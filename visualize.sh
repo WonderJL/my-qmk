@@ -643,8 +643,10 @@ generate_diagrams() {
     
     # Step 1: Convert keymap.c to JSON via qmk c2json
     print_step "3/6" "Converting keymap.c to JSON..."
-    local json_output
-    json_output=$(mktemp /tmp/keymap_XXXXXX.json)
+    # Save JSON to output directory (same location as YAML)
+    local json_file="$yaml_base_dir/keymap.json"
+    mkdir -p "$yaml_base_dir"
+    local json_output="$json_file"
     local error_output
     error_output=$(mktemp /tmp/keymap_error_XXXXXX.txt)
     
@@ -739,7 +741,7 @@ generate_diagrams() {
         exit 1
     fi
     print_success "Parsed to YAML: $yaml_file"
-    rm -f "$json_output"
+    print_success "JSON saved to: $json_file"
     
     # Step 3: Generate SVG via keymap draw
     print_step "5/6" "Generating SVG diagram..."
@@ -869,6 +871,10 @@ main() {
     fi
     if [ -f "$OUTPUT_DIR/keymap.png" ]; then
         echo -e "  ${GREEN}✓${NC} $OUTPUT_DIR/keymap.png"
+    fi
+    local json_path="$OUTPUT_BASE_DIR/$SELECTED_KEYBOARD/$SELECTED_KEYMAP/keymap.json"
+    if [ -f "$json_path" ]; then
+        echo -e "  ${GREEN}✓${NC} $json_path"
     fi
     if [ "$SAVE_YAML" = true ]; then
         local yaml_path="$OUTPUT_BASE_DIR/$SELECTED_KEYBOARD/$SELECTED_KEYMAP/keymap.yaml"

@@ -42,6 +42,8 @@ Layer 5: WIN_LAYER     - Window management (NAV + S)
 Layer 6: MAC_FN        - Function keys (existing)
 Layer 7: WIN_BASE      - Normal typing (Windows, optional)
 Layer 8: WIN_FN        - Function keys (Windows, optional)
+Layer 9: LIGHTING_LAYER - RGB lighting controls (NAV + G)
+Layer 10: NUMPAD_LAYER  - Number pad (NAV + H)
 ```
 
 ### Layer Activation Flow
@@ -49,19 +51,31 @@ Layer 8: WIN_FN        - Function keys (Windows, optional)
 ```
 BASE (Layer 0)
   ├─ Left Thumb Hold → NAV_LAYER (Layer 1)
-  │   ├─ Tap A → Reserved (future: shortcuts/automations)
-  │   ├─ Tap S → Latch WIN_LAYER (Layer 5)
-  │   ├─ Tap D → Latch APP_LAYER (Layer 4)
-  │   └─ Tap F → Latch CURSOR_LAYER (Layer 3)
+  │   ├─ Tap Q → Toggle WIN_LAYER (Layer 5) [toggle]
+  │   ├─ Tap W → Toggle MAC_FN (Layer 6) [toggle]
+  │   ├─ Tap E → Toggle WIN_BASE (Layer 7) [toggle]
+  │   ├─ Tap R → Toggle WIN_FN (Layer 8) [toggle]
+  │   ├─ Tap A → Latch APP_LAYER (Layer 4) [latch]
+  │   ├─ Tap S → Latch WIN_LAYER (Layer 5) [latch - existing]
+  │   ├─ Tap D → Latch APP_LAYER (Layer 4) [latch]
+  │   ├─ Tap F → Latch CURSOR_LAYER (Layer 3) [latch]
+  │   ├─ Hold G → Momentary LIGHTING_LAYER (Layer 9) [momentary]
+  │   └─ Tap H → Toggle NUMPAD_LAYER (Layer 10) [toggle]
   │
   └─ Right Thumb Hold → SYM_LAYER (Layer 2)
+
+From any non-momentary layer (L3-L10):
+  └─ Left Space Hold → NAV_LAYER (Layer 1)
 ```
 
 **Key Points**:
 - **NAV_LAYER**: Momentary (MO) - activates only while left thumb held
 - **SYM_LAYER**: Momentary (MO) - activates only while right thumb held
 - **Helper Layers** (CURSOR/APP/WIN): Latch (LT) - tap selector to activate, tap again to deactivate
-- **All layers deactivate** on thumb release (momentary layers) or explicit deactivation (latched layers)
+- **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
+- **Lighting Layer** (L9): Momentary (MO) - activates only while selector held
+- **Left Space NAV Access**: All non-momentary layers (L3-L10) have left space as `MO(NAV_LAYER)` for navigation
+- **All layers deactivate** on thumb release (momentary layers) or explicit deactivation (latched/toggled layers)
 
 ---
 
@@ -112,15 +126,20 @@ BASE (Layer 0)
     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
     // Row 1: Transparent
     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-    // Row 2: Transparent
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+    // Row 2: Top row - Toggle selectors for L5-L8
+    _______,  _______,  TG(WIN_LAYER),   // Q: Toggle WIN_LAYER (Layer 5)
+                  TG(MAC_FN),      // W: Toggle MAC_FN (Layer 6)
+                  TG(WIN_BASE),    // E: Toggle WIN_BASE (Layer 7)
+                  TG(WIN_FN),      // R: Toggle WIN_FN (Layer 8)
+                  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
     // Row 3: Selectors on left-hand home row
     _______,  _______,  LT(APP_LAYER, KC_NO),   // A: Reserved (future: shortcuts/automations) - currently latches APP_LAYER
-                  LT(WIN_LAYER, KC_NO),   // S: WIN layer
-                  LT(APP_LAYER, KC_NO),   // D: APP layer
-                  LT(CURSOR_LAYER, KC_NO), // F: CURSOR layer
-                  _______,  // G: Transparent
-                  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
+                  LT(WIN_LAYER, KC_NO),   // S: Latch WIN_LAYER (Layer 5)
+                  LT(APP_LAYER, KC_NO),   // D: Latch APP_LAYER (Layer 4)
+                  LT(CURSOR_LAYER, KC_NO), // F: Latch CURSOR_LAYER (Layer 3)
+                  MO(LIGHTING_LAYER),  // G: Momentary LIGHTING_LAYER (Layer 9)
+                  TG(NUMPAD_LAYER),  // H: Toggle NUMPAD_LAYER (Layer 10)
+                  _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
     // Row 4: Transparent
     _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
     // Row 5: Keep thumb key held
@@ -129,20 +148,32 @@ BASE (Layer 0)
 ```
 
 **Key Features**:
-- **Left-hand home row (A/S/D/F)**: Selectors using `LT()` (Layer Tap)
+- **Top row (Q/W/E/R)**: Toggle selectors using `TG()` (Toggle)
+  - `Q`: Toggle WIN_LAYER (Layer 5)
+  - `W`: Toggle MAC_FN (Layer 6)
+  - `E`: Toggle WIN_BASE (Layer 7)
+  - `R`: Toggle WIN_FN (Layer 8)
+- **Left-hand home row (A/S/D/F/G/H)**: Selectors using `LT()` (Layer Tap) and `MO()` (Momentary)
   - `A`: Reserved (future: shortcuts/automations) - currently latches APP_LAYER
-  - `S`: Latch WIN_LAYER (Layer 5)
+  - `S`: Latch WIN_LAYER (Layer 5) - note: also accessible via Q toggle
   - `D`: Latch APP_LAYER (Layer 4)
   - `F`: Latch CURSOR_LAYER (Layer 3)
+  - `G`: Momentary LIGHTING_LAYER (Layer 9) - hold to activate
+  - `H`: Toggle NUMPAD_LAYER (Layer 10)
 - **`LT(LAYER, KC_NO)`**: Tap to latch layer, hold does nothing
+- **`TG(LAYER)`**: Tap to toggle layer on/off (returns to MAC_BASE when toggled off)
+- **`MO(LAYER)`**: Hold to activate layer, release to deactivate
 - **Right-hand keys**: Transparent (pass through to BASE)
 - **Thumb key**: Keep `MO(NAV_LAYER)` to maintain activation
 
 **Usage**:
 1. Hold Left Thumb → NAV_LAYER activates
-2. Tap selector key (A/S/D/F) → Helper layer latches
-3. Release Left Thumb → NAV_LAYER deactivates, but latched helper layer remains active
-4. Tap selector again or activate another layer → Deactivate latched layer
+2. Tap selector key:
+   - **Toggle selectors (Q/W/E/R/H)**: Tap to toggle layer on/off
+   - **Latch selectors (A/S/D/F)**: Tap to latch layer
+   - **Momentary selector (G)**: Hold to activate lighting layer
+3. Release Left Thumb → NAV_LAYER deactivates, but latched/toggled layers remain active
+4. Tap toggle selector again or activate another layer → Deactivate toggled layer
 
 ---
 
@@ -273,14 +304,15 @@ BASE (Layer 0)
                 // ;: Accept all files (TBD: Cursor command)
                 // ... rest transparent
     // Row 4: Transparent
-    // Row 5: Keep NAV thumb held
-),
+    // Row 5: Left space for NAV access
+    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______),
 ```
 
 **Key Features**:
 - **Right-hand only actions**: Left-hand remains transparent
 - **Home row (H/J/K/L/;)**: High-frequency actions
 - **Top row (Y/U/I/O/P/[)]**: Setup/mode actions
+- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **TBD**: Actual Cursor IDE commands need to be mapped (placeholders documented)
 
 **Status**: ⚠️ **INCOMPLETE** - Cursor IDE command mappings need to be finalized
@@ -326,16 +358,16 @@ BASE (Layer 0)
                 KC_APP_SLACK,    // S: Slack (⌥⌘S) - note: conflicts with selector
                 // ... rest transparent
     // Row 5: Special keys
-    _______,  _______,  _______,  _______,  _______,            KC_APP_FINDER,  // Space: Finder (⇧⌥⌘Space)
-                // ... rest transparent
-),
+    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            KC_APP_FINDER,  // Left Space: NAV access, Right Space: Finder (⇧⌥⌘Space)
+                                                                     _______,            _______,  _______,  _______,  _______,  _______,  _______),
 ```
 
 **Key Features**:
 - **Home row**: Chat apps (J/K/L/;) - WhatsApp, Signal, WeChat, Telegram
 - **Top row**: Dev/productivity apps (V/N/B/C/E) - VS Code, Notion, BGA, Calendar, Mail
 - **Bottom row**: System/media apps (Z/S) - ChatGPT, Slack
-- **Special keys**: Esc (Calculator), ` (Music), Space (Finder)
+- **Special keys**: Esc (Calculator), ` (Music), Right Space (Finder)
+- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **Left-hand**: Transparent (or category selectors if implementing sub-layers)
 
 **All 15 App Launchers**:
@@ -395,12 +427,14 @@ BASE (Layer 0)
     _______,  _______,            KC_WIN_SV_L,  // Z: Split View Left (⌃⌥⌘←)
                 KC_WIN_SV_R,  // X: Split View Right (⌃⌥⌘→)
                 // ... rest transparent
-    // Arrow keys: Halves
-    // Left: KC_WIN_LEFT (⇧⌃⌘←)
-    // Right: KC_WIN_RIGHT (⇧⌃⌘→)
-    // Up: KC_WIN_TOP (⇧⌃⌘↑)
-    // Down: KC_WIN_BOTTOM (⇧⌃⌘↓)
-),
+    // Row 5: Arrow keys for halves + NAV access
+    //        Left Space: MO(NAV_LAYER) for navigation
+    //        Arrow keys: Halves
+    //        Left: KC_WIN_LEFT (⇧⌃⌘←)
+    //        Right: KC_WIN_RIGHT (⇧⌃⌘→)
+    //        Up: KC_WIN_TOP (⇧⌃⌘↑)
+    //        Down: KC_WIN_BOTTOM (⇧⌃⌘↓)
+    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            _______,                       _______,            _______,  _______,  _______,  KC_WIN_LEFT,  KC_WIN_BOTTOM,  KC_WIN_RIGHT),
 ```
 
 **Key Features**:
@@ -418,7 +452,138 @@ BASE (Layer 0)
 - **Split View (⌃⌥⌘)**: Z/X
   - `Z` → Split View Left (⌃⌥⌘←)
   - `X` → Split View Right (⌃⌥⌘→)
+- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **Organized by modifier groups**: Logical grouping for muscle memory
+
+---
+
+### Layer 9: LIGHTING_LAYER (RGB Lighting Controls)
+
+**Purpose**: Control keyboard RGB lighting effects
+
+**Activation**: NAV + G (hold G while NAV_LAYER is active) - Momentary (MO)
+
+**Key Mappings**:
+```c
+[LIGHTING_LAYER] = LAYOUT_91_ansi(
+    // Row 0: Transparent
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+    // Row 1: Transparent
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+    // Row 2: Top row - Mode controls
+    _______,  _______,  RM_TOGG,   // Q: Toggle RGB Matrix on/off
+                  RM_NEXT,   // W: Next animation mode
+                  RM_PREV,   // E: Previous animation mode
+                  _______,  // R: Transparent
+                  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+    // Row 3: Home row - Brightness and Hue controls
+    _______,  _______,  RM_VALU,   // A: Brightness up
+                  RM_VALD,   // S: Brightness down
+                  RM_HUEU,   // D: Hue up
+                  RM_HUED,   // F: Hue down
+                  _______,  // G: Transparent
+                  _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
+    // Row 4: Bottom row - Saturation and Speed controls
+    _______,  _______,            RM_SATU,   // Z: Saturation up
+                  RM_SATD,   // X: Saturation down
+                  RM_SPDU,   // C: Speed up
+                  RM_SPDD,   // V: Speed down
+                  RM_FLGN,   // B: Next flag
+                  RM_FLGP,   // N: Previous flag
+                  _______,  _______,  _______,  _______,              _______,  _______,
+    // Row 5: Left space for NAV access
+    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______),
+```
+
+**Key Features**:
+- **Toggle Group** (Q): `RM_TOGG` - Toggle RGB Matrix on/off
+- **Mode Group** (W/E): `RM_NEXT` / `RM_PREV` - Cycle through animation modes
+- **Brightness Group** (A/S): `RM_VALU` / `RM_VALD` - Increase/decrease brightness
+- **Hue Group** (D/F): `RM_HUEU` / `RM_HUED` - Cycle through hue
+- **Saturation Group** (Z/X): `RM_SATU` / `RM_SATD` - Increase/decrease saturation
+- **Speed Group** (C/V): `RM_SPDU` / `RM_SPDD` - Increase/decrease animation speed
+- **Flags Group** (B/N): `RM_FLGN` / `RM_FLGP` - Cycle through flags
+- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
+- **Logical grouping**: Controls grouped by function for easy access
+- **Momentary activation**: Layer activates only while G key is held
+
+**Usage**:
+1. Hold Left Thumb → NAV_LAYER activates
+2. Hold G key → LIGHTING_LAYER activates
+3. Press lighting control keys while holding G
+4. Release G or Left Thumb → LIGHTING_LAYER deactivates
+
+---
+
+### Layer 10: NUMPAD_LAYER (Number Pad)
+
+**Purpose**: Toggle number pad for numeric input
+
+**Activation**: NAV + H (tap H while NAV_LAYER is active) - Toggle (TG)
+
+**Key Mappings**:
+```c
+[NUMPAD_LAYER] = LAYOUT_91_ansi(
+    // Row 0: Transparent
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+    // Row 1: Transparent
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+    // Row 2: Top row - Numpad top row (7, 8, 9, /)
+    _______,  _______,  _______,  // Q: Transparent
+                  _______,  // W: Transparent
+                  _______,  // E: Transparent
+                  _______,  // R: Transparent
+                  _______,  // T: Transparent
+                  _______,  // Y: Transparent
+                  KC_KP_7,  // U: 7 (top left)
+                  KC_KP_8,  // I: 8
+                  KC_KP_9,  // O: 9
+                  KC_KP_SLASH,  // P: / (divide)
+                  _______,  _______,  _______,  _______,            _______,
+    // Row 3: Home row - Numpad second row (4, 5, 6, *)
+    _______,  _______,  _______,  // A: Transparent
+                  _______,  // S: Transparent
+                  _______,  // D: Transparent
+                  _______,  // F: Transparent
+                  _______,  // G: Transparent
+                  _______,  // H: Transparent
+                  KC_KP_4,  // J: 4
+                  KC_KP_5,  // K: 5
+                  KC_KP_6,  // L: 6
+                  KC_KP_ASTERISK,  // ;: * (multiply)
+                  _______,            _______,            _______,
+    // Row 4: Bottom row - Numpad third row (1, 2, 3, -)
+    _______,  _______,            _______,  // Z: Transparent
+                  _______,  // X: Transparent
+                  _______,  // C: Transparent
+                  _______,  // V: Transparent
+                  _______,  // B: Transparent
+                  KC_KP_1,  // N: 1
+                  KC_KP_2,  // M: 2
+                  KC_KP_3,  // ,: 3
+                  KC_KP_MINUS,  // .: - (subtract)
+                  _______,              _______,  _______,
+    // Row 5: Numpad bottom row (0, ., +, Enter) + NAV access
+    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            KC_KP_0,                       KC_KP_DOT,             KC_KP_PLUS,  KC_KP_ENTER,  _______,  _______,  _______),
+```
+
+**Key Features**:
+- **Standard numpad layout**: Right-hand side placement
+- **Top row** (U/I/O/P): 7, 8, 9, / (divide)
+- **Second row** (J/K/L/;): 4, 5, 6, * (multiply)
+- **Third row** (N/M/,/.): 1, 2, 3, - (subtract)
+- **Bottom row**: 0 (left space), . (right space), + (right cmd), Enter (right ctrl)
+- **U key as 7**: Top-left position of numpad (as specified)
+- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
+- **Toggle activation**: Tap H in NAV_LAYER to activate, tap H again to return to MAC_BASE
+- **Always returns to MAC_BASE**: When toggled off, always returns to Layer 0
+
+**Usage**:
+1. Hold Left Thumb → NAV_LAYER activates
+2. Tap H key → NUMPAD_LAYER toggles on
+3. Use numpad keys for numeric input
+4. Tap H again in NAV_LAYER → NUMPAD_LAYER toggles off (returns to MAC_BASE)
+5. Or hold Left Space → Access NAV_LAYER, then toggle off
 
 ---
 
@@ -538,6 +703,26 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
         ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
         ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
     },
+    [MAC_FN] = { 
+        ENCODER_CCW_CW(RM_VALD, RM_VALU),
+        ENCODER_CCW_CW(RM_VALD, RM_VALU)
+    },
+    [WIN_BASE] = { 
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+    },
+    [WIN_FN] = { 
+        ENCODER_CCW_CW(RM_VALD, RM_VALU),
+        ENCODER_CCW_CW(RM_VALD, RM_VALU)
+    },
+    [LIGHTING_LAYER] = { 
+        ENCODER_CCW_CW(RM_VALD, RM_VALU),
+        ENCODER_CCW_CW(RM_VALD, RM_VALU)
+    },
+    [NUMPAD_LAYER] = { 
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+    },
 };
 #endif // ENCODER_MAP_ENABLE
 ```
@@ -564,12 +749,15 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - [x] Encoder macro definitions
 
 ### ⚠️ In Progress / Needs Completion
-- [ ] NAV_LAYER implementation (selectors need finalization)
+- [ ] NAV_LAYER implementation (selectors finalized: Q/W/E/R for L5-L8 toggles, G/H for L9/L10)
 - [ ] CURSOR_LAYER implementation (Cursor IDE commands need mapping)
 - [ ] APP_LAYER implementation (Notes app needs mapping, key conflicts need resolution)
 - [ ] WIN_LAYER implementation (complete key mappings)
+- [ ] LIGHTING_LAYER implementation (RGB controls mapped)
+- [ ] NUMPAD_LAYER implementation (standard numpad layout mapped)
+- [ ] Left space NAV access for all non-momentary layers (L3-L10)
 - [ ] Encoder tap dance implementation (single/double press)
-- [ ] Windows support layers (WIN_BASE, WIN_NAV) - optional
+- [ ] Windows support layers (WIN_BASE, WIN_FN) - optional
 
 ### 🔍 Review Required
 - [ ] **Usability Review**: Test each layer activation sequence
@@ -665,6 +853,26 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - **Row 4**: QWERTY bottom row (14 keys)
 - **Row 5**: Modifiers and thumb keys (13 keys)
 
+### Additional Layer Notes
+
+**Layer 6: MAC_FN** (Function Keys)
+- Purpose: Function keys (F1-F12) and RGB controls for macOS
+- Activation: Toggle via NAV + W (`TG(MAC_FN)`)
+- **Left Space**: Should be `MO(NAV_LAYER)` for NAV access (to be implemented)
+- Encoder: RGB brightness controls
+
+**Layer 7: WIN_BASE** (Windows Typing)
+- Purpose: Normal typing layer for Windows
+- Activation: Toggle via NAV + E (`TG(WIN_BASE)`)
+- **Left Space**: Should be `MO(NAV_LAYER)` for NAV access (to be implemented)
+- Encoder: Zoom and volume controls
+
+**Layer 8: WIN_FN** (Windows Function Keys)
+- Purpose: Function keys and RGB controls for Windows
+- Activation: Toggle via NAV + R (`TG(WIN_FN)`)
+- **Left Space**: Should be `MO(NAV_LAYER)` for NAV access (to be implemented)
+- Encoder: RGB brightness controls
+
 ---
 
 ## 🎯 Next Steps
@@ -697,24 +905,38 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 ### Completeness Status
 - ✅ **BASE Layer**: Complete
 - ✅ **SYM Layer**: Complete (with special macros)
-- ⚠️ **NAV Layer**: Structure defined, selectors need finalization
-- ⚠️ **CURSOR Layer**: Structure defined, commands need mapping
-- ⚠️ **APP Layer**: Most apps mapped, conflicts need resolution
-- ⚠️ **WIN Layer**: Structure defined, mappings need completion
-- ⚠️ **Encoder**: Basic behavior defined, tap dance needs implementation
+- ✅ **NAV Layer**: Structure defined, all selectors finalized (Q/W/E/R for L5-L8, A/S/D/F/G/H for others)
+- ⚠️ **CURSOR Layer**: Structure defined, commands need mapping, left space NAV access added
+- ⚠️ **APP Layer**: Most apps mapped, conflicts need resolution, left space NAV access added
+- ⚠️ **WIN Layer**: Structure defined, mappings need completion, left space NAV access added
+- ✅ **LIGHTING Layer**: Complete specification with all RGB controls, left space NAV access added
+- ✅ **NUMPAD Layer**: Complete specification with standard layout, left space NAV access added
+- ⚠️ **MAC_FN Layer**: Existing layer, needs left space NAV access documentation
+- ⚠️ **WIN_BASE Layer**: Existing layer, needs left space NAV access documentation
+- ⚠️ **WIN_FN Layer**: Existing layer, needs left space NAV access documentation
+- ⚠️ **Encoder**: Basic behavior defined, tap dance needs implementation, encoder maps updated for new layers
 
 ### Remaining Work
 1. Resolve key conflicts in APP_LAYER
 2. Map Cursor IDE commands for CURSOR_LAYER
 3. Complete WIN_LAYER key mappings
 4. Implement encoder tap dance
-5. Finalize NAV_LAYER selectors
+5. Add left space NAV access to MAC_FN, WIN_BASE, WIN_FN layers
 6. Comprehensive testing and validation
+7. Test all layer activation sequences (toggle, latch, momentary)
+8. Verify left space NAV access works from all non-momentary layers
 
 ---
 
-**Document Version**: 1.0  
+**Document Version**: 1.1  
 **Last Updated**: 2026-01-26  
 **Status**: Finalized Tech Spec (Implementation In Progress)  
 **Target Keyboard**: Keychron Q11 ANSI Encoder  
 **Firmware**: QMK
+
+**Recent Updates**:
+- Added Layer 9: LIGHTING_LAYER (RGB lighting controls)
+- Added Layer 10: NUMPAD_LAYER (number pad)
+- Updated NAV_LAYER with toggle selectors for L5-L8 (Q/W/E/R)
+- Added left space NAV access to all non-momentary layers (L3-L10)
+- Updated encoder configuration for all layers

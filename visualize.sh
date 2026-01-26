@@ -504,6 +504,8 @@ select_output_dir() {
     local keymap_dir="$SCRIPT_DIR/$SELECTED_KEYBOARD/keymaps/$SELECTED_KEYMAP"
     local default_dir="$DEFAULT_OUTPUT_DIR"
     
+    echo "Output will be organized as: <base_path>/<keyboard>/<keymap>/<format>/"
+    echo ""
     echo "Options:"
     echo ""
     printf "  ${CYAN}1)${NC} Default (${default_dir}/)\n"
@@ -521,35 +523,35 @@ select_output_dir() {
     
     case "$selection" in
         1)
-            OUTPUT_DIR="$default_dir"
-            print_success "Output directory: $OUTPUT_DIR"
+            OUTPUT_BASE_DIR="$default_dir"
+            print_success "Output base directory: $OUTPUT_BASE_DIR"
             ;;
         2)
             printf "Enter custom path: "
             read -r custom_path
             if [ -z "$custom_path" ]; then
                 print_error "Empty path. Using default: $default_dir"
-                OUTPUT_DIR="$default_dir"
+                OUTPUT_BASE_DIR="$default_dir"
             else
                 # Expand ~ and resolve relative paths
                 custom_path=$(eval echo "$custom_path")
                 # Try to resolve to absolute path if it's a directory
                 if [ -d "$(dirname "$custom_path" 2>/dev/null)" ]; then
-                    OUTPUT_DIR="$(cd "$(dirname "$custom_path")" 2>/dev/null && pwd)/$(basename "$custom_path")"
+                    OUTPUT_BASE_DIR="$(cd "$(dirname "$custom_path")" 2>/dev/null && pwd)/$(basename "$custom_path")"
                 else
                     # If parent doesn't exist, use as-is (will be created)
-                    OUTPUT_DIR="$custom_path"
+                    OUTPUT_BASE_DIR="$custom_path"
                 fi
-                print_success "Output directory: $OUTPUT_DIR"
+                print_success "Output base directory: $OUTPUT_BASE_DIR"
             fi
             ;;
         3)
-            OUTPUT_DIR="$keymap_dir"
-            print_success "Output directory: $OUTPUT_DIR"
+            OUTPUT_BASE_DIR="$keymap_dir"
+            print_success "Output base directory: $OUTPUT_BASE_DIR"
             ;;
         *)
             print_error "Selection out of range. Using default: $default_dir"
-            OUTPUT_DIR="$default_dir"
+            OUTPUT_BASE_DIR="$default_dir"
             ;;
     esac
     echo ""
@@ -609,14 +611,31 @@ generate_diagrams() {
     
     print_info "Keymap file: $keymap_file"
     
-    # Create output directory
+    # Construct final output directory: <base_path>/<keyboard>/<keymap>/<format>/
+    # Determine format subdirectory based on output format
+    local format_subdir
+    if [ "$OUTPUT_FORMAT" = "svg" ]; then
+        format_subdir="svg"
+    elif [ "$OUTPUT_FORMAT" = "png" ]; then
+        format_subdir="png"
+    else
+        format_subdir="both"
+    fi
+    
+    # Build final output path: <base>/<keyboard>/<keymap>/<format>/
+    OUTPUT_DIR="$OUTPUT_BASE_DIR/$SELECTED_KEYBOARD/$SELECTED_KEYMAP/$format_subdir"
+    
+    # Create output directory structure
     mkdir -p "$OUTPUT_DIR"
     print_success "Output directory: $OUTPUT_DIR"
     
     # Determine YAML file location
+    # YAML is saved in the parent directory (same level as format subdirectories)
+    local yaml_base_dir="$OUTPUT_BASE_DIR/$SELECTED_KEYBOARD/$SELECTED_KEYMAP"
     local yaml_file
     if [ "$SAVE_YAML" = true ]; then
-        yaml_file="$OUTPUT_DIR/keymap.yaml"
+        yaml_file="$yaml_base_dir/keymap.yaml"
+        mkdir -p "$yaml_base_dir"
     else
         yaml_file=$(mktemp /tmp/keymap_XXXXXX.yaml)
         print_info "Using temporary YAML file: $yaml_file"
@@ -822,7 +841,8 @@ main() {
     SELECTED_KEYMAP=""
     SELECTED_COLUMNS="$DEFAULT_COLUMNS"
     OUTPUT_FORMAT="svg"
-    OUTPUT_DIR="$DEFAULT_OUTPUT_DIR"
+    OUTPUT_BASE_DIR="$DEFAULT_OUTPUT_DIR"
+    OUTPUT_DIR=""
     SAVE_YAML=true
     
     # Run workflow
@@ -850,8 +870,11 @@ main() {
     if [ -f "$OUTPUT_DIR/keymap.png" ]; then
         echo -e "  ${GREEN}✓${NC} $OUTPUT_DIR/keymap.png"
     fi
-    if [ "$SAVE_YAML" = true ] && [ -f "$OUTPUT_DIR/keymap.yaml" ]; then
-        echo -e "  ${GREEN}✓${NC} $OUTPUT_DIR/keymap.yaml"
+    if [ "$SAVE_YAML" = true ]; then
+        local yaml_path="$OUTPUT_BASE_DIR/$SELECTED_KEYBOARD/$SELECTED_KEYMAP/keymap.yaml"
+        if [ -f "$yaml_path" ]; then
+            echo -e "  ${GREEN}✓${NC} $yaml_path"
+        fi
     fi
     echo ""
     

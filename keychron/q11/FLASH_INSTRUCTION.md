@@ -6,14 +6,14 @@ The Keychron Q11 is a split keyboard, and **each side must be flashed individual
 
 ### Master Side (Left)
 To enter bootloader mode on the **master side**:
-1. **Hold down the key located at K01** (which is programmed as **Esc**)
-2. While holding the key, **plug in the USB cable** to the master side
+1. **Hold down the ESC key** (top row, second key from the left, right after the left encoder)
+2. While holding the ESC key, **plug in the USB cable** to the master side
 3. Release the key once the keyboard enters bootloader mode
 
 ### Slave Side (Right)
 To enter bootloader mode on the **slave side**:
-1. **Hold down the key located at K67** (which is programmed as **Del**)
-2. While holding the key, **plug in the USB cable** to the slave side
+1. **Hold down the DEL key** (top row, on the right side, just before the right encoder)
+2. While holding the DEL key, **plug in the USB cable** to the slave side
 3. Release the key once the keyboard enters bootloader mode
 
 ## Flashing Firmware

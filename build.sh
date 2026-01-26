@@ -427,7 +427,17 @@ main() {
     echo -e "  Keymap:   ${CYAN}$SELECTED_KEYMAP${NC}"
     echo -e "  Output:   ${GREEN}$OUTPUT_DIR/${NC}"
     echo ""
-    print_info "Flash your keyboard with: qmk flash <firmware_file>"
+    
+    # Construct the firmware filename (keyboard path with / replaced by _)
+    local kb_name=$(echo "$SELECTED_KEYBOARD" | tr '/' '_')
+    local firmware_file="${OUTPUT_DIR}/${kb_name}_${SELECTED_KEYMAP}.bin"
+    
+    # Show copy-pasteable flash command
+    print_info "To flash your keyboard, run:"
+    echo ""
+    echo -e "  ${GREEN}qmk flash ${firmware_file}${NC}"
+    echo ""
+    print_info "Make sure your keyboard is in bootloader mode (hold Esc while plugging in)."
     echo ""
 }
 

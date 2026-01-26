@@ -289,20 +289,21 @@ From any non-momentary layer (L3-L10):
     // Row 1: Transparent
     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
     // Row 2: Top row - Setup/mode actions
-    _______,  _______,  _______,  // Y: Toggle explorer (TBD: Cursor command)
-                // U: Toggle terminal (TBD: Cursor command)
-                // I: Open/focus chat (TBD: Cursor command)
-                // O: Mode picker (TBD: Cursor command)
-                // P: Model picker (TBD: Cursor command)
-                // [: Submit with codebase (TBD: Cursor command)
-                // ]: Submit no codebase (TBD: Cursor command)
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  LGUI(KC_B),  // Y: Toggle explorer (Cursor: workbench.action.toggleSidebarVisibility, cmd+b)
+                LGUI(KC_T),  // U: Toggle terminal (Cursor override: workbench.action.terminal.toggleTerminal, cmd+t)
+                LGUI(KC_I),  // I: Open/focus chat (Cursor: composer.startComposerPrompt, cmd+i)
+                LGUI(KC_DOT),  // O: Mode picker (Cursor: composer.openModeMenu, cmd+.)
+                _______,  // P: Model picker (TBD - skipped)
+                _______,  // [: Submit with codebase (TBD - skipped)
+                _______,  // ]: Submit no codebase (TBD - skipped)
+                _______,            _______,
     // Row 3: Home row - High-frequency actions
-    _______,  _______,  _______,  _______,  _______,  _______,  // H: Focus editor (TBD: Cursor command)
-                // J: Previous change (TBD: Cursor command)
-                // K: Next change (TBD: Cursor command)
-                // L: Apply in editor (TBD: Cursor command)
-                // ;: Accept all files (TBD: Cursor command)
-                // ... rest transparent
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  // H: Focus editor (TBD - skipped)
+                _______,  // J: Previous change (TBD - skipped)
+                _______,  // K: Next change (TBD - skipped)
+                _______,  // L: Apply in editor (TBD - skipped)
+                _______,  // ;: Accept all files (TBD - skipped)
+                _______,            _______,            _______,
     // Row 4: Transparent
     // Row 5: Left space for NAV access
     _______,  _______,  _______,  _______,  MO(NAV_LAYER),            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______),
@@ -310,12 +311,13 @@ From any non-momentary layer (L3-L10):
 
 **Key Features**:
 - **Right-hand only actions**: Left-hand remains transparent
-- **Home row (H/J/K/L/;)**: High-frequency actions
-- **Top row (Y/U/I/O/P/[)]**: Setup/mode actions
+- **Top row (Y/U/I/O)**: Explorer/terminal/chat/mode via Cursor commands
+- **Top row (P/[ / ])**: TBD (skipped) and left transparent
+- **Home row (H/J/K/L/;)**: TBD (skipped) and left transparent
 - **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
-- **TBD**: Actual Cursor IDE commands need to be mapped (placeholders documented)
+- **TBD**: Model picker, submit with/without codebase, focus editor, previous/next change, apply in editor, accept all files
 
-**Status**: ⚠️ **INCOMPLETE** - Cursor IDE command mappings need to be finalized
+**Status**: ⚠️ **INCOMPLETE** - Partial mapping done; remaining Cursor actions are TBD (skipped)
 
 ---
 
@@ -750,7 +752,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 ### ⚠️ In Progress / Needs Completion
 - [ ] NAV_LAYER implementation (selectors finalized: Q/W/E/R for L5-L8 toggles, G/H for L9/L10)
-- [ ] CURSOR_LAYER implementation (Cursor IDE commands need mapping)
+- [ ] CURSOR_LAYER implementation (mapped Y/U/I/O; remaining TBD: model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
 - [ ] APP_LAYER implementation (Notes app needs mapping, key conflicts need resolution)
 - [ ] WIN_LAYER implementation (complete key mappings)
 - [ ] LIGHTING_LAYER implementation (RGB controls mapped)
@@ -765,7 +767,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - [ ] **Code Review**: Verify all macros compile correctly
 - [ ] **Conflict Detection**: Resolve key conflicts (e.g., Slack on S key conflicts with WIN selector)
 - [ ] **Completeness Check**: Ensure all 15 app launchers are mapped
-- [ ] **Cursor Commands**: Map actual Cursor IDE commands (currently TBD)
+- [ ] **Cursor Commands**: Map remaining Cursor IDE commands (model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
 
 ---
 
@@ -784,10 +786,10 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 **Recommendation**: Move Slack to a different key (e.g., `X` or `M`)
 
 ### Issue 2: Cursor IDE Commands
-**Problem**: Cursor IDE command mappings are TBD (placeholders in CURSOR_LAYER)
+**Problem**: CURSOR_LAYER is partially mapped; remaining actions are TBD (model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
 
 **Resolution**: 
-1. Identify actual Cursor IDE keyboard shortcuts
+1. Identify Cursor IDE keyboard shortcuts for remaining actions
 2. Map to appropriate QMK keycodes
 3. Update CURSOR_LAYER implementation
 
@@ -879,7 +881,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 ### Immediate Actions
 1. **Complete NAV_LAYER**: Finalize selector implementations
-2. **Map Cursor Commands**: Identify and map actual Cursor IDE shortcuts
+2. **Complete Cursor Commands**: Map remaining Cursor IDE shortcuts
 3. **Resolve Key Conflicts**: Move conflicting apps to different keys
 4. **Complete APP_LAYER**: Add Notes app mapping
 5. **Complete WIN_LAYER**: Finalize all window management mappings
@@ -906,7 +908,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - ✅ **BASE Layer**: Complete
 - ✅ **SYM Layer**: Complete (with special macros)
 - ✅ **NAV Layer**: Structure defined, all selectors finalized (Q/W/E/R for L5-L8, A/S/D/F/G/H for others)
-- ⚠️ **CURSOR Layer**: Structure defined, commands need mapping, left space NAV access added
+- ⚠️ **CURSOR Layer**: Partial mapping (Y/U/I/O); remaining commands TBD, left space NAV access added
 - ⚠️ **APP Layer**: Most apps mapped, conflicts need resolution, left space NAV access added
 - ⚠️ **WIN Layer**: Structure defined, mappings need completion, left space NAV access added
 - ✅ **LIGHTING Layer**: Complete specification with all RGB controls, left space NAV access added
@@ -918,7 +920,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 ### Remaining Work
 1. Resolve key conflicts in APP_LAYER
-2. Map Cursor IDE commands for CURSOR_LAYER
+2. Map remaining Cursor IDE commands for CURSOR_LAYER
 3. Complete WIN_LAYER key mappings
 4. Implement encoder tap dance
 5. Add left space NAV access to MAC_FN, WIN_BASE, WIN_FN layers

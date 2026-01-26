@@ -1,6 +1,6 @@
 layout: {qmk_keyboard: keychron/q11/ansi_encoder, layout_name: LAYOUT_91_ansi}
 layers:
-  L0:
+  L0-MAC_BASE:
   - [MUTE, ESC, BRID, BRIU, MCTL, LPAD, RM VALD, RM VALU, MPRV, MPLY]
   - - MNXT
     - MUTE
@@ -56,7 +56,7 @@ layers:
     - LCTL
   - [LOPT, LCMD, MO(NAV LAYER), SPC, SPC, MO(SYM LAYER), RCMD, RCTL, LEFT, DOWN]
   - [RGHT]
-  L1:
+  L1-NAV_LAYER:
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -148,7 +148,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-  L2:
+  L2-SYM_LAYER:
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -231,7 +231,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-  L3:
+  L3-CURSOR_LAYER:
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -323,7 +323,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-  L4:
+  L4-APP_LAYER:
   - - {t: ▽, type: trans}
     - Alt+Gui+ESC
     - {t: ▽, type: trans}

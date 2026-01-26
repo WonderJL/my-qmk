@@ -595,6 +595,162 @@ select_yaml_handling() {
 }
 
 # =============================================================================
+# Layer name extraction functions
+# =============================================================================
+
+# Extract layer names from keymap.c enum layers
+extract_layer_names() {
+    local keymap_file="$1"
+    
+    # Extract enum layers block and parse layer names
+    # Pattern: enum layers { NAME1, NAME2, ... };
+    if [ -f "$keymap_file" ]; then
+        # Extract the enum layers section (from "enum layers {" to "};")
+        awk '/enum layers[[:space:]]*\{/,/^[[:space:]]*\};/' "$keymap_file" 2>/dev/null | \
+            # Extract identifiers that are followed by comma or closing brace
+            grep -E '^[[:space:]]*[A-Z_][A-Z0-9_]*[[:space:]]*[,}]' | \
+            # Extract just the identifier name
+            sed -E 's/^[[:space:]]*([A-Z_][A-Z0-9_]*).*/\1/' | \
+            # Remove empty lines
+            grep -v '^[[:space:]]*$'
+    fi
+}
+
+# Update YAML file to replace L0, L1, etc. with layer names
+update_yaml_layer_names() {
+    local yaml_file="$1"
+    local keymap_file="$2"
+    
+    if [ ! -f "$yaml_file" ] || [ ! -f "$keymap_file" ]; then
+        return 1
+    fi
+    
+    # Extract layer names
+    local layer_index=0
+    local temp_yaml=$(mktemp /tmp/keymap_yaml_XXXXXX.yaml)
+    
+    # Read layer names into array
+    local layer_names=()
+    while IFS= read -r name; do
+        if [ -n "$name" ]; then
+            layer_names[layer_index]="$name"
+            ((layer_index++)) || true
+        fi
+    done < <(extract_layer_names "$keymap_file")
+    
+    if [ ${#layer_names[@]} -eq 0 ]; then
+        print_warning "Could not extract layer names from keymap.c"
+        rm -f "$temp_yaml"
+        return 1
+    fi
+    
+    # Create a backup and update YAML
+    cp "$yaml_file" "$temp_yaml"
+    
+    # Replace L0, L1, L2, etc. with "L0-LAYER_NAME:" format
+    local i=0
+    for layer_name in "${layer_names[@]}"; do
+        # Replace "L${i}:" with "L${i}-${layer_name}:" in the YAML
+        # Handle both GNU sed (Linux) and BSD sed (macOS)
+        if sed --version >/dev/null 2>&1; then
+            # GNU sed (Linux)
+            sed -i "s/^  L${i}:/  L${i}-${layer_name}:/" "$temp_yaml" 2>/dev/null
+        else
+            # BSD sed (macOS)
+            sed -i '' "s/^  L${i}:/  L${i}-${layer_name}:/" "$temp_yaml" 2>/dev/null
+        fi
+        ((i++)) || true
+    done
+    
+    # Replace original with updated version
+    mv "$temp_yaml" "$yaml_file"
+    
+    print_success "Updated YAML with layer names"
+    return 0
+}
+
+# Update JSON file to replace layer indices with layer names (optional)
+update_json_layer_names() {
+    local json_file="$1"
+    local keymap_file="$2"
+    
+    if [ ! -f "$json_file" ] || [ ! -f "$keymap_file" ]; then
+        return 1
+    fi
+    
+    # Check if Python is available for JSON processing
+    if ! command -v python3 &> /dev/null; then
+        print_warning "Python3 not available, skipping JSON layer name update"
+        return 1
+    fi
+    
+    # Extract layer names
+    local layer_names=()
+    local layer_index=0
+    while IFS= read -r name; do
+        if [ -n "$name" ]; then
+            layer_names[layer_index]="$name"
+            ((layer_index++)) || true
+        fi
+    done < <(extract_layer_names "$keymap_file")
+    
+    if [ ${#layer_names[@]} -eq 0 ]; then
+        return 1
+    fi
+    
+    # Use Python to update JSON (add layer names as metadata)
+    # Build Python array string from bash array
+    local python_array="["
+    local first=true
+    for name in "${layer_names[@]}"; do
+        if [ "$first" = true ]; then
+            python_array="${python_array}'${name}'"
+            first=false
+        else
+            python_array="${python_array}, '${name}'"
+        fi
+    done
+    python_array="${python_array}]"
+    
+    python3 << EOF 2>/dev/null
+import json
+import sys
+
+try:
+    with open('$json_file', 'r') as f:
+        data = json.load(f)
+    
+    # Add layer_names array to JSON metadata
+    layer_names = $python_array
+    
+    # Create a mapping of layer index to name
+    layer_map = {}
+    for i, name in enumerate(layer_names):
+        layer_map[str(i)] = name
+        layer_map[i] = name
+    
+    # Add layer_names and layer_map to the root of JSON
+    data['layer_names'] = layer_names
+    data['layer_map'] = layer_map
+    
+    with open('$json_file', 'w') as f:
+        json.dump(data, f, indent=2)
+    
+    sys.exit(0)
+except Exception as e:
+    sys.exit(1)
+EOF
+    
+    if [ $? -eq 0 ]; then
+        print_success "Updated JSON with layer names metadata"
+        return 0
+    else
+        print_warning "Could not update JSON with layer names"
+        return 1
+    fi
+}
+
+# =============================================================================
 # Diagram generation functions
 # =============================================================================
 
@@ -742,6 +898,36 @@ generate_diagrams() {
     fi
     print_success "Parsed to YAML: $yaml_file"
     print_success "JSON saved to: $json_file"
+    
+    # Step 2.5: Update YAML and JSON with layer names
+    print_info "Extracting and applying layer names..."
+    
+    # Extract and display layer names
+    local layer_names=()
+    local layer_index=0
+    while IFS= read -r name; do
+        if [ -n "$name" ]; then
+            layer_names[layer_index]="$name"
+            print_info "  Layer $layer_index: $name"
+            ((layer_index++)) || true
+        fi
+    done < <(extract_layer_names "$keymap_file")
+    
+    if [ ${#layer_names[@]} -gt 0 ]; then
+        if update_yaml_layer_names "$yaml_file" "$keymap_file"; then
+            print_success "Layer names applied to YAML (${#layer_names[@]} layers)"
+        else
+            print_warning "Could not apply layer names to YAML (will use L0, L1, etc.)"
+        fi
+        
+        if update_json_layer_names "$json_file" "$keymap_file"; then
+            print_success "Layer names metadata added to JSON"
+        else
+            print_info "JSON layer names update skipped (optional)"
+        fi
+    else
+        print_warning "No layer names found in keymap.c (will use L0, L1, etc.)"
+    fi
     
     # Step 3: Generate SVG via keymap draw
     print_step "5/6" "Generating SVG diagram..."

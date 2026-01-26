@@ -124,8 +124,8 @@ path.combo {
 }
 /* End Tabler Icons Cleanup */
 </style>
-<g transform="translate(30, 0)" class="layer-L0">
-<text x="0" y="28" class="label" id="L0">L0:</text>
+<g transform="translate(30, 0)" class="layer-L0-MAC_BASE">
+<text x="0" y="28" class="label" id="L0-MAC_BASE">L0-MAC_BASE:</text>
 <g transform="translate(0, 56)">
 <g transform="translate(28, 28)" class="key keypos-0">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -501,8 +501,8 @@ path.combo {
 </g>
 </g>
 </g>
-<g transform="translate(30, 406)" class="layer-L1">
-<text x="0" y="28" class="label" id="L1">L1:</text>
+<g transform="translate(30, 406)" class="layer-L1-NAV_LAYER">
+<text x="0" y="28" class="label" id="L1-NAV_LAYER">L1-NAV_LAYER:</text>
 <g transform="translate(0, 56)">
 <g transform="translate(28, 28)" class="key trans keypos-0">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
@@ -880,8 +880,8 @@ path.combo {
 </g>
 </g>
 </g>
-<g transform="translate(30, 812)" class="layer-L2">
-<text x="0" y="28" class="label" id="L2">L2:</text>
+<g transform="translate(30, 812)" class="layer-L2-SYM_LAYER">
+<text x="0" y="28" class="label" id="L2-SYM_LAYER">L2-SYM_LAYER:</text>
 <g transform="translate(0, 56)">
 <g transform="translate(28, 28)" class="key trans keypos-0">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
@@ -1261,8 +1261,8 @@ path.combo {
 </g>
 </g>
 </g>
-<g transform="translate(30, 1218)" class="layer-L3">
-<text x="0" y="28" class="label" id="L3">L3:</text>
+<g transform="translate(30, 1218)" class="layer-L3-CURSOR_LAYER">
+<text x="0" y="28" class="label" id="L3-CURSOR_LAYER">L3-CURSOR_LAYER:</text>
 <g transform="translate(0, 56)">
 <g transform="translate(28, 28)" class="key trans keypos-0">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
@@ -1630,8 +1630,8 @@ path.combo {
 </g>
 </g>
 </g>
-<g transform="translate(30, 1624)" class="layer-L4">
-<text x="0" y="28" class="label" id="L4">L4:</text>
+<g transform="translate(30, 1624)" class="layer-L4-APP_LAYER">
+<text x="0" y="28" class="label" id="L4-APP_LAYER">L4-APP_LAYER:</text>
 <g transform="translate(0, 56)">
 <g transform="translate(28, 28)" class="key trans keypos-0">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>

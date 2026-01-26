@@ -137,20 +137,26 @@ install_dependencies() {
         print_success "AVR toolchain installed"
     fi
     
-    # Install ARM toolchain
-    print_info "Installing ARM toolchain (arm-gcc-bin@${ARM_GCC_VERSION})..."
-    if brew list --formula osx-cross/arm/arm-gcc-bin@${ARM_GCC_VERSION} &>/dev/null; then
-        print_success "ARM toolchain already installed"
+    # Install ARM toolchain (arm-none-eabi-gcc)
+    # This is required for ARM-based keyboards like Keychron Q11
+    print_info "Installing ARM toolchain (arm-none-eabi-gcc)..."
+    if command -v arm-none-eabi-gcc &> /dev/null; then
+        print_success "ARM toolchain already installed: $(arm-none-eabi-gcc --version | head -n1)"
     else
-        # Try version 13, then 12, then latest
-        if brew install osx-cross/arm/arm-gcc-bin@${ARM_GCC_VERSION} 2>/dev/null; then
-            print_success "ARM toolchain installed (version ${ARM_GCC_VERSION})"
+        # Try standard Homebrew formula first (most reliable)
+        if brew install arm-none-eabi-gcc 2>/dev/null; then
+            print_success "ARM toolchain installed (arm-none-eabi-gcc)"
+        # Fallback to osx-cross/arm tap
+        elif brew install osx-cross/arm/arm-gcc-bin@${ARM_GCC_VERSION} 2>/dev/null; then
+            print_success "ARM toolchain installed (osx-cross version ${ARM_GCC_VERSION})"
         elif brew install osx-cross/arm/arm-gcc-bin@12 2>/dev/null; then
             ARM_GCC_VERSION="12"
-            print_success "ARM toolchain installed (version 12)"
+            print_success "ARM toolchain installed (osx-cross version 12)"
+        elif brew install osx-cross/arm/arm-gcc-bin 2>/dev/null; then
+            print_success "ARM toolchain installed (osx-cross latest)"
         else
-            brew install osx-cross/arm/arm-gcc-bin
-            print_success "ARM toolchain installed (latest)"
+            print_error "Failed to install ARM toolchain. Please install manually:"
+            print_info "  brew install arm-none-eabi-gcc"
         fi
     fi
     
@@ -173,10 +179,19 @@ configure_path() {
     
     local zshrc_path="$HOME/.zshrc"
     local avr_path="${QMK_HOMEBREW_PATH}/opt/avr-gcc@${AVR_GCC_VERSION}/bin"
-    local arm_path="${QMK_HOMEBREW_PATH}/opt/arm-gcc-bin@${ARM_GCC_VERSION}/bin"
+    
+    # Detect ARM toolchain path (standard Homebrew or osx-cross)
+    local arm_path=""
+    if [ -d "${QMK_HOMEBREW_PATH}/opt/arm-none-eabi-gcc/bin" ]; then
+        arm_path="${QMK_HOMEBREW_PATH}/opt/arm-none-eabi-gcc/bin"
+    elif [ -d "${QMK_HOMEBREW_PATH}/opt/arm-gcc-bin@${ARM_GCC_VERSION}/bin" ]; then
+        arm_path="${QMK_HOMEBREW_PATH}/opt/arm-gcc-bin@${ARM_GCC_VERSION}/bin"
+    elif [ -d "${QMK_HOMEBREW_PATH}/opt/arm-gcc-bin@12/bin" ]; then
+        arm_path="${QMK_HOMEBREW_PATH}/opt/arm-gcc-bin@12/bin"
+    fi
     
     # Check if paths are already configured
-    if grep -q "avr-gcc@${AVR_GCC_VERSION}/bin" "$zshrc_path" 2>/dev/null; then
+    if grep -q "QMK toolchain paths" "$zshrc_path" 2>/dev/null; then
         print_success "QMK toolchain paths already in ~/.zshrc"
     else
         print_info "Adding QMK toolchain paths to ~/.zshrc..."
@@ -189,14 +204,18 @@ configure_path() {
         echo "" >> "$zshrc_path"
         echo "# QMK toolchain paths" >> "$zshrc_path"
         echo "export PATH=\"${avr_path}:\$PATH\"" >> "$zshrc_path"
-        echo "export PATH=\"${arm_path}:\$PATH\"" >> "$zshrc_path"
+        if [ -n "$arm_path" ]; then
+            echo "export PATH=\"${arm_path}:\$PATH\"" >> "$zshrc_path"
+        fi
         
         print_success "Added toolchain paths to ~/.zshrc"
     fi
     
     # Export paths for current session
     export PATH="${avr_path}:$PATH"
-    export PATH="${arm_path}:$PATH"
+    if [ -n "$arm_path" ]; then
+        export PATH="${arm_path}:$PATH"
+    fi
     
     print_info "Toolchain paths exported for current session"
 }

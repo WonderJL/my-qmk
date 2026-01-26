@@ -231,6 +231,7 @@ From Step 2 mapping:
   - Left Thumb: `MO(NAV_LAYER)` - activates NAV layer
   - Right Thumb: `MO(SYM_LAYER)` - activates SYM layer
   - All letters type normally
+  - `\` key outputs `\` (backslash) - `KC_BSLS` (default behavior)
   - No helper functionality
 - **Reason**: Foundation typing layer
 - **Risk**: Low - standard QWERTY layout
@@ -278,21 +279,6 @@ From Step 2 mapping:
   #define KC_SYM_PARENTHESES SEND_STRING("()" SS_TAP(X_LEFT))
   #define KC_SYM_CURLY_BRACES SEND_STRING("{}" SS_TAP(X_LEFT))
 
-  // Tap Dance for backslash/pipe
-  enum { TD_BACKSLASH_PIPE };
-  void backslash_pipe_finished(tap_dance_state_t *state, void *user_data) {
-      if (state->count == 1) {
-          if (!state->pressed) tap_code(KC_BSLS);  // Single tap: \
-      } else if (state->count == 2) {
-          tap_code(KC_PIPE);  // Double tap: |
-      }
-  }
-  void backslash_pipe_reset(tap_dance_state_t *state, void *user_data) {
-      if (state->count >= 2) reset_tap_dance(state);
-  }
-  qk_tap_dance_action_t tap_dance_actions[] = {
-      [TD_BACKSLASH_PIPE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, backslash_pipe_finished, backslash_pipe_reset),
-  };
 
   [SYM_LAYER] = LAYOUT_91_ansi(
       // Row 0: Transparent
@@ -300,7 +286,7 @@ From Step 2 mapping:
       // Row 1: Number row - Output shifted symbols directly (no shift needed)
       _______,  _______,  KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,  KC_ASTR,  KC_LPRN,  KC_RPRN,  KC_UNDS,  KC_PLUS,  _______,            _______,
       // Row 2: Top row - Standard ANSI positions
-      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_LCBR,  KC_RCBR,  TD(TD_BACKSLASH_PIPE),  _______,
+      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_LCBR,  KC_RCBR,  KC_PIPE,  _______,
       // Row 3: Home row - Special macros on home row
       // Left hand: A S D F G
       _______,  _______,  _______,  _______,  _______,  KC_SYM_TILDE_SLASH,  _______,
@@ -328,9 +314,9 @@ From Step 2 mapping:
     - `F` → Tilde-slash macro (~/)
   - ✅ **Standard ANSI layout preserved**: Symbols stay in familiar positions
   - ✅ **Direct symbol access**: Number row outputs shifted symbols directly (1→!, 2→@, etc.)
-  - ✅ **Tap dance**: Backslash key uses tap dance (\ single tap, | double tap)
+  - ✅ **Standard symbols**: Backslash key outputs `|` (pipe) on SYM layer (shifted version)
   - ✅ **Letters remain transparent**: Typing safety maintained
-  - ✅ **Symbol keys output shifted versions**: `[`→{`, `]`→}`, `;`→`:`, `'`→`"`, `,`→`<`, `.`→`>`, `/`→`?`
+  - ✅ **Symbol keys output shifted versions**: `[`→{`, `]`→}`, `;`→`:`, `'`→`"`, `,`→`<`, `.`→`>`, `/`→`?`, `\`→`|`
 - **Reason**: Quick access to symbols with special macros for common coding patterns
 - **Status**: ✅ **COMPLETED** - Implementation done in `keymap.c`
 

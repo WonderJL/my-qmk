@@ -12,16 +12,14 @@ Update the **SYM Layer (Layer 2)** in the existing QMK keymap plan with:
    - Curly braces: `{}` (with cursor in middle)
 2. **Standard ANSI layout preserved**: Keep symbols in their standard ANSI positions
 3. **Direct symbol access**: When SYM layer is active, keys output their shifted versions directly (no shift key needed)
-4. **Tap dance for dual-symbol keys**: Keys with two symbols (e.g., `| \`) use tap dance:
-   - Single tap = unshifted symbol (e.g., `\`)
-   - Double tap = shifted symbol (e.g., `|`)
+4. **Standard symbol access**: Keys output their standard symbols directly
 
 ### Scope
 - **Update Task 5** in existing plan: Replace TBD symbol mappings with complete specification
 - **Add Task 2.5**: Define special macro keycodes for bracket/parentheses/braces/backticks
 - **Home row special macros**: Place 5 special macros on home row keys
 - **Standard ANSI symbol layout**: Keep symbols in standard positions, output shifted versions directly
-- **Tap dance implementation**: Implement tap dance for dual-symbol keys (single tap = unshifted, double tap = shifted)
+- **Standard symbol layout**: Symbols output directly without tap dance
 - **QMK macro implementation**: All special macros using QMK's string sending capabilities
 
 ### Non-Goals
@@ -46,7 +44,7 @@ Update the **SYM Layer (Layer 2)** in the existing QMK keymap plan with:
 1. **Special Macros on Home Row**: All 5 special macros (backticks, ~/, [], (), {}) placed on home row keys
 2. **Standard ANSI Layout**: All symbols remain in their standard ANSI positions
 3. **Direct Symbol Access**: When SYM layer active, keys output shifted symbols directly (no shift needed)
-4. **Tap Dance Implementation**: Dual-symbol keys use tap dance (single tap = unshifted, double tap = shifted)
+4. **Standard Symbol Access**: All symbols output directly using standard QMK keycodes
 5. **Cursor Positioning**: Special macros position cursor correctly (in middle of brackets/parentheses/braces)
 6. **QMK Implementation**: All macros and tap dance use proper QMK syntax and compile successfully
 
@@ -55,7 +53,7 @@ Update the **SYM Layer (Layer 2)** in the existing QMK keymap plan with:
 - **Ergonomics**: Special macros on easily reachable home row keys
 - **Familiarity**: Standard ANSI layout preserved for muscle memory
 - **Maintainability**: Clear code structure, well-commented
-- **Usability**: Special macros work correctly with cursor positioning, tap dance works reliably
+- **Usability**: Special macros work correctly with cursor positioning
 
 ## 🧩 System / Codebase Context
 
@@ -151,15 +149,11 @@ For special macros that need to output strings and position cursor:
 - For cursor positioning, use `SEND_STRING()` followed by left arrow key
 - Example: `SEND_STRING("[]" SS_TAP(X_LEFT))` outputs `[]` and moves cursor left (into middle)
 
-### QMK Tap Dance for Dual-Symbol Keys
+### Standard Symbol Keycodes
 
-For keys that have two symbols (unshifted and shifted):
-- Use QMK's tap dance feature
-- Single tap outputs unshifted symbol (e.g., `\` for backslash key)
-- Double tap outputs shifted symbol (e.g., `|` for backslash key)
-- Example: `TD(TD_BACKSLASH_PIPE)` where:
-  - Single tap = `KC_BSLS` (backslash)
-  - Double tap = `KC_PIPE` (vertical bar)
+For keys with symbols, use standard QMK keycodes directly:
+- **Base layer**: `\` key outputs `\` (backslash) - `KC_BSLS` (default behavior)
+- **SYM layer**: `\` key outputs `|` (pipe) - `KC_PIPE` (shifted version when SYM layer active)
 
 ### Layout Structure (LAYOUT_91_ansi)
 
@@ -204,50 +198,7 @@ From existing plan and default keymap:
 - **Reason**: Foundation for special symbol macros
 - **Risk**: Medium - need to verify SS_TAP syntax and cursor positioning works correctly
 
-#### Task 2: Define Tap Dance for Dual-Symbol Keys
-- **Files**: `keychron/q11/ansi_encoder/keymaps/j-custom/keymap.c`
-- **Action**: Define tap dance actions for keys with two symbols
-  ```c
-  // ============================================
-  // Tap Dance Definitions
-  // ============================================
-  // Tap dance states
-  typedef enum {
-      TD_NONE,
-      TD_SINGLE_TAP,
-      TD_SINGLE_HOLD,
-      TD_DOUBLE_TAP
-  } td_state_t;
-  
-  // Backslash/Pipe key: \ (single tap) | | (double tap)
-  void backslash_pipe_finished(tap_dance_state_t *state, void *user_data) {
-      if (state->count == 1) {
-          if (!state->pressed) {
-              // Single tap: backslash
-              tap_code(KC_BSLS);
-          }
-      } else if (state->count == 2) {
-          // Double tap: pipe
-          tap_code(KC_PIPE);
-      }
-  }
-  
-  void backslash_pipe_reset(tap_dance_state_t *state, void *user_data) {
-      if (state->count >= 2) {
-          reset_tap_dance(state);
-      }
-  }
-  
-  // Define tap dance actions
-  qk_tap_dance_action_t tap_dance_actions[] = {
-      [TD_BACKSLASH_PIPE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, backslash_pipe_finished, backslash_pipe_reset),
-      // Add more tap dance actions for other dual-symbol keys as needed
-  };
-  ```
-- **Reason**: Enable single tap = unshifted, double tap = shifted for dual-symbol keys
-- **Risk**: Medium - tap dance implementation requires testing
-
-#### Task 3: Map Special Macros to Home Row
+#### Task 2: Map Special Macros to Home Row
 - **Files**: `keychron/q11/ansi_encoder/keymaps/j-custom/keymap.c`
 - **Action**: Place 5 special macros on home row keys
   - **Right hand home row**:
@@ -261,7 +212,7 @@ From existing plan and default keymap:
 - **Reason**: Home row priority for special macros (most frequently used), avoid conflict with `;` → `:` output
 - **Risk**: Low - standard macro assignment
 
-#### Task 4: Implement Standard ANSI Symbol Layout with Direct Access
+#### Task 3: Implement Standard ANSI Symbol Layout with Direct Access
 - **Files**: `keychron/q11/ansi_encoder/keymaps/j-custom/keymap.c`
 - **Action**: Map symbols to their standard ANSI positions, output shifted versions directly
   - **Row 1 (Number row)**: Output shifted symbols directly
@@ -280,7 +231,7 @@ From existing plan and default keymap:
   - **Other rows**: Keep standard positions, output shifted versions
     - `[` → `{` (left brace) - `KC_LCBR`
     - `]` → `}` (right brace) - `KC_RCBR`
-    - `\` → Use tap dance: `\` (single tap) or `|` (double tap)
+    - `\` → `|` (pipe) - `KC_PIPE` (shifted version on SYM layer)
     - `;` → `:` (colon) - `KC_COLN`
     - `'` → `"` (double quote) - `KC_DQUO`
     - `,` → `<` (less than) - `KC_LT`
@@ -290,7 +241,7 @@ From existing plan and default keymap:
 - **Reason**: Preserve standard ANSI layout for muscle memory, direct symbol access
 - **Risk**: Low - standard QMK keycode mapping
 
-#### Task 5: Update SYM Layer Implementation (Replace Task 5 in Existing Plan)
+#### Task 4: Update SYM Layer Implementation (Replace Task 5 in Existing Plan)
 - **Files**: `keychron/q11/ansi_encoder/keymaps/j-custom/keymap.c`
 - **Action**: Replace TBD placeholder with complete SYM layer definition
   ```c
@@ -327,7 +278,7 @@ From existing plan and default keymap:
                   _______,  // P: Transparent (keep letter)
                   KC_LCBR,  // [: { (left brace)
                   KC_RCBR,  // ]: } (right brace)
-                  TD(TD_BACKSLASH_PIPE),  // \: Tap dance (\ single tap, | double tap)
+                  KC_PIPE,  // \: | (pipe) - shifted version on SYM layer
       // Row 3: Home row - Special macros on home row
       // Left hand: A S D F G
       _______,  _______,  _______,  // A: Transparent (keep letter)
@@ -380,10 +331,10 @@ From existing plan and default keymap:
   - **Home row (right hand)**: `;` outputs `:` (colon) - standard ANSI, no conflict
   - **Number row**: Outputs shifted symbols directly (1→!, 2→@, etc.)
   - **Standard ANSI positions**: Symbols stay in familiar positions
-  - **Tap dance**: Backslash key uses tap dance (\ single tap, | double tap)
+  - **Standard symbols**: Backslash key outputs `|` (pipe) on SYM layer (shifted version)
   - **Letters remain transparent**: Typing safety maintained
 - **Reason**: Complete SYM layer implementation with standard ANSI layout and special macros on home row, avoiding conflicts
-- **Risk**: Medium - need to verify special macro syntax, cursor positioning, and tap dance implementation
+- **Risk**: Medium - need to verify special macro syntax and cursor positioning
 
 ### ⚙️ Medium Priority
 
@@ -425,16 +376,14 @@ From existing plan and default keymap:
 1. Add special macro keycode definitions to keymap.c
 2. Verify syntax compiles
 
-### Phase 2: Tap Dance and Special Macros (Tasks 2, 3)
-1. Implement tap dance for dual-symbol keys (backslash/pipe)
-2. Map special macros to home row keys (right hand)
+### Phase 2: Special Macros (Task 2)
+1. Map special macros to home row keys (right hand)
 
-### Phase 3: Layer Implementation (Tasks 4, 5)
+### Phase 3: Layer Implementation (Tasks 3, 4)
 1. Implement standard ANSI symbol layout with direct access (no shift needed)
 2. Replace TBD placeholder in SYM layer
 3. Implement complete LAYOUT_91_ansi definition
 4. Verify special macros are on home row
-5. Verify tap dance works correctly
 
 ### Phase 4: Testing & Verification (Task 6)
 1. Compile keymap to check for syntax errors
@@ -469,9 +418,7 @@ From existing plan and default keymap:
   - [ ] `.` outputs `>`
   - [ ] `/` outputs `?`
   - [ ] `` ` `` outputs `~`
-- [ ] Tap dance works correctly:
-  - [ ] Single tap on `\` outputs `\`
-  - [ ] Double tap on `\` outputs `|`
+- [ ] Backslash key outputs `\` correctly
 - [ ] Special macros output correct strings:
   - [ ] Six backticks: cursor in middle (after newline)
   - [ ] Square brackets: cursor between brackets
@@ -484,14 +431,12 @@ From existing plan and default keymap:
 - [ ] Special macros on home row are easily reachable (H/J/K/L on right, F on left)
 - [ ] Standard ANSI layout feels familiar (muscle memory)
 - [ ] No awkward hand positions required
-- [ ] Tap dance timing feels natural
 - [ ] No conflicts between special macros and standard symbol outputs
 
 ### Edge Cases
 - [ ] Rapid thumb press/release doesn't cause stuck symbols
 - [ ] Special macros work in different applications (text editor, terminal, etc.)
 - [ ] Cursor positioning works across different text contexts
-- [ ] Tap dance doesn't interfere with normal typing
 - [ ] No conflicts with BASE layer typing
 - [ ] Letters still type correctly when SYM layer is active (transparent keys)
 
@@ -499,7 +444,6 @@ From existing plan and default keymap:
 - **Macro doesn't output**: Check SEND_STRING syntax
 - **Cursor positioning wrong**: Adjust SS_TAP(X_LEFT) count
 - **Symbol outputs wrong character**: Verify keycode mapping (check if shifted version is correct)
-- **Tap dance not working**: Verify tap dance implementation and timing
 - **Layer stuck active**: Verify thumb release logic
 - **Letters typing symbols**: Check that letter keys are transparent on SYM layer
 
@@ -511,9 +455,7 @@ From existing plan and default keymap:
 
 ### Code Quality
 - [ ] Consistent naming: `KC_SYM_*` for special macros
-- [ ] Tap dance actions properly defined and documented
 - [ ] Comments explain special macro behavior
-- [ ] Comments explain tap dance behavior (single tap vs double tap)
 - [ ] Standard ANSI layout clearly documented
 - [ ] Special macros well-documented
 
@@ -557,16 +499,11 @@ From existing plan and default keymap:
    - **Source**: User preference
    - **Safety**: Preserves familiar layout
 
-7. **Tap Dance Timing**: Standard QMK tap dance timing (200ms default)
-   - **Source**: QMK documentation
-   - **Safety**: May need adjustment based on user preference
-
 ### NON-BLOCKER Defaults Used
 
-- **Special Macro Keys**: Assigned to right-hand home row (H/J/K/L/;) for easy access
+- **Special Macro Keys**: Assigned to right-hand home row (H/J/K/L) and left-hand (F) for easy access
 - **Letter Keys**: Remain transparent on SYM layer (typing safety)
 - **Transparent Keys**: Row 0, letter keys, and modifier keys remain transparent
-- **Tap Dance Timing**: Using default QMK timing (may need adjustment)
 
 ## ✅ Completion Criteria
 
@@ -587,11 +524,10 @@ From existing plan and default keymap:
    - [ ] Standard symbol keys output shifted versions directly
    - [ ] Letters remain transparent (typing safety maintained)
 
-3. **Tap Dance Implementation**
-   - [ ] Backslash key uses tap dance
-   - [ ] Single tap outputs `\` (backslash)
-   - [ ] Double tap outputs `|` (pipe)
-   - [ ] Tap dance timing feels natural
+3. **Standard Symbol Access**
+   - [ ] Base layer: `\` key outputs `\` (backslash) correctly
+   - [ ] SYM layer: `\` key outputs `|` (pipe) correctly
+   - [ ] All symbols output shifted versions on SYM layer using standard QMK keycodes
 
 4. **Code Quality**
    - [ ] Keymap compiles without errors
@@ -628,13 +564,12 @@ From existing plan and default keymap:
 ✅ **Existing Pattern**: Can follow existing layer structure from plan
 ✅ **QMK Capability**: Standard ANSI symbols can be mapped using QMK keycodes
 ✅ **Special Macros**: QMK supports SEND_STRING for special macros
-✅ **Tap Dance**: QMK supports tap dance for dual-symbol keys
+✅ **Standard Keycodes**: All symbols use standard QMK keycodes
 ✅ **Standard Layout**: Preserving ANSI layout maintains muscle memory
 
 ### Remaining Uncertainties (Non-Blocking)
 
 - **Cursor Positioning**: May need fine-tuning based on OS behavior (macOS-specific)
-- **Tap Dance Timing**: May need adjustment based on user preference (default 200ms)
 - **Special Macro Testing**: Requires hardware testing to verify cursor positioning works correctly
 - **Symbol Keycodes**: May need to verify correct shifted keycodes for macOS layout
 
@@ -642,9 +577,9 @@ From existing plan and default keymap:
 
 1. **Review this plan** - Verify special macro placement and standard ANSI layout approach
 2. **Approve to proceed** - Update existing plan document with SYM layer details
-3. **Implementation** - Add special macros, tap dance, and complete SYM layer in keymap.c
+3. **Implementation** - Add special macros and complete SYM layer in keymap.c
 4. **Testing** - Compile and test on hardware
-5. **Iteration** - Adjust cursor positioning and tap dance timing if needed based on testing
+5. **Iteration** - Adjust cursor positioning if needed based on testing
 6. **Documentation** - Update reference documents
 
 ---
@@ -659,4 +594,4 @@ From existing plan and default keymap:
 - Special macros moved to home row (right hand)
 - Standard ANSI layout preserved (symbols in familiar positions)
 - Direct symbol access (no shift needed when SYM layer active)
-- Tap dance for dual-symbol keys (single tap = unshifted, double tap = shifted)
+- Standard symbol access using QMK keycodes

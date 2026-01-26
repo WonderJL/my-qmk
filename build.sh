@@ -124,6 +124,72 @@ discover_keymaps() {
 }
 
 # =============================================================================
+# Flash instruction functions
+# =============================================================================
+
+# Find FLASH_INSTRUCTION.md for a keyboard
+# Looks for it at the keyboard base level (e.g., keychron/q11/FLASH_INSTRUCTION.md)
+# or variant level (e.g., keychron/q11/ansi_encoder/FLASH_INSTRUCTION.md)
+find_flash_instruction() {
+    local keyboard_path="$1"
+    local vendor_model=$(dirname "$keyboard_path")
+    
+    # First try at keyboard base level (applies to all variants)
+    local base_instruction="$SCRIPT_DIR/$vendor_model/FLASH_INSTRUCTION.md"
+    if [ -f "$base_instruction" ]; then
+        echo "$base_instruction"
+        return 0
+    fi
+    
+    # Fallback to variant-specific level
+    local variant_instruction="$SCRIPT_DIR/$keyboard_path/FLASH_INSTRUCTION.md"
+    if [ -f "$variant_instruction" ]; then
+        echo "$variant_instruction"
+        return 0
+    fi
+    
+    return 1
+}
+
+# Check for FLASH_INSTRUCTION.md and warn if missing
+check_flash_instruction() {
+    local keyboard_path="$1"
+    local instruction_file
+    
+    if instruction_file=$(find_flash_instruction "$keyboard_path"); then
+        FLASH_INSTRUCTION_FILE="$instruction_file"
+        return 0
+    else
+        FLASH_INSTRUCTION_FILE=""
+        print_warning "FLASH_INSTRUCTION.md not found for $keyboard_path"
+        print_info "Consider creating FLASH_INSTRUCTION.md at:"
+        local vendor_model=$(dirname "$keyboard_path")
+        echo "  - $SCRIPT_DIR/$vendor_model/FLASH_INSTRUCTION.md (recommended, applies to all variants)"
+        echo "  - $SCRIPT_DIR/$keyboard_path/FLASH_INSTRUCTION.md (variant-specific)"
+        echo ""
+        return 1
+    fi
+}
+
+# Display flash instructions from FLASH_INSTRUCTION.md
+display_flash_instructions() {
+    if [ -n "$FLASH_INSTRUCTION_FILE" ] && [ -f "$FLASH_INSTRUCTION_FILE" ]; then
+        echo ""
+        print_info "Bootloader Mode Instructions:"
+        echo ""
+        # Display the content, skipping the first line (title) for cleaner output
+        # Show from line 2 onwards, or all if no title
+        tail -n +2 "$FLASH_INSTRUCTION_FILE" 2>/dev/null || cat "$FLASH_INSTRUCTION_FILE"
+        echo ""
+    else
+        # Fallback to generic message
+        echo ""
+        print_info "Make sure your keyboard is in bootloader mode (hold Esc while plugging in)."
+        echo ""
+    fi
+}
+
+# =============================================================================
 # Menu functions
 # =============================================================================
 
@@ -172,6 +238,10 @@ select_keyboard() {
     
     SELECTED_KEYBOARD="${keyboards[$((selection-1))]}"
     print_success "Selected: $SELECTED_KEYBOARD"
+    
+    # Check for FLASH_INSTRUCTION.md
+    check_flash_instruction "$SELECTED_KEYBOARD"
+    
     echo ""
 }
 
@@ -411,6 +481,7 @@ main() {
     # Initialize global variables
     keyboards=()
     BACKUP_DIR=""
+    FLASH_INSTRUCTION_FILE=""
     
     # Run build workflow
     check_prerequisites
@@ -432,12 +503,13 @@ main() {
     local kb_name=$(echo "$SELECTED_KEYBOARD" | tr '/' '_')
     local firmware_file="${OUTPUT_DIR}/${kb_name}_${SELECTED_KEYMAP}.bin"
     
+    # Display flash instructions from FLASH_INSTRUCTION.md first (if available)
+    display_flash_instructions
+    
     # Show copy-pasteable flash command
     print_info "To flash your keyboard, run:"
     echo ""
     echo -e "  ${GREEN}qmk flash ${firmware_file}${NC}"
-    echo ""
-    print_info "Make sure your keyboard is in bootloader mode (hold Esc while plugging in)."
     echo ""
 }
 

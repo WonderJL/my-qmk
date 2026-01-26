@@ -11,14 +11,23 @@
  *   Layer 6: MAC_FN        - Function keys (existing)
  *   Layer 7: WIN_BASE      - Normal typing (Windows)
  *   Layer 8: WIN_FN        - Function keys (Windows)
+ *   Layer 9: LIGHTING_LAYER - RGB lighting controls (NAV + G)
+ *   Layer 10: NUMPAD_LAYER  - Number pad (NAV + H)
  *
  * Activation Flow:
  *   BASE → Left Thumb Hold → NAV_LAYER
+ *     NAV + Q → Toggle WIN_LAYER
+ *     NAV + W → Toggle MAC_FN
+ *     NAV + E → Toggle WIN_BASE
+ *     NAV + R → Toggle WIN_FN
  *     NAV + A → APP_LAYER (reserved, same as D for now)
  *     NAV + S → WIN_LAYER
  *     NAV + D → APP_LAYER
  *     NAV + F → CURSOR_LAYER
+ *     NAV + G → LIGHTING_LAYER (momentary)
+ *     NAV + H → NUMPAD_LAYER (toggle)
  *   BASE → Right Thumb Hold → SYM_LAYER
+ *   L3-L10 → Left Space Hold → NAV_LAYER
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +49,8 @@ enum layers {
     MAC_FN,
     WIN_BASE,
     WIN_FN,
+    LIGHTING_LAYER,
+    NUMPAD_LAYER,
 };
 
 // ============================================
@@ -47,7 +58,7 @@ enum layers {
 // ============================================
 enum custom_keycodes {
     // Symbol macros (SYM_LAYER) - require SEND_STRING
-    KC_SYM_BACKTICKS = SAFE_RANGE,  // H: ```\n``` with cursor in middle
+    KC_SYM_BACKTICKS = SAFE_RANGE,  // H: ```\n``` with cursor before closing backticks
     KC_SYM_TILDE_SLASH,              // F: ~/
     KC_SYM_PARENTHESES,              // J: () with cursor in middle
     KC_SYM_CURLY_BRACES,             // K: {} with cursor in middle
@@ -61,7 +72,7 @@ enum custom_keycodes {
 #define KC_APP_VSCODE    LALT(LGUI(KC_V))       // ⌥⌘V - V key
 #define KC_APP_CAL       LALT(LGUI(KC_C))       // ⌥⌘C - C key
 #define KC_APP_MAIL      LALT(LGUI(KC_E))       // ⌥⌘E - E key
-#define KC_APP_SLACK     LALT(LGUI(KC_M))       // ⌥⌘M - M key (moved from S to avoid conflict)
+#define KC_APP_SLACK     LALT(LGUI(KC_S))       // ⌥⌘S - S key
 #define KC_APP_BGA       LALT(LGUI(KC_B))       // ⌥⌘B - B key
 #define KC_APP_WHATSAPP  LALT(LGUI(KC_1))       // ⌥⌘1 - J key
 #define KC_APP_SIGNAL    LALT(LGUI(KC_2))       // ⌥⌘2 - K key
@@ -70,7 +81,7 @@ enum custom_keycodes {
 #define KC_APP_CALC      LALT(LGUI(KC_ESC))     // ⌥⌘Esc - Esc key
 #define KC_APP_MUSIC     LALT(LGUI(KC_GRV))     // ⌥⌘` - ` key
 #define KC_APP_NOTION    LSFT(LCTL(LGUI(KC_N))) // ⇧⌃⌘N - N key
-#define KC_APP_NOTES     LALT(LGUI(KC_N))       // ⌥⌘N - (available if needed)
+#define KC_APP_OBSIDIAN  LALT(LGUI(KC_O))       // ⌥⌘O - O key
 #define KC_APP_FINDER    LSFT(LALT(LGUI(KC_SPC))) // ⇧⌥⌘Space - Space key
 
 // ============================================
@@ -98,6 +109,19 @@ enum custom_keycodes {
 // ============================================
 #define KC_ZOOM_OUT      LGUI(KC_MINS)          // Cmd - (zoom out)
 #define KC_ZOOM_IN       LGUI(KC_EQL)           // Cmd = (zoom in)
+#define KC_ZOOM_RESET    LGUI(KC_0)             // Cmd 0 (zoom reset)
+#define KC_LOCK_SCREEN   LCTL(LGUI(KC_Q))       // Ctrl+Cmd+Q (lock screen)
+
+// ============================================
+// Tap Dance
+// ============================================
+enum {
+    TD_ENC_R = 0,
+};
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),
+};
 
 // Windows-specific shortcuts (for WIN_BASE/WIN_FN layers)
 #define KC_TASK LGUI(KC_TAB)
@@ -113,7 +137,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // ============================================
     [MAC_BASE] = LAYOUT_91_ansi(
         // Row 0: Encoder, Esc, F-keys, media
-        KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   KC_MUTE,
+        KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   TD(TD_ENC_R),
         // Row 1: Numbers
         _______,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
         // Row 2: QWERTY top row
@@ -136,8 +160,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
         // Row 1: Transparent
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-        // Row 2: Transparent
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+        // Row 2: Toggle selectors for L5-L8
+        _______,  _______,  TG(WIN_LAYER),  TG(MAC_FN),  TG(WIN_BASE),  TG(WIN_FN),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
         // Row 3: Selectors on left-hand home row
         //        A: Reserved (currently APP_LAYER)
         //        S: WIN_LAYER (window management)
@@ -147,8 +171,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                             LT(WIN_LAYER, KC_NO),      // S: WIN layer
                             LT(APP_LAYER, KC_NO),      // D: APP layer
                             LT(CURSOR_LAYER, KC_NO),   // F: CURSOR layer
-                            _______,                   // G: Transparent
-                            _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
+                            MO(LIGHTING_LAYER),        // G: LIGHTING layer (momentary)
+                            TG(NUMPAD_LAYER),          // H: NUMPAD layer (toggle)
+                            _______,  _______,  _______,  _______,  _______,            _______,            _______,
         // Row 4: Transparent
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
         // Row 5: Keep NAV thumb held
@@ -176,23 +201,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // ============================================
     // Layer 3: CURSOR_LAYER - Cursor IDE helper (NAV + F)
-    // TBD: Cursor IDE commands need to be mapped
-    // Structure is ready for future implementation
+    // Partial mapping: Y/U/I/O set, remaining actions TBD
     // ============================================
     [CURSOR_LAYER] = LAYOUT_91_ansi(
         // Row 0: Transparent
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
         // Row 1: Transparent
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-        // Row 2: Top row - Setup/mode actions (TBD)
+        // Row 2: Top row - Setup/mode actions
         //        Y: Toggle explorer
         //        U: Toggle terminal
         //        I: Open/focus chat
         //        O: Mode picker
-        //        P: Model picker
-        //        [: Submit with codebase
-        //        ]: Submit no codebase
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+        //        P: Model picker (TBD)
+        //        [: Submit with codebase (TBD)
+        //        ]: Submit no codebase (TBD)
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  LGUI(KC_B),  LGUI(KC_T),  LGUI(KC_I),  LGUI(KC_DOT),  _______,  _______,  _______,  _______,            _______,
         // Row 3: Home row - High-frequency actions (TBD)
         //        H: Focus editor
         //        J: Previous change
@@ -202,8 +226,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
         // Row 4: Transparent
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
-        // Row 5: Transparent
-        _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 5: Left space for NAV access
+        _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 _______,            _______,  _______,  _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 4: APP_LAYER - Application launchers (NAV + D)
@@ -220,18 +244,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
         // Row 2: Dev/productivity apps
         //        E: Mail (⌥⌘E)
-        //        V: VS Code (⌥⌘V) - note: on top row T position for easy reach
-        //        B: BGA (⌥⌘B)
-        //        N: Notion (⇧⌃⌘N)
-        //        C: Calendar (⌥⌘C)
+        //        O: Obsidian (⌥⌘O)
         _______,  _______,  _______,  _______,  KC_APP_MAIL,   // E: Mail
-                            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+                            _______,  _______,  _______,  _______,  _______,  KC_APP_OBSIDIAN,  // O: Obsidian
+                            _______,  _______,  _______,  _______,            _______,
         // Row 3: Home row - Chat apps
         //        J: WhatsApp (⌥⌘1)
         //        K: Signal (⌥⌘2)
         //        L: WeChat (⌥⌘3)
         //        ;: Telegram (⌥⌘4)
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+        //        S: Slack (⌥⌘S)
+        _______,  _______,  _______,  KC_APP_SLACK,  _______,  _______,  _______,  _______,
                             KC_APP_WHATSAPP,   // J: WhatsApp
                             KC_APP_SIGNAL,     // K: Signal
                             KC_APP_WECHAT,     // L: WeChat
@@ -243,18 +266,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        V: VS Code (⌥⌘V)
         //        B: BGA (⌥⌘B)
         //        N: Notion (⇧⌃⌘N)
-        //        M: Slack (⌥⌘M) - moved from S to avoid selector conflict
+        //        M: (reserved)
         _______,  _______,            KC_APP_CHATGPT,  // Z: ChatGPT
                             _______,
                             KC_APP_CAL,        // C: Calendar
                             KC_APP_VSCODE,     // V: VS Code
                             KC_APP_BGA,        // B: BGA
                             KC_APP_NOTION,     // N: Notion
-                            KC_APP_SLACK,      // M: Slack (moved from S)
+                            _______,           // M: (reserved)
                             _______,  _______,  _______,              _______,  _______,
-        // Row 5: Space→Finder
-        _______,  _______,  _______,  _______,  _______,            KC_APP_FINDER,  // Space: Finder (⇧⌥⌘Space)
-                                                                     _______,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 5: Left space → NAV, Right space → Finder
+        _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 KC_APP_FINDER,  // Right Space: Finder (⇧⌥⌘Space)
+                                                                     _______,            _______,  _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 5: WIN_LAYER - Window management (NAV + S)
@@ -287,58 +310,94 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        Right: Right Half (⇧⌃⌘→)
         //        Up: Top Half (⇧⌃⌘↑)
         //        Down: Bottom Half (⇧⌃⌘↓)
-        _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,  _______,  KC_WIN_LEFT,  KC_WIN_BOTTOM,  KC_WIN_RIGHT),
+        _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 _______,            _______,  _______,  _______,  KC_WIN_LEFT,  KC_WIN_BOTTOM,  KC_WIN_RIGHT),
 
     // ============================================
     // Layer 6: MAC_FN - Function keys (existing)
     // ============================================
     [MAC_FN] = LAYOUT_91_ansi(
-        RM_TOGG,  _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   _______,  _______,  RM_TOGG,
+        KC_MUTE,  _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   _______,  _______,  TD(TD_ENC_R),
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
         _______,  _______,            _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
-        _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,    _______,  _______,  _______,  _______),
+        _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 _______,            _______,  _______,    _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 7: WIN_BASE - Normal typing (Windows)
     // ============================================
     [WIN_BASE] = LAYOUT_91_ansi(
-        KC_MUTE,  KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   KC_INS,   KC_DEL,   KC_MUTE,
+        KC_MUTE,  KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   KC_INS,   KC_DEL,   TD(TD_ENC_R),
         _______,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
         _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
         _______,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
         _______,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
-        _______,  KC_LCTL,  KC_LWIN,  KC_LALT,  MO(WIN_FN),         KC_SPC,                        KC_SPC,             KC_RALT,  MO(WIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        _______,  KC_LCTL,  KC_LWIN,  KC_LALT,  MO(WIN_FN),         MO(NAV_LAYER),                 KC_SPC,             KC_RALT,  MO(WIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 8: WIN_FN - Function keys (Windows)
     // ============================================
     [WIN_FN] = LAYOUT_91_ansi(
-        RM_TOGG,  _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FLXP,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  _______,  _______,  RM_TOGG,
+        KC_MUTE,  _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FLXP,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  _______,  _______,  TD(TD_ENC_R),
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
         _______,  _______,            _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
-        _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,    _______,  _______,  _______,  _______),
+        _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 _______,            _______,  _______,    _______,  _______,  _______,  _______),
+
+    // ============================================
+    // Layer 9: LIGHTING_LAYER - RGB lighting controls (NAV + G)
+    // ============================================
+    [LIGHTING_LAYER] = LAYOUT_91_ansi(
+        // Row 0: Transparent
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+        // Row 1: Transparent
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+        // Row 2: Mode controls
+        _______,  _______,  RM_TOGG,  RM_NEXT,  RM_PREV,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+        // Row 3: Brightness and Hue controls
+        _______,  _______,  RM_VALU,  RM_VALD,  RM_HUEU,  RM_HUED,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
+        // Row 4: Saturation and Speed controls
+        _______,  _______,            RM_SATU,  RM_SATD,  RM_SPDU,  RM_SPDD,  RM_FLGN,  RM_FLGP,  _______,  _______,  _______,  _______,              _______,  _______,
+        // Row 5: Left space for NAV access
+        _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 _______,            _______,  _______,  _______,  _______,  _______,  _______),
+
+    // ============================================
+    // Layer 10: NUMPAD_LAYER - Number pad (NAV + H)
+    // ============================================
+    [NUMPAD_LAYER] = LAYOUT_91_ansi(
+        // Row 0: Transparent
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+        // Row 1: Transparent
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+        // Row 2: Numpad top row (7, 8, 9, /)
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_7,  KC_KP_8,  KC_KP_9,  KC_KP_SLASH,  _______,  _______,  _______,            _______,
+        // Row 3: Numpad second row (4, 5, 6, *)
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_ASTERISK,  _______,            _______,            _______,
+        // Row 4: Numpad third row (1, 2, 3, -)
+        _______,  _______,            _______,  _______,  _______,  _______,  _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_MINUS,              _______,  _______,  _______,
+        // Row 5: Numpad bottom row (0, ., +, Enter) + NAV access
+        _______,  _______,  _______,  _______,  MO(NAV_LAYER),      KC_KP_0,                    KC_KP_DOT,           KC_KP_PLUS,  KC_KP_ENTER,  _______,  _______,  _______,  _______),
 };
 
 // ============================================
 // Encoder Configuration
-// Left encoder: Zoom (CCW: zoom out, CW: zoom in)
-// Right encoder: Volume (CCW: down, CW: up)
+// Left encoder: Volume (CCW: down, CW: up), press: Mute
+// Right encoder: Zoom (CCW: out, CW: in), press: Tap dance (Cmd+0 / Ctrl+Cmd+Q)
 // ============================================
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-    [MAC_BASE]     = { ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [NAV_LAYER]    = { ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [SYM_LAYER]    = { ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [CURSOR_LAYER] = { ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [APP_LAYER]    = { ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [WIN_LAYER]    = { ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [MAC_FN]       = { ENCODER_CCW_CW(RM_VALD, RM_VALU),        ENCODER_CCW_CW(RM_VALD, RM_VALU) },
-    [WIN_BASE]     = { ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN), ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [WIN_FN]       = { ENCODER_CCW_CW(RM_VALD, RM_VALU),        ENCODER_CCW_CW(RM_VALD, RM_VALU) },
+    [MAC_BASE]       = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [NAV_LAYER]      = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [SYM_LAYER]      = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [CURSOR_LAYER]   = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [APP_LAYER]      = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [WIN_LAYER]      = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [MAC_FN]         = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [WIN_BASE]       = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [WIN_FN]         = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [LIGHTING_LAYER] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
+    [NUMPAD_LAYER]   = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
 };
 #endif // ENCODER_MAP_ENABLE
 
@@ -351,8 +410,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Symbol macros - only trigger on key press (not release)
         case KC_SYM_BACKTICKS:
             if (record->event.pressed) {
-                // Six backticks: ```\n``` with cursor in middle
-                SEND_STRING("```" SS_TAP(X_ENTER) "```" SS_TAP(X_UP));
+                // Six backticks: ```\n``` with cursor before closing backticks
+                SEND_STRING("```" SS_TAP(X_ENTER) "```" SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT));
             }
             return false;
 

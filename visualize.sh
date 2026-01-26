@@ -837,29 +837,34 @@ generate_diagrams() {
     
     # Run qmk c2json with keyboard and keymap parameters
     if ! qmk c2json -kb "$qmk_keyboard" -km "$qmk_keymap" "$keymap_file" > "$json_output" 2> "$error_output"; then
-        print_error "Failed to convert keymap.c to JSON"
-        echo ""
-        print_info "Error details:"
-        if [ -s "$error_output" ]; then
-            cat "$error_output" | while IFS= read -r line; do
-                echo -e "  ${RED}$line${NC}"
-            done
+        print_warning "qmk c2json failed. Retrying with --no-cpp..."
+        if ! qmk c2json --no-cpp -kb "$qmk_keyboard" -km "$qmk_keymap" "$keymap_file" > "$json_output" 2> "$error_output"; then
+            print_error "Failed to convert keymap.c to JSON"
+            echo ""
+            print_info "Error details:"
+            if [ -s "$error_output" ]; then
+                cat "$error_output" | while IFS= read -r line; do
+                    echo -e "  ${RED}$line${NC}"
+                done
+            else
+                print_info "  (No error details available)"
+            fi
+            echo ""
+            print_info "Common causes:"
+            print_info "  - Keyboard not found in QMK firmware repository"
+            print_info "  - Missing QMK keyboard definition"
+            print_info "  - Invalid keymap.c syntax"
+            print_info ""
+            print_info "To fix:"
+            print_info "  1. Ensure the keyboard exists at: $qmk_keyboard_path"
+            print_info "  2. Run './build.sh' first to copy keyboard to QMK directory"
+            print_info "  3. Run 'qmk setup' if you haven't already"
+            print_info "  4. Check that the keyboard path matches QMK's structure"
+            rm -f "$json_output" "$error_output"
+            exit 1
         else
-            print_info "  (No error details available)"
+            print_warning "Converted to JSON with --no-cpp (preprocessor disabled)"
         fi
-        echo ""
-        print_info "Common causes:"
-        print_info "  - Keyboard not found in QMK firmware repository"
-        print_info "  - Missing QMK keyboard definition"
-        print_info "  - Invalid keymap.c syntax"
-        print_info ""
-        print_info "To fix:"
-        print_info "  1. Ensure the keyboard exists at: $qmk_keyboard_path"
-        print_info "  2. Run './build.sh' first to copy keyboard to QMK directory"
-        print_info "  3. Run 'qmk setup' if you haven't already"
-        print_info "  4. Check that the keyboard path matches QMK's structure"
-        rm -f "$json_output" "$error_output"
-        exit 1
     fi
     
     # Check if JSON output is valid (not empty and contains valid JSON)

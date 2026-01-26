@@ -65,7 +65,8 @@ BASE (Layer 0)
   └─ Right Thumb Hold → SYM_LAYER (Layer 2)
 
 From any non-momentary layer (L3-L10):
-  └─ Left Space Hold → NAV_LAYER (Layer 1)
+  └─ Left Space Hold → NAV_LAYER (Layer 1)  
+     (NUMPAD_LAYER uses the left thumb key for NAV access to keep KP_0 on left space)
 ```
 
 **Key Points**:
@@ -74,7 +75,7 @@ From any non-momentary layer (L3-L10):
 - **Helper Layers** (CURSOR/APP/WIN): Latch (LT) - tap selector to activate, tap again to deactivate
 - **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
 - **Lighting Layer** (L9): Momentary (MO) - activates only while selector held
-- **Left Space NAV Access**: All non-momentary layers (L3-L10) have left space as `MO(NAV_LAYER)` for navigation
+- **Left Space NAV Access**: All non-momentary layers (L3-L10) provide NAV access on left space, except NUMPAD_LAYER which uses the left thumb key to keep KP_0 on left space
 - **All layers deactivate** on thumb release (momentary layers) or explicit deactivation (latched/toggled layers)
 
 ---
@@ -91,7 +92,7 @@ From any non-momentary layer (L3-L10):
 ```c
 [MAC_BASE] = LAYOUT_91_ansi(
     // Row 0: Function keys, media, etc.
-    KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   KC_MUTE,
+    KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   TD(TD_ENC_R),
     // Row 1: Numbers and symbols
     _______,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
     // Row 2: QWERTY top row
@@ -263,7 +264,7 @@ From any non-momentary layer (L3-L10):
 
 **Key Features**:
 - **Special macros on home row**:
-  - `H` → Six backticks macro (```\n``` with cursor in middle)
+  - `H` → Six backticks macro (```\n``` with cursor before closing backticks on bottom line)
   - `J` → Parentheses macro (() with cursor in middle)
   - `K` → Curly braces macro ({} with cursor in middle)
   - `L` → Square brackets macro ([] with cursor in middle)
@@ -306,7 +307,7 @@ From any non-momentary layer (L3-L10):
                 _______,            _______,            _______,
     // Row 4: Transparent
     // Row 5: Left space for NAV access
-    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______),
+    _______,  _______,  _______,  _______,  _______,  MO(NAV_LAYER),  _______,                       _______,            _______,  _______,  _______,  _______,  _______),
 ```
 
 **Key Features**:
@@ -314,7 +315,7 @@ From any non-momentary layer (L3-L10):
 - **Top row (Y/U/I/O)**: Explorer/terminal/chat/mode via Cursor commands
 - **Top row (P/[ / ])**: TBD (skipped) and left transparent
 - **Home row (H/J/K/L/;)**: TBD (skipped) and left transparent
-- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
+- **Left Thumb Key**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **TBD**: Model picker, submit with/without codebase, focus editor, previous/next change, apply in editor, accept all files
 
 **Status**: ⚠️ **INCOMPLETE** - Partial mapping done; remaining Cursor actions are TBD (skipped)
@@ -340,11 +341,12 @@ From any non-momentary layer (L3-L10):
     _______,  _______,  _______,  // Y: (reserved)
                 // U: (reserved)
                 // I: (reserved)
-                KC_APP_VSCODE,  // V: VS Code (⌥⌘V)
-                KC_APP_NOTION,  // N: Notion (⇧⌃⌘N) - note: different modifier
-                KC_APP_BGA,     // B: BGA (⌥⌘B)
-                KC_APP_CAL,     // C: Calendar (⌥⌘C)
-                KC_APP_MAIL,    // E: Mail (⌥⌘E)
+                KC_APP_OBSIDIAN,  // O: Obsidian (⌥⌘O)
+                KC_APP_VSCODE,    // V: VS Code (⌥⌘V)
+                KC_APP_NOTION,    // N: Notion (⇧⌃⌘N) - note: different modifier
+                KC_APP_BGA,       // B: BGA (⌥⌘B)
+                KC_APP_CAL,       // C: Calendar (⌥⌘C)
+                KC_APP_MAIL,      // E: Mail (⌥⌘E)
                 // ... rest transparent
     // Row 3: Home row - Chat apps
     _______,  _______,  _______,  _______,  _______,  _______,  // H: (reserved)
@@ -357,19 +359,19 @@ From any non-momentary layer (L3-L10):
     _______,  _______,            KC_APP_CHATGPT,  // Z: ChatGPT (⌥⌘Z)
                 // X: (reserved)
                 // ... rest transparent
-                KC_APP_SLACK,    // S: Slack (⌥⌘S) - note: conflicts with selector
+                KC_APP_SLACK,    // S: Slack (⌥⌘S)
                 // ... rest transparent
     // Row 5: Special keys
-    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            KC_APP_FINDER,  // Left Space: NAV access, Right Space: Finder (⇧⌥⌘Space)
+    _______,  _______,  _______,  _______,  _______,  MO(NAV_LAYER),  KC_APP_FINDER,  // Left Space: NAV access, Right Space: Finder (⇧⌥⌘Space)
                                                                      _______,            _______,  _______,  _______,  _______,  _______,  _______),
 ```
 
 **Key Features**:
 - **Home row**: Chat apps (J/K/L/;) - WhatsApp, Signal, WeChat, Telegram
-- **Top row**: Dev/productivity apps (V/N/B/C/E) - VS Code, Notion, BGA, Calendar, Mail
+- **Top row**: Dev/productivity apps (O/V/N/B/C/E) - Obsidian, VS Code, Notion, BGA, Calendar, Mail
 - **Bottom row**: System/media apps (Z/S) - ChatGPT, Slack
 - **Special keys**: Esc (Calculator), ` (Music), Right Space (Finder)
-- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
+- **Left Thumb Key**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **Left-hand**: Transparent (or category selectors if implementing sub-layers)
 
 **All 15 App Launchers**:
@@ -386,10 +388,10 @@ From any non-momentary layer (L3-L10):
 11. Calculator (⌥⌘Esc) - `Esc`
 12. NetEase Music (⌥⌘`) - `` ` ``
 13. Notion (⇧⌃⌘N) - `N`
-14. Notes (⌥⌘N) - (TBD: needs mapping)
+14. Obsidian (⌥⌘O) - `O`
 15. Finder (⇧⌥⌘Space) - `Space`
 
-**Status**: ⚠️ **INCOMPLETE** - Notes app (⌥⌘N) needs mapping, some key conflicts need resolution
+**Status**: ✅ **COMPLETE** - All 15 app launchers mapped
 
 ---
 
@@ -436,7 +438,7 @@ From any non-momentary layer (L3-L10):
     //        Right: KC_WIN_RIGHT (⇧⌃⌘→)
     //        Up: KC_WIN_TOP (⇧⌃⌘↑)
     //        Down: KC_WIN_BOTTOM (⇧⌃⌘↓)
-    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            _______,                       _______,            _______,  _______,  _______,  KC_WIN_LEFT,  KC_WIN_BOTTOM,  KC_WIN_RIGHT),
+    _______,  _______,  _______,  _______,  _______,  MO(NAV_LAYER),  _______,                       _______,            _______,  _______,  KC_WIN_LEFT,  KC_WIN_BOTTOM,  KC_WIN_RIGHT),
 ```
 
 **Key Features**:
@@ -454,7 +456,7 @@ From any non-momentary layer (L3-L10):
 - **Split View (⌃⌥⌘)**: Z/X
   - `Z` → Split View Left (⌃⌥⌘←)
   - `X` → Split View Right (⌃⌥⌘→)
-- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
+- **Left Thumb Key**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **Organized by modifier groups**: Logical grouping for muscle memory
 
 ---
@@ -494,7 +496,7 @@ From any non-momentary layer (L3-L10):
                   RM_FLGP,   // N: Previous flag
                   _______,  _______,  _______,  _______,              _______,  _______,
     // Row 5: Left space for NAV access
-    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______),
+    _______,  _______,  _______,  _______,  _______,  MO(NAV_LAYER),  _______,                       _______,            _______,  _______,  _______,  _______,  _______),
 ```
 
 **Key Features**:
@@ -505,7 +507,7 @@ From any non-momentary layer (L3-L10):
 - **Saturation Group** (Z/X): `RM_SATU` / `RM_SATD` - Increase/decrease saturation
 - **Speed Group** (C/V): `RM_SPDU` / `RM_SPDD` - Increase/decrease animation speed
 - **Flags Group** (B/N): `RM_FLGN` / `RM_FLGP` - Cycle through flags
-- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
+- **Left Thumb Key**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **Logical grouping**: Controls grouped by function for easy access
 - **Momentary activation**: Layer activates only while G key is held
 
@@ -576,7 +578,7 @@ From any non-momentary layer (L3-L10):
 - **Third row** (N/M/,/.): 1, 2, 3, - (subtract)
 - **Bottom row**: 0 (left space), . (right space), + (right cmd), Enter (right ctrl)
 - **U key as 7**: Top-left position of numpad (as specified)
-- **Left Space**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
+- **Left Thumb Key**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **Toggle activation**: Tap H in NAV_LAYER to activate, tap H again to return to MAC_BASE
 - **Always returns to MAC_BASE**: When toggled off, always returns to Layer 0
 
@@ -585,7 +587,7 @@ From any non-momentary layer (L3-L10):
 2. Tap H key → NUMPAD_LAYER toggles on
 3. Use numpad keys for numeric input
 4. Tap H again in NAV_LAYER → NUMPAD_LAYER toggles off (returns to MAC_BASE)
-5. Or hold Left Space → Access NAV_LAYER, then toggle off
+5. Or hold Left Thumb Key → Access NAV_LAYER, then toggle off
 
 ---
 
@@ -597,7 +599,7 @@ From any non-momentary layer (L3-L10):
 // ============================================
 // Special Symbol Macros (String Output)
 // ============================================
-// Six backticks: ```\n``` with cursor in middle
+// Six backticks: ```\n``` with cursor before closing backticks on bottom line
 #define KC_SYM_BACKTICKS SEND_STRING("```" SS_TAP(X_ENTER) "```" SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT))
 
 // Tilde-slash: ~/
@@ -624,6 +626,7 @@ From any non-momentary layer (L3-L10):
 #define KC_APP_CAL       LALT(LGUI(KC_C))      // ⌥⌘C
 #define KC_APP_MAIL      LALT(LGUI(KC_E))      // ⌥⌘E
 #define KC_APP_SLACK     LALT(LGUI(KC_S))      // ⌥⌘S
+#define KC_APP_OBSIDIAN  LALT(LGUI(KC_O))      // ⌥⌘O
 #define KC_APP_BGA       LALT(LGUI(KC_B))      // ⌥⌘B
 #define KC_APP_WHATSAPP  LALT(LGUI(KC_1))      // ⌥⌘1
 #define KC_APP_SIGNAL    LALT(LGUI(KC_2))      // ⌥⌘2
@@ -632,7 +635,6 @@ From any non-momentary layer (L3-L10):
 #define KC_APP_CALC      LALT(LGUI(KC_ESC))    // ⌥⌘Esc
 #define KC_APP_MUSIC     LALT(LGUI(KC_GRV))    // ⌥⌘`
 #define KC_APP_NOTION    LSFT(LCTL(LGUI(KC_N))) // ⇧⌃⌘N
-#define KC_APP_NOTES     LALT(LGUI(KC_N))      // ⌥⌘N
 #define KC_APP_FINDER    LSFT(LALT(LGUI(KC_SPC))) // ⇧⌥⌘Space
 ```
 
@@ -672,6 +674,18 @@ From any non-momentary layer (L3-L10):
 #define KC_LOCK_SCREEN  LCTL(LGUI(KC_Q))       // Ctrl+Cmd+Q
 ```
 
+### Tap Dance Definition (Right Encoder Press)
+
+```c
+enum {
+    TD_ENC_R = 0,
+};
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),
+};
+```
+
 ---
 
 ## 🎛️ Encoder Configuration
@@ -682,60 +696,61 @@ From any non-momentary layer (L3-L10):
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [MAC_BASE] = { 
-        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),  // Rotate: Zoom out/in
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)           // Right encoder: Volume
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),         // Left encoder: Volume
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)   // Right encoder: Zoom out/in
     },
     [NAV_LAYER] = { 
-        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [SYM_LAYER] = { 
-        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [CURSOR_LAYER] = { 
-        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [APP_LAYER] = { 
-        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [WIN_LAYER] = { 
-        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [MAC_FN] = { 
-        ENCODER_CCW_CW(RM_VALD, RM_VALU),
-        ENCODER_CCW_CW(RM_VALD, RM_VALU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [WIN_BASE] = { 
-        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [WIN_FN] = { 
-        ENCODER_CCW_CW(RM_VALD, RM_VALU),
-        ENCODER_CCW_CW(RM_VALD, RM_VALU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [LIGHTING_LAYER] = { 
-        ENCODER_CCW_CW(RM_VALD, RM_VALU),
-        ENCODER_CCW_CW(RM_VALD, RM_VALU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
     [NUMPAD_LAYER] = { 
-        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN),
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU)
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),
+        ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)
     },
 };
 #endif // ENCODER_MAP_ENABLE
 ```
 
 **Encoder Actions**:
-- **Rotate CCW**: Zoom out (Cmd -)
-- **Rotate CW**: Zoom in (Cmd =)
-- **Press (single)**: Zoom reset (Cmd 0) - requires tap dance implementation
-- **Press (double)**: Lock screen (Ctrl+Cmd+Q) - requires tap dance implementation
+- **Left Encoder Rotate CCW/CW**: Volume down/up
+- **Left Encoder Press (single)**: Mute
+- **Right Encoder Rotate CCW/CW**: Zoom out/in (Cmd - / Cmd =)
+- **Right Encoder Press (single)**: Zoom reset (Cmd 0) - tap dance
+- **Right Encoder Press (double)**: Lock screen (Ctrl+Cmd+Q) - tap dance
 
-**Status**: ⚠️ **INCOMPLETE** - Tap dance for encoder press actions needs implementation
+**Status**: ⚠️ **INCOMPLETE** - Tap dance for right encoder press actions needs implementation
 
 ---
 
@@ -753,19 +768,19 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 ### ⚠️ In Progress / Needs Completion
 - [ ] NAV_LAYER implementation (selectors finalized: Q/W/E/R for L5-L8 toggles, G/H for L9/L10)
 - [ ] CURSOR_LAYER implementation (mapped Y/U/I/O; remaining TBD: model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
-- [ ] APP_LAYER implementation (Notes app needs mapping, key conflicts need resolution)
+- [ ] APP_LAYER implementation (Obsidian mapping added, Slack on S)
 - [ ] WIN_LAYER implementation (complete key mappings)
 - [ ] LIGHTING_LAYER implementation (RGB controls mapped)
 - [ ] NUMPAD_LAYER implementation (standard numpad layout mapped)
-- [ ] Left space NAV access for all non-momentary layers (L3-L10)
-- [ ] Encoder tap dance implementation (single/double press)
-- [ ] Windows support layers (WIN_BASE, WIN_FN) - optional
+- [ ] Left space NAV access for all non-momentary layers (L3-L10, NUMPAD uses left thumb key)
+- [ ] Encoder tap dance implementation (right encoder single/double press)
+- [ ] Windows support layers (WIN_BASE, WIN_FN)
 
 ### 🔍 Review Required
 - [ ] **Usability Review**: Test each layer activation sequence
 - [ ] **Sense-Checking Review**: Verify key placements are logical and ergonomic
 - [ ] **Code Review**: Verify all macros compile correctly
-- [ ] **Conflict Detection**: Resolve key conflicts (e.g., Slack on S key conflicts with WIN selector)
+- [ ] **Conflict Detection**: Resolve any remaining key conflicts
 - [ ] **Completeness Check**: Ensure all 15 app launchers are mapped
 - [ ] **Cursor Commands**: Map remaining Cursor IDE commands (model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
 
@@ -773,19 +788,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 ## 🚨 Known Issues & Resolutions
 
-### Issue 1: Key Conflicts
-**Problem**: Some app launchers conflict with selector keys
-- Slack (⌥⌘S) on `S` key conflicts with WIN_LAYER selector
-- Notes (⌥⌘N) on `N` key may conflict with Notion (⇧⌃⌘N)
-
-**Resolution Options**:
-1. Move conflicting apps to different keys
-2. Use different activation method for conflicting apps
-3. Accept conflict and use context to disambiguate
-
-**Recommendation**: Move Slack to a different key (e.g., `X` or `M`)
-
-### Issue 2: Cursor IDE Commands
+### Issue 1: Cursor IDE Commands
 **Problem**: CURSOR_LAYER is partially mapped; remaining actions are TBD (model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
 
 **Resolution**: 
@@ -793,15 +796,10 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 2. Map to appropriate QMK keycodes
 3. Update CURSOR_LAYER implementation
 
-### Issue 3: Encoder Tap Dance
-**Problem**: Encoder press actions (single/double) require tap dance implementation
+### Issue 2: Encoder Tap Dance
+**Problem**: Right encoder press actions (single/double) require tap dance implementation
 
-**Resolution**: Implement QMK tap dance for encoder press detection
-
-### Issue 4: Notes App Mapping
-**Problem**: Notes app (⌥⌘N) not yet mapped in APP_LAYER
-
-**Resolution**: Add Notes app to appropriate key in APP_LAYER
+**Resolution**: Implement QMK tap dance for right encoder press detection
 
 ---
 
@@ -860,20 +858,20 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 **Layer 6: MAC_FN** (Function Keys)
 - Purpose: Function keys (F1-F12) and RGB controls for macOS
 - Activation: Toggle via NAV + W (`TG(MAC_FN)`)
-- **Left Space**: Should be `MO(NAV_LAYER)` for NAV access (to be implemented)
-- Encoder: RGB brightness controls
+- **Left Space**: `MO(NAV_LAYER)` for NAV access
+- Encoder: Left volume/mute, right zoom + tap dance
 
 **Layer 7: WIN_BASE** (Windows Typing)
 - Purpose: Normal typing layer for Windows
 - Activation: Toggle via NAV + E (`TG(WIN_BASE)`)
-- **Left Space**: Should be `MO(NAV_LAYER)` for NAV access (to be implemented)
-- Encoder: Zoom and volume controls
+- **Left Space**: `MO(NAV_LAYER)` for NAV access
+- Encoder: Left volume/mute, right zoom + tap dance
 
 **Layer 8: WIN_FN** (Windows Function Keys)
 - Purpose: Function keys and RGB controls for Windows
 - Activation: Toggle via NAV + R (`TG(WIN_FN)`)
-- **Left Space**: Should be `MO(NAV_LAYER)` for NAV access (to be implemented)
-- Encoder: RGB brightness controls
+- **Left Space**: `MO(NAV_LAYER)` for NAV access
+- Encoder: Left volume/mute, right zoom + tap dance
 
 ---
 
@@ -882,9 +880,8 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 ### Immediate Actions
 1. **Complete NAV_LAYER**: Finalize selector implementations
 2. **Complete Cursor Commands**: Map remaining Cursor IDE shortcuts
-3. **Resolve Key Conflicts**: Move conflicting apps to different keys
-4. **Complete APP_LAYER**: Add Notes app mapping
-5. **Complete WIN_LAYER**: Finalize all window management mappings
+3. **Complete APP_LAYER**: Add Obsidian mapping and confirm Slack on S
+4. **Complete WIN_LAYER**: Finalize all window management mappings
 
 ### Implementation Tasks
 1. **Implement Encoder Tap Dance**: Add single/double press detection
@@ -909,24 +906,22 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - ✅ **SYM Layer**: Complete (with special macros)
 - ✅ **NAV Layer**: Structure defined, all selectors finalized (Q/W/E/R for L5-L8, A/S/D/F/G/H for others)
 - ⚠️ **CURSOR Layer**: Partial mapping (Y/U/I/O); remaining commands TBD, left space NAV access added
-- ⚠️ **APP Layer**: Most apps mapped, conflicts need resolution, left space NAV access added
+- ✅ **APP Layer**: All apps mapped (Obsidian added, Slack on S), left space NAV access added
 - ⚠️ **WIN Layer**: Structure defined, mappings need completion, left space NAV access added
 - ✅ **LIGHTING Layer**: Complete specification with all RGB controls, left space NAV access added
-- ✅ **NUMPAD Layer**: Complete specification with standard layout, left space NAV access added
-- ⚠️ **MAC_FN Layer**: Existing layer, needs left space NAV access documentation
-- ⚠️ **WIN_BASE Layer**: Existing layer, needs left space NAV access documentation
-- ⚠️ **WIN_FN Layer**: Existing layer, needs left space NAV access documentation
-- ⚠️ **Encoder**: Basic behavior defined, tap dance needs implementation, encoder maps updated for new layers
+- ✅ **NUMPAD Layer**: Complete specification with standard layout, NAV access on left thumb key added
+- ✅ **MAC_FN Layer**: Existing layer with left space NAV access
+- ✅ **WIN_BASE Layer**: Existing layer with left space NAV access
+- ✅ **WIN_FN Layer**: Existing layer with left space NAV access
+- ⚠️ **Encoder**: Behavior defined (left volume/mute, right zoom + tap dance), tap dance needs implementation
 
 ### Remaining Work
-1. Resolve key conflicts in APP_LAYER
-2. Map remaining Cursor IDE commands for CURSOR_LAYER
-3. Complete WIN_LAYER key mappings
-4. Implement encoder tap dance
-5. Add left space NAV access to MAC_FN, WIN_BASE, WIN_FN layers
-6. Comprehensive testing and validation
-7. Test all layer activation sequences (toggle, latch, momentary)
-8. Verify left space NAV access works from all non-momentary layers
+1. Map remaining Cursor IDE commands for CURSOR_LAYER
+2. Complete WIN_LAYER key mappings
+3. Implement encoder tap dance (right encoder)
+4. Comprehensive testing and validation
+5. Test all layer activation sequences (toggle, latch, momentary)
+6. Verify left space NAV access works from all non-momentary layers
 
 ---
 

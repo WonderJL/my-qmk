@@ -18,3 +18,6 @@
 
 /* Enable caps-lock LED */
 #define CAPS_LOCK_LED_INDEX 23
+
+/* VIA Configuration - Support 9 layers (0-8) */
+#define DYNAMIC_KEYMAP_LAYER_COUNT 9

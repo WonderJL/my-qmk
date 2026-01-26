@@ -155,6 +155,8 @@ From Step 2 mapping:
 #### Task 2: Define All QMK Macro Keycodes
 - **Files**: `keychron/q11/ansi_encoder/keymaps/j-custom/keymap.c`
 - **Action**: Define custom keycodes for all shortcuts
+
+**Note**: Special symbol macros are defined in Task 5 (SYM Layer) implementation.
   ```c
   // ============================================
   // App Launcher Macros (⌥⌘ combinations)
@@ -265,26 +267,72 @@ From Step 2 mapping:
 - **Reason**: Menu system for accessing helper layers
 - **Risk**: Medium - must match CURSOR helper pattern exactly
 
-#### Task 5: Implement SYM Layer (Layer 2)
+#### Task 5: Implement SYM Layer (Layer 2) ✅ COMPLETED
 - **Files**: `keychron/q11/ansi_encoder/keymaps/j-custom/keymap.c`
-- **Action**: Create symbols layer
+- **Action**: Create symbols layer with special macros on home row and standard ANSI layout
   ```c
+  // Special Symbol Macros (defined before keymaps)
+  #define KC_SYM_BACKTICKS SEND_STRING("```" SS_TAP(X_ENTER) "```" SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT))
+  #define KC_SYM_TILDE_SLASH SEND_STRING("~/")
+  #define KC_SYM_SQUARE_BRACKETS SEND_STRING("[]" SS_TAP(X_LEFT))
+  #define KC_SYM_PARENTHESES SEND_STRING("()" SS_TAP(X_LEFT))
+  #define KC_SYM_CURLY_BRACES SEND_STRING("{}" SS_TAP(X_LEFT))
+
+  // Tap Dance for backslash/pipe
+  enum { TD_BACKSLASH_PIPE };
+  void backslash_pipe_finished(tap_dance_state_t *state, void *user_data) {
+      if (state->count == 1) {
+          if (!state->pressed) tap_code(KC_BSLS);  // Single tap: \
+      } else if (state->count == 2) {
+          tap_code(KC_PIPE);  // Double tap: |
+      }
+  }
+  void backslash_pipe_reset(tap_dance_state_t *state, void *user_data) {
+      if (state->count >= 2) reset_tap_dance(state);
+  }
+  qk_tap_dance_action_t tap_dance_actions[] = {
+      [TD_BACKSLASH_PIPE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, backslash_pipe_finished, backslash_pipe_reset),
+  };
+
   [SYM_LAYER] = LAYOUT_91_ansi(
-      // TBD: Define symbol mappings
-      // Common symbols: ! @ # $ % ^ & * ( ) [ ] { } | \ ; : " ' < > ? ~ ` 
-      // Can use shifted versions or custom symbols
-      // Example structure:
+      // Row 0: Transparent
       _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
-      _______,  _______,  KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,  KC_ASTR,  KC_LPRN,  KC_RPRN,  _______,  _______,  _______,            _______,
-      // ... (TBD based on user preferences)
+      // Row 1: Number row - Output shifted symbols directly (no shift needed)
+      _______,  _______,  KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR,   KC_PERC,  KC_CIRC,  KC_AMPR,  KC_ASTR,  KC_LPRN,  KC_RPRN,  KC_UNDS,  KC_PLUS,  _______,            _______,
+      // Row 2: Top row - Standard ANSI positions
+      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_LCBR,  KC_RCBR,  TD(TD_BACKSLASH_PIPE),  _______,
+      // Row 3: Home row - Special macros on home row
+      // Left hand: A S D F G
+      _______,  _______,  _______,  _______,  _______,  KC_SYM_TILDE_SLASH,  _______,
+      // Right hand: H J K L ; '
+                  KC_SYM_BACKTICKS,     // H: Six backticks macro
+                  KC_SYM_PARENTHESES,   // J: () macro
+                  KC_SYM_CURLY_BRACES,  // K: {} macro
+                  KC_SYM_SQUARE_BRACKETS, // L: [] macro
+                  KC_COLN,  // ;: : (colon)
+                  KC_DQUO,  // ': " (double quote)
+                  _______,  _______,  // Enter, Home
+      // Row 4: Bottom row - Standard ANSI positions
+      _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_LT,    KC_GT,    KC_QUES,  _______,  _______,
+      // Row 5: Modifiers and thumb keys
+      _______,  _______,  _______,  _______,  _______,  _______,  MO(SYM_LAYER),  _______,  _______,  _______,  _______,  _______,  _______
   ),
   ```
 - **Key Points**:
-  - Activated by Right Thumb hold
-  - Symbols accessible while thumb held
-  - Release thumb returns to BASE
-- **Reason**: Quick access to symbols
-- **Risk**: Low - standard symbol layer pattern
+  - ✅ **Activated by Right Thumb hold** (`MO(SYM_LAYER)`)
+  - ✅ **Special macros on home row**:
+    - `H` → Six backticks macro (```\n``` with cursor in middle)
+    - `J` → Parentheses macro (() with cursor in middle)
+    - `K` → Curly braces macro ({} with cursor in middle)
+    - `L` → Square brackets macro ([] with cursor in middle)
+    - `F` → Tilde-slash macro (~/)
+  - ✅ **Standard ANSI layout preserved**: Symbols stay in familiar positions
+  - ✅ **Direct symbol access**: Number row outputs shifted symbols directly (1→!, 2→@, etc.)
+  - ✅ **Tap dance**: Backslash key uses tap dance (\ single tap, | double tap)
+  - ✅ **Letters remain transparent**: Typing safety maintained
+  - ✅ **Symbol keys output shifted versions**: `[`→{`, `]`→}`, `;`→`:`, `'`→`"`, `,`→`<`, `.`→`>`, `/`→`?`
+- **Reason**: Quick access to symbols with special macros for common coding patterns
+- **Status**: ✅ **COMPLETED** - Implementation done in `keymap.c`
 
 #### Task 6: Implement CURSOR Layer (Layer 3)
 - **Files**: `keychron/q11/ansi_encoder/keymaps/j-custom/keymap.c`

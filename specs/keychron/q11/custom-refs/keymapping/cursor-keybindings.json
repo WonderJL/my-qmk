@@ -4,11 +4,11 @@
     "key": "cmd+shift+t",
     "command": "workbench.action.terminal.new"
   },
-  {
+{"˘˘˘˘"
     "key": "cmd+t",
     "command": "workbench.action.terminal.toggleTerminal"
   },
-  {
+{/*  */
     "key": "cmd+shift+0",
     "command": "workbench.action.terminal.focusNext",
     "when": "terminalFocus"

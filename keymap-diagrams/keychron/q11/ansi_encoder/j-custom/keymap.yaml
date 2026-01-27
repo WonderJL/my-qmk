@@ -94,7 +94,7 @@ layers:
     - {t: ▽, type: trans}
     - MO(NAV LAYER)
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
+  - - TG(MAC BASE)
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -811,12 +811,12 @@ layers:
     - {t: ▽, type: trans}
   L10-NUMPAD_LAYER:
   - - TD(TD ENC L)
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - ESC
+    - BRID
+    - BRIU
+    - MCTL
+    - LPAD
+    - RM VALD
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -827,13 +827,13 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - TD(TD ENC R)
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - APP WHATSAPP
+    - '`'
+    - '1'
+    - '2'
+    - '3'
+    - '4'
+    - '5'
   - - {t: ▽, type: trans}
     - KP 7
     - KP 8
@@ -843,13 +843,13 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - APP WECHAT
+    - TAB
+    - Q
+  - - W
+    - E
+    - R
+    - T
     - {t: ▽, type: trans}
     - KP 4
     - KP 5
@@ -859,13 +859,13 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - APP SLACK 6
+    - CAPS
+    - A
+    - S
+    - D
+    - F
+    - G
     - {t: ▽, type: trans}
     - KP 1
     - KP 2
@@ -874,26 +874,26 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - APP CHATGPT
+    - LSFT
+    - Z
+    - X
+    - C
+    - V
+    - B
     - {t: ▽, type: trans}
   - - KP 0
     - KP DOT
+    - {t: ▽, type: trans}
     - KP PLUS
-    - KP ENTER
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - MO(NAV LAYER)
+    - APP VPN SHADOWROCKET
+    - IME NEXT
+    - LCTL
+    - LALT
+    - LGUI
+    - TD(TD NUMPAD SPACE)
   - - KP ENTER
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}

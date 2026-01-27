@@ -137,6 +137,7 @@ enum custom_keycodes {
 enum {
     TD_ENC_L = 0,  // Left encoder: single = Mute, double = Return to base
     TD_ENC_R = 1,  // Right encoder: single = Zoom reset, double = Lock screen
+    TD_NUMPAD_SPACE = 2,  // NUMPAD_LAYER left space: single = space, double = toggle off NUMPAD_LAYER
 };
 
 // Tap dance callback functions for debugging
@@ -198,9 +199,35 @@ void td_enc_l_reset(tap_dance_state_t *state, void *user_data) {
 #endif
 }
 
+// Tap dance callback for NUMPAD_LAYER left space
+void td_numpad_space_finished(tap_dance_state_t *state, void *user_data) {
+#ifdef CONSOLE_ENABLE
+    uprintf("DEBUG: TD_NUMPAD_SPACE finished - count: %d\n", state->count);
+#endif
+    if (state->count == 1) {
+#ifdef CONSOLE_ENABLE
+        uprintf("DEBUG: TD_NUMPAD_SPACE single tap - sending KC_SPC\n");
+#endif
+        tap_code(KC_SPC);
+    } else if (state->count == 2) {
+#ifdef CONSOLE_ENABLE
+        uprintf("DEBUG: TD_NUMPAD_SPACE double tap - toggling off NUMPAD_LAYER\n");
+#endif
+        // Toggle off NUMPAD_LAYER (returns to MAC_BASE)
+        layer_off(NUMPAD_LAYER);
+    }
+}
+
+void td_numpad_space_reset(tap_dance_state_t *state, void *user_data) {
+#ifdef CONSOLE_ENABLE
+    uprintf("DEBUG: TD_NUMPAD_SPACE reset - count: %d\n", state->count);
+#endif
+}
+
 tap_dance_action_t tap_dance_actions[] = {
     [TD_ENC_L] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_enc_l_finished, td_enc_l_reset),  // Left encoder: single = Mute, double = Return to base
     [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),  // Right encoder: single = Zoom reset, double = Lock screen
+    [TD_NUMPAD_SPACE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_numpad_space_finished, td_numpad_space_reset),  // NUMPAD_LAYER left space: single = space, double = toggle off NUMPAD_LAYER
 };
 
 // Windows-specific shortcuts (for WIN_BASE/WIN_FN layers)
@@ -245,6 +272,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held)
     // Left-hand home row (A/S/D/F) are layer selectors
+    // Right space: Toggle MAC_BASE layer
     // ============================================
     [NAV_LAYER] = LAYOUT_91_ansi(
         // Row 0: Transparent
@@ -268,8 +296,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                             _______,  _______,  _______,  _______,  _______,            _______,            _______,
         // Row 4: Transparent
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
-        // Row 5: Keep NAV thumb held
-        _______,  _______,  _______,  _______,  MO(NAV_LAYER),      _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 5: Keep NAV thumb held, Right space = Toggle MAC_BASE
+        _______,  _______,  _______,  _______,  MO(NAV_LAYER),      _______,                       TG(MAC_BASE),            _______,  _______,  _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 2: SYM_LAYER - Symbols (right thumb)
@@ -456,20 +484,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // ============================================
     // Layer 10: NUMPAD_LAYER - Number pad (NAV + H)
+    // Left-hand keys (columns 0-6) mirror MAC_BASE for modifier combinations (cmd+c, cmd+v, cmd+a)
+    // Left space: single tap = space, double tap = toggle off NUMPAD_LAYER
     // ============================================
     [NUMPAD_LAYER] = LAYOUT_91_ansi(
-        // Row 0: Encoder tap dance for return to base
-        TD(TD_ENC_L),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  TD(TD_ENC_R),
-        // Row 1: Numpad top row (7, 8, 9, /) - positions 8-11 (Y/U/I/O keys)
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_7,  KC_KP_8,  KC_KP_9,  KC_KP_SLASH,  _______,  _______,  _______,            _______,
-        // Row 2: Numpad second row (4, 5, 6, *) - positions 8-11 (H/J/K/L keys)
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_ASTERISK,  _______,  _______,  _______,            _______,
-        // Row 3: Numpad third row (1, 2, 3, -) - positions 8-11 (N/M/,/. keys)
-        _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_MINUS,              _______,            _______,            _______,
-        // Row 4: Numpad bottom row (0, ., +, Enter) - positions 8-11
-        _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_0,  KC_KP_DOT,  KC_KP_PLUS,  KC_KP_ENTER,              _______,  _______,
-        // Row 5: Left space = NAV access, Right space = Numpad Enter
-        _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 KC_KP_ENTER,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 0: Left-hand keys from MAC_BASE, right-hand numpad
+        TD(TD_ENC_L),  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  TD(TD_ENC_R),
+        // Row 1: Left-hand keys from MAC_BASE, right-hand numpad top row (7, 8, 9, /)
+        KC_APP_WHATSAPP,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      _______,  KC_KP_7,  KC_KP_8,  KC_KP_9,  KC_KP_SLASH,  _______,  _______,  _______,            _______,
+        // Row 2: Left-hand keys from MAC_BASE, right-hand numpad second row (4, 5, 6, *)
+        KC_APP_WECHAT,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_ASTERISK,  _______,  _______,  _______,            _______,
+        // Row 3: Left-hand keys from MAC_BASE, right-hand numpad third row (1, 2, 3, -)
+        KC_APP_SLACK_6,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_MINUS,              _______,            _______,            _______,
+        // Row 4: Left-hand keys from MAC_BASE, right-hand numpad bottom row (0, ., +)
+        KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     _______,  KC_KP_0,  KC_KP_DOT,  _______,  KC_KP_PLUS,              _______,  _______,
+        // Row 5: Left-hand modifiers from MAC_BASE, Left space = tap dance (single: space, double: toggle off NUMPAD), Right space = Numpad Enter
+        KC_APP_VPN_SHADOWROCKET,  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI,      TD(TD_NUMPAD_SPACE),                 KC_KP_ENTER,            _______,  _______,  _______,  _______,  _______,  _______),
 };
 
 // ============================================

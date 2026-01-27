@@ -10,6 +10,9 @@ This document consolidates and finalizes the QMK keymap configuration specificat
 **Recent Updates**:
 - Custom layer switching for NAV_LAYER selectors (A/S/D/F/G) - switch layers while holding left space
 - Universal return to base - double-click left encoder returns to MAC_BASE from any layer
+- NUMPAD_LAYER left space: tap = space, hold = return to MAC_BASE (LT(MAC_BASE, KC_SPC))
+- NUMPAD_LAYER left-hand keys (columns 0-6) mirror MAC_BASE for modifier combinations (cmd+c, cmd+v, cmd+a)
+- NAV_LAYER right space: Toggle MAC_BASE layer (TG(MAC_BASE))
 
 This tech spec serves as the **single source of truth** for implementation, providing complete layer definitions, key mappings, macro specifications, and implementation guidelines.
 
@@ -75,15 +78,20 @@ BASE (Layer 0)
 
 From any non-momentary layer (L3-L10):
   └─ Left Space Hold → NAV_LAYER (Layer 1)  
-     (NUMPAD_LAYER uses left space for NAV access, consistent with other layers)
+     (NUMPAD_LAYER uses left space tap dance: single tap = space, double tap = toggle off NUMPAD_LAYER)
+
+NAV_LAYER:
+  └─ Right Space → Toggle MAC_BASE layer (TG(MAC_BASE))
 ```
 
 **Key Points**:
 - **NAV_LAYER**: Momentary - activates only while left space held (Layer Tap)
 - **SYM_LAYER**: Momentary - activates only while right space held (Layer Tap)
-- **Space Bars**: Layer Tap (LT) and Custom - tap for space, hold for layer activation
+- **Space Bars**: Layer Tap (LT), Tap Dance (TD), and Custom - tap for space, hold/double-tap for layer actions
   - **Left Space**: `KC_NAV_SPACE` (custom) - tap for space, hold for NAV layer, supports custom layer switching
   - **Right Space**: `LT(SYM_LAYER, KC_SPC)` - tap for space, hold for SYM layer
+  - **NAV_LAYER Right Space**: `TG(MAC_BASE)` - toggle MAC_BASE layer
+  - **NUMPAD_LAYER Left Space**: `TD(TD_NUMPAD_SPACE)` - single tap for space, double tap to toggle off NUMPAD_LAYER
 - **Thumb Keys**:
   - **Left Thumb (Position 2)**: `KC_IME_NEXT` - Input method switch (Ctrl+Space)
   - **Right Thumb (Position 10)**: `MO(MAC_FN)` - Function layer (momentary, hold to activate)
@@ -216,9 +224,8 @@ From any non-momentary layer (L3-L10):
                   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
     // Row 4: Transparent
     _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
-    // Row 5: Space bars transparent (pass through to BASE LT functions)
-    _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______
-),
+    // Row 5: Keep NAV thumb held, Right space = Toggle MAC_BASE
+    _______,  _______,  _______,  _______,  MO(NAV_LAYER),      _______,                       TG(MAC_BASE),            _______,  _______,  _______,  _______,  _______,  _______),
 ```
 
 **Key Features**:
@@ -238,7 +245,8 @@ From any non-momentary layer (L3-L10):
 - **`TG(LAYER)`**: Tap to toggle layer on/off (returns to MAC_BASE when toggled off)
 - **Custom Keycodes**: `KC_NAV_SPACE`, `KC_NAV_APP`, `KC_NAV_WIN`, `KC_NAV_APP_D`, `KC_NAV_CURSOR`, `KC_NAV_LIGHTING`
 - **Right-hand keys**: Transparent (pass through to BASE)
-- **Space bars**: Transparent (pass through to BASE layer's `LT()` functions - tap for space, hold for layer)
+- **Right Space**: `TG(MAC_BASE)` - Toggle MAC_BASE layer on/off
+- **Left Space**: `MO(NAV_LAYER)` - Keep NAV thumb held (momentary activation)
 
 **Usage**:
 1. **Activate NAV_LAYER**:
@@ -249,6 +257,7 @@ From any non-momentary layer (L3-L10):
    - Release selector key → Target layer remains active (left space still held)
 3. **Toggle layers** (tap, not hold):
    - **Toggle selectors (Q/W/E/R/H)**: Tap to toggle layer on/off
+   - **Right Space**: Tap to toggle MAC_BASE layer on/off
 4. **Return to BASE**:
    - Release Left Space → Returns to MAC_BASE, all custom-switched layers deactivate
 5. **Tap Left Space** (quick press/release):
@@ -620,32 +629,40 @@ From any non-momentary layer (L3-L10):
 
 **Return to Base**: 
 - Double-click left encoder (top left) → Returns to MAC_BASE (works from any layer)
+- Or: Double-tap left space → Toggles off NUMPAD_LAYER (returns to MAC_BASE)
 - Or: Hold left space → NAV_LAYER → Tap H → Toggle off → Returns to MAC_BASE
 
 **Key Mappings**:
 ```c
 [NUMPAD_LAYER] = LAYOUT_91_ansi(
-    // Row 0: Encoder tap dance for return to base
-    TD(TD_ENC_L),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  TD(TD_ENC_R),
-    // Row 1: Numpad top row (7, 8, 9, /) - positions 8-11 (Y/U/I/O keys)
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_7,  KC_KP_8,  KC_KP_9,  KC_KP_SLASH,  _______,  _______,  _______,            _______,
-    // Row 2: Numpad second row (4, 5, 6, *) - positions 8-11 (H/J/K/L keys)
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_ASTERISK,  _______,  _______,  _______,            _______,
-    // Row 3: Numpad third row (1, 2, 3, -) - positions 8-11 (N/M/,/. keys)
-    _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_MINUS,              _______,            _______,            _______,
-    // Row 4: Numpad bottom row (0, ., +, Enter) - positions 8-11
-    _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_0,  KC_KP_DOT,  KC_KP_PLUS,  KC_KP_ENTER,              _______,  _______,
-    // Row 5: Left space = NAV access, Right space = Numpad Enter
-    _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 KC_KP_ENTER,            _______,  _______,  _______,  _______,  _______,  _______),
+    // Row 0: Left-hand keys from MAC_BASE, right-hand numpad
+    TD(TD_ENC_L),  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  TD(TD_ENC_R),
+    // Row 1: Left-hand keys from MAC_BASE, right-hand numpad top row (7, 8, 9, /)
+    KC_APP_WHATSAPP,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      _______,  KC_KP_7,  KC_KP_8,  KC_KP_9,  KC_KP_SLASH,  _______,  _______,  _______,            _______,
+    // Row 2: Left-hand keys from MAC_BASE, right-hand numpad second row (4, 5, 6, *)
+    KC_APP_WECHAT,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_ASTERISK,  _______,  _______,  _______,            _______,
+    // Row 3: Left-hand keys from MAC_BASE, right-hand numpad third row (1, 2, 3, -)
+    KC_APP_SLACK_6,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_MINUS,              _______,            _______,            _______,
+    // Row 4: Left-hand keys from MAC_BASE, right-hand numpad bottom row (0, ., +)
+    KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     _______,  KC_KP_0,  KC_KP_DOT,  _______,  KC_KP_PLUS,              _______,  _______,
+    // Row 5: Left-hand modifiers from MAC_BASE, Left space = tap dance (single: space, double: toggle off NUMPAD), Right space = Numpad Enter
+    KC_APP_VPN_SHADOWROCKET,  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI,      TD(TD_NUMPAD_SPACE),                 KC_KP_ENTER,            _______,  _______,  _______,  _______,  _______,  _______),
 ```
 
 **Key Features**:
-- **Standard numpad layout**: Right-hand side placement, full number pad numbers on right hand
+- **Left-hand keys (columns 0-6)**: Mirror MAC_BASE layer keys for modifier combinations (cmd+c, cmd+v, cmd+a)
+  - **Row 0**: Encoder, Esc, brightness/media controls
+  - **Row 1**: App launchers and number keys (1-5)
+  - **Row 2**: App launchers and QWERTY top row (Q-T)
+  - **Row 3**: App launchers and home row (A-G)
+  - **Row 4**: App launchers and bottom row (Z-B)
+  - **Row 5**: VPN toggle, IME switch, and modifiers (Ctrl, Alt, Cmd)
+- **Right-hand numpad layout**: Standard numpad placement on right-hand side
 - **Top row** (Y/U/I/O): 7, 8, 9, / (divide) - positions 8-11
 - **Second row** (H/J/K/L): 4, 5, 6, * (multiply) - positions 8-11
 - **Third row** (N/M/,/.): 1, 2, 3, - (subtract) - positions 8-11
-- **Bottom row** (Row 4): 0, ., +, Enter - positions 8-11
-- **Left Space** (Row 5, position 5): `MO(NAV_LAYER)` - long press to access NAV_LAYER (consistent with other layers)
+- **Bottom row** (Row 4): 0, ., + (plus) - positions 8, 9, 11 (position 10 is empty)
+- **Left Space** (Row 5, position 5): `TD(TD_NUMPAD_SPACE)` - single tap for space, double tap to toggle off NUMPAD_LAYER (returns to MAC_BASE)
 - **Right Space** (Row 5, position 6): `KC_KP_ENTER` - numpad enter
 - **Toggle activation**: Tap H in NAV_LAYER to activate, tap H again to return to MAC_BASE
 - **Always returns to MAC_BASE**: When toggled off, always returns to Layer 0
@@ -653,10 +670,12 @@ From any non-momentary layer (L3-L10):
 **Usage**:
 1. Hold Left Space → NAV_LAYER activates (or tap H in NAV_LAYER to toggle NUMPAD_LAYER)
 2. Tap H key → NUMPAD_LAYER toggles on
-3. Use numpad keys for numeric input
-4. Long press Left Space → Access NAV_LAYER from NUMPAD_LAYER
-5. Tap H again in NAV_LAYER → NUMPAD_LAYER toggles off (returns to MAC_BASE)
-6. Right Space sends numpad enter for quick entry
+3. Use numpad keys for numeric input on right-hand side
+4. Use left-hand keys for typing and modifier combinations (cmd+c, cmd+v, cmd+a work normally)
+5. Single tap Left Space → Sends space character
+6. Double tap Left Space → Toggles off NUMPAD_LAYER (returns to MAC_BASE)
+7. Tap H again in NAV_LAYER → NUMPAD_LAYER toggles off (returns to MAC_BASE)
+8. Right Space sends numpad enter for quick entry
 
 ---
 
@@ -789,6 +808,7 @@ enum custom_keycodes {
 enum {
     TD_ENC_L = 0,  // Left encoder: single = Mute, double = Return to base
     TD_ENC_R = 1,  // Right encoder: single = Zoom reset, double = Lock screen
+    TD_NUMPAD_SPACE = 2,  // NUMPAD_LAYER left space: single = space, double = toggle off NUMPAD_LAYER
 };
 
 // Tap dance callback functions for left encoder (with debug output)
@@ -815,9 +835,23 @@ void td_enc_l_reset(tap_dance_state_t *state, void *user_data) {
     // Reset handler (used for debug output)
 }
 
+// Tap dance callback for NUMPAD_LAYER left space
+void td_numpad_space_finished(tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        tap_code(KC_SPC);  // Single tap = Space
+    } else if (state->count == 2) {
+        layer_off(NUMPAD_LAYER);  // Double tap = Toggle off NUMPAD_LAYER (returns to MAC_BASE)
+    }
+}
+
+void td_numpad_space_reset(tap_dance_state_t *state, void *user_data) {
+    // Reset handler (used for debug output)
+}
+
 tap_dance_action_t tap_dance_actions[] = {
     [TD_ENC_L] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_enc_l_finished, td_enc_l_reset),  // Left encoder: single = Mute, double = Return to base (callback handles toggle layers)
     [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),  // Right encoder: single = Zoom reset, double = Lock screen
+    [TD_NUMPAD_SPACE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_numpad_space_finished, td_numpad_space_reset),  // NUMPAD_LAYER left space: single = space, double = toggle off NUMPAD_LAYER
 };
 ```
 
@@ -921,6 +955,10 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - **Right Encoder Rotate CCW/CW**: Zoom out/in (Cmd - / Cmd =)
 - **Right Encoder Press (single)**: Zoom reset (Cmd 0) - tap dance
 - **Right Encoder Press (double)**: Lock screen (Ctrl+Cmd+Q) - tap dance
+
+**Tap Dance Actions**:
+- **NUMPAD_LAYER Left Space (single tap)**: Sends space character
+- **NUMPAD_LAYER Left Space (double tap)**: Toggles off NUMPAD_LAYER (returns to MAC_BASE)
 
 **Universal Return to Base**: Double-click left encoder from any layer to return to MAC_BASE
 
@@ -1153,7 +1191,7 @@ Use `qmk console` command to view debug output in real-time. This helps verify k
 - ✅ **APP Layer**: Complete (all apps mapped, custom switching implemented)
 - ✅ **WIN Layer**: Complete (all window management mappings, custom switching implemented)
 - ✅ **LIGHTING Layer**: Complete (all RGB controls mapped, custom switching implemented)
-- ✅ **NUMPAD Layer**: Complete (standard layout mapped, left space NAV access, positions 8-11)
+- ✅ **NUMPAD Layer**: Complete (standard layout mapped, left-hand keys mirror MAC_BASE, left space returns to base, positions 8-11)
 - ✅ **MAC_FN Layer**: Complete (existing layer with encoder tap dance)
 - ✅ **WIN_BASE Layer**: Complete (existing layer with encoder tap dance)
 - ✅ **WIN_FN Layer**: Complete (existing layer with encoder tap dance)
@@ -1172,13 +1210,16 @@ Use `qmk console` command to view debug output in real-time. This helps verify k
 
 ---
 
-**Document Version**: 1.4  
+**Document Version**: 1.6  
 **Last Updated**: 2026-01-28  
-**Status**: Finalized Tech Spec (Implementation In Progress)
+**Status**: Finalized Tech Spec (Implementation In Progress)  
 **Recent Updates**: 
 - Custom layer switching implemented
 - Universal return to base via left encoder double-click (using tap dance callback)
-- Debug mode enabled (CONSOLE_ENABLE = yes)  
+- Debug mode enabled (CONSOLE_ENABLE = yes)
+- NUMPAD_LAYER: Left-hand keys mirror MAC_BASE for modifier combinations
+- NUMPAD_LAYER: Left space uses tap dance (single tap = space, double tap = toggle off NUMPAD_LAYER)
+- NAV_LAYER: Right space toggles MAC_BASE (TG(MAC_BASE))
 **Target Keyboard**: Keychron Q11 ANSI Encoder  
 **Firmware**: QMK
 
@@ -1194,3 +1235,6 @@ Use `qmk console` command to view debug output in real-time. This helps verify k
 - Updated NAV_LAYER with toggle selectors for L5-L8 (Q/W/E/R)
 - Added left space NAV access to all non-momentary layers (L3-L10)
 - Updated encoder configuration for all layers
+- **NUMPAD_LAYER**: Left-hand keys (columns 0-6) now mirror MAC_BASE for modifier combinations (cmd+c, cmd+v, cmd+a)
+- **NUMPAD_LAYER**: Left space changed to `TD(TD_NUMPAD_SPACE)` - single tap for space, double tap to toggle off NUMPAD_LAYER
+- **NAV_LAYER**: Right space changed to `TG(MAC_BASE)` - toggle MAC_BASE layer

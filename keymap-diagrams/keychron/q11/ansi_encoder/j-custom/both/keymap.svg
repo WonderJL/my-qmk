@@ -462,7 +462,7 @@ path.combo {
 <g transform="translate(105, 322)" class="key keypos-79">
 <rect rx="6" ry="6" x="-33" y="-26" width="66" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-1.2em">LT(MAC</tspan><tspan x="0" dy="1.2em">FN,LCTL</tspan><tspan x="0" dy="1.2em">(SPC))</tspan>
+<tspan x="0" dy="-1.2em">LT(MAC</tspan><tspan x="0" dy="1.2em">FN,</tspan><tspan x="0" dy="1.2em">GLOBE)</tspan>
 </text>
 </g>
 <g transform="translate(175, 322)" class="key keypos-80">
@@ -475,7 +475,7 @@ path.combo {
 </g>
 <g transform="translate(315, 322)" class="key keypos-82">
 <rect rx="6" ry="6" x="-33" y="-26" width="66" height="52" class="key"/>
-<text x="0" y="0" class="key tap">LNG1</text>
+<text x="0" y="0" class="key tap">LGUI</text>
 </g>
 <g transform="translate(413, 322)" class="key keypos-83">
 <rect rx="6" ry="6" x="-61" y="-26" width="122" height="52" class="key"/>
@@ -491,7 +491,7 @@ path.combo {
 </g>
 <g transform="translate(718.0, 322.0)" class="key keypos-85">>
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">RCMD</text>
+<text x="0" y="0" class="key tap">RGUI</text>
 </g>
 <g transform="translate(774.0, 322.0)" class="key keypos-86">>
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -500,7 +500,7 @@ path.combo {
 <g transform="translate(830.0, 322.0)" class="key keypos-87">>
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-1.2em">LT(MAC</tspan><tspan x="0" dy="1.2em">FN,LCTL</tspan><tspan x="0" dy="1.2em">(SPC))</tspan>
+<tspan x="0" dy="-1.2em">LT(MAC</tspan><tspan x="0" dy="1.2em">FN,</tspan><tspan x="0" dy="1.2em">GLOBE)</tspan>
 </text>
 </g>
 <g transform="translate(900.0, 322.0)" class="key keypos-88">>

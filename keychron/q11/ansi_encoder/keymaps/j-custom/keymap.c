@@ -63,6 +63,8 @@ enum custom_keycodes {
     KC_SYM_PARENTHESES,              // J: () with cursor in middle
     KC_SYM_CURLY_BRACES,             // K: {} with cursor in middle
     KC_SYM_SQUARE_BRACKETS,          // L: [] with cursor in middle
+    // Globe key (macOS Globe/Fn key) - fallback if KC_GLOBE not available
+    KC_GLOBE_CUSTOM,                 // Custom Globe key implementation
 };
 
 // ============================================
@@ -152,15 +154,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
         // Row 5: Modifiers and thumb keys
         //        Position 1: KC_APP_VPN_SHADOWROCKET - VPN toggle
-        //        Position 2: LT(MAC_FN, LCTL(KC_SPC)) - Left Thumb (tap for Ctrl+Space, hold for MAC_FN layer)
+        //        Position 2: LT(MAC_FN, KC_GLOBE_CUSTOM) - Left Thumb Fn (tap: Globe, hold: MAC_FN layer)
         //        Position 3: KC_LCTL - Left Control
         //        Position 4: KC_LALT - Left Option/Alt
-        //        Position 5: KC_LNG1 - Input method switch (Language 1)
-        //        Position 6: LT(NAV_LAYER, KC_SPC) - Left Space (tap for space, hold for NAV layer)
-        //        Right Space: LT(SYM_LAYER, KC_SPC) - tap for space, hold for SYM layer
-        //        - 3 keys after right space: KC_RCMD, KC_RCTL, Right Thumb (Fn)
-        //        Fn key: LT(MAC_FN, LCTL(KC_SPC)) - tap for Ctrl+Space, hold to activate MAC_FN layer (F1-F12 keys)
-        KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, LCTL(KC_SPC)),  KC_LCTL,  KC_LALT,  KC_LNG1,      LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, LCTL(KC_SPC)),  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        //        Position 5: KC_LGUI - Mac Command button (Left GUI/Command)
+        //        Position 6: LT(NAV_LAYER, KC_SPC) - Left Space (tap: space, hold: NAV layer)
+        //        Position 7: LT(SYM_LAYER, KC_SPC) - Right Space (tap: space, hold: SYM layer)
+        //        Position 8: KC_RGUI - Right Command (Right GUI/Command)
+        //        Position 9: KC_RCTL - Right Control
+        //        Position 10: LT(MAC_FN, KC_GLOBE_CUSTOM) - Right Thumb Fn (tap: Globe, hold: MAC_FN layer)
+        //        Position 11: KC_LEFT - Left Arrow
+        //        Position 12: KC_DOWN - Down Arrow
+        //        Position 13: KC_RGHT - Right Arrow
+        KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_GLOBE_CUSTOM),  KC_LCTL,  KC_LALT,  KC_LGUI,      LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  LT(MAC_FN, KC_GLOBE_CUSTOM),  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held)
@@ -452,6 +458,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 // Square brackets: [] with cursor in middle
                 SEND_STRING("[]" SS_TAP(X_LEFT));
             }
+            return false;
+
+        // Globe key fallback - Globe key requires QMK patches/modules to work
+        // To enable Globe key support, you need to:
+        // 1. Apply QMK patches for KC_GLOBE support (see: https://gist.github.com/lordpixel23/87498dc42e328eabdff6dd258a667efd)
+        // 2. Or use tzarc/qmk_modules globe_key module
+        // 3. Add KEYBOARD_SHARED_EP = yes to rules.mk
+        // For now, this sends nothing (KC_NO) - replace with KC_GLOBE once patches are applied
+        case KC_GLOBE_CUSTOM:
+            // TODO: Implement Globe key once KC_GLOBE is available via patches
+            // For now, this does nothing - Globe key functionality requires QMK patches
             return false;
 
         default:

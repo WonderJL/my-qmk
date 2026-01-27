@@ -7,8 +7,8 @@ layers:
   - [W, E, R, T, Y, U, I, O, P, '[', ']', \]
   - [PGDN, APP SLACK 6, CAPS, A, S, D, F, G, H, J, K, L]
   - [;, '''', ENT, HOME, APP CHATGPT, LSFT, Z, X, C, V, B, N]
-  - [M, ',', ., /, RSFT, UP, APP VPN SHADOWROCKET, 'LT(MAC FN,LCTL(SPC))', LCTL, LALT, LNG1, 'LT(NAV LAYER,SPC)']
-  - ['LT(SYM LAYER,SPC)', RCMD, RCTL, 'LT(MAC FN,LCTL(SPC))', LEFT, DOWN, RGHT]
+  - [M, ',', ., /, RSFT, UP, APP VPN SHADOWROCKET, 'LT(MAC FN,GLOBE)', LCTL, LALT, LGUI, 'LT(NAV LAYER,SPC)']
+  - ['LT(SYM LAYER,SPC)', RGUI, RCTL, 'LT(MAC FN,GLOBE)', LEFT, DOWN, RGHT]
   L1-NAV_LAYER:
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}

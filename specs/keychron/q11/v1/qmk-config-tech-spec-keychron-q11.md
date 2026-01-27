@@ -57,11 +57,11 @@ BASE (Layer 0)
   │   │   ├─ Tap W → Toggle MAC_FN (Layer 6) [toggle]
   │   │   ├─ Tap E → Toggle WIN_BASE (Layer 7) [toggle]
   │   │   ├─ Tap R → Toggle WIN_FN (Layer 8) [toggle]
-  │   │   ├─ Tap A → Latch APP_LAYER (Layer 4) [latch]
-  │   │   ├─ Tap S → Latch WIN_LAYER (Layer 5) [latch - existing]
-  │   │   ├─ Tap D → Latch APP_LAYER (Layer 4) [latch]
-  │   │   ├─ Tap F → Latch CURSOR_LAYER (Layer 3) [latch]
-  │   │   ├─ Hold G → Momentary LIGHTING_LAYER (Layer 9) [momentary]
+  │   │   ├─ While holding left space, press A → Switch to APP_LAYER (Layer 4) [custom switch]
+  │   │   ├─ While holding left space, press S → Switch to WIN_LAYER (Layer 5) [custom switch]
+  │   │   ├─ While holding left space, press D → Switch to APP_LAYER (Layer 4) [custom switch]
+  │   │   ├─ While holding left space, press F → Switch to CURSOR_LAYER (Layer 3) [custom switch]
+  │   │   ├─ While holding left space, press G → Switch to LIGHTING_LAYER (Layer 9) [custom switch]
   │   │   └─ Tap H → Toggle NUMPAD_LAYER (Layer 10) [toggle]
   │
   └─ Right Space Hold → SYM_LAYER (Layer 2) [Layer Tap]
@@ -76,8 +76,8 @@ From any non-momentary layer (L3-L10):
 **Key Points**:
 - **NAV_LAYER**: Momentary - activates only while left space held (Layer Tap)
 - **SYM_LAYER**: Momentary - activates only while right space held (Layer Tap)
-- **Space Bars**: Layer Tap (LT) - tap for space, hold for layer activation
-  - **Left Space**: `LT(NAV_LAYER, KC_SPC)` - tap for space, hold for NAV layer
+- **Space Bars**: Layer Tap (LT) and Custom - tap for space, hold for layer activation
+  - **Left Space**: `KC_NAV_SPACE` (custom) - tap for space, hold for NAV layer, supports custom layer switching
   - **Right Space**: `LT(SYM_LAYER, KC_SPC)` - tap for space, hold for SYM layer
 - **Thumb Keys**:
   - **Left Thumb (Position 2)**: `KC_IME_NEXT` - Input method switch (Ctrl+Space)
@@ -85,9 +85,9 @@ From any non-momentary layer (L3-L10):
   - **Input Method Switching**: Position 2 sends `LCTL(KC_SPC)` for macOS input source switching
   - **Function Layer**: Position 10 activates MAC_FN layer when held (momentary, no tap behavior)
   - **Mac Command Button**: `KC_LGUI` key (Position 5) is the Mac Command button (Left GUI/Command)
-- **Helper Layers** (CURSOR/APP/WIN): Latch (LT) - tap selector to activate, tap again to deactivate
+- **Helper Layers** (CURSOR/APP/WIN/LIGHTING): Custom Switch - while holding left space, press selector to switch to target layer, stays active until left space released
 - **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
-- **Lighting Layer** (L9): Momentary (MO) - activates only while selector held
+- **Custom Layer Switching**: Left space hold activates NAV_LAYER, then pressing A/S/D/F/G switches to target layer while left space remains held
 - **Left Space NAV Access**: All non-momentary layers (L3-L10) provide NAV access on left space, except NUMPAD_LAYER which uses the left thumb key to keep KP_0 on left space
 - **All layers deactivate** on space release (momentary layers) or explicit deactivation (latched/toggled layers)
 
@@ -128,7 +128,7 @@ From any non-momentary layer (L3-L10):
     //        Position 11: KC_LEFT - Left Arrow
     //        Position 12: KC_DOWN - Down Arrow
     //        Position 13: KC_RGHT - Right Arrow
-    KC_APP_VPN_SHADOWROCKET,  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI,         LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT
+    KC_APP_VPN_SHADOWROCKET,  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI,         KC_NAV_SPACE,                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT
 ),
 ```
 
@@ -200,12 +200,12 @@ From any non-momentary layer (L3-L10):
                   TG(WIN_BASE),    // E: Toggle WIN_BASE (Layer 7)
                   TG(WIN_FN),      // R: Toggle WIN_FN (Layer 8)
                   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-    // Row 3: Selectors on left-hand home row
-    _______,  _______,  LT(APP_LAYER, KC_NO),   // A: Reserved (future: shortcuts/automations) - currently latches APP_LAYER
-                  LT(WIN_LAYER, KC_NO),   // S: Latch WIN_LAYER (Layer 5)
-                  LT(APP_LAYER, KC_NO),   // D: Latch APP_LAYER (Layer 4)
-                  LT(CURSOR_LAYER, KC_NO), // F: Latch CURSOR_LAYER (Layer 3)
-                  MO(LIGHTING_LAYER),  // G: Momentary LIGHTING_LAYER (Layer 9)
+    // Row 3: Selectors on left-hand home row (custom layer switching)
+    _______,  _______,  KC_NAV_APP,   // A: Custom APP_LAYER switch (while holding left space)
+                  KC_NAV_WIN,   // S: Custom WIN_LAYER switch (while holding left space)
+                  KC_NAV_APP_D,   // D: Custom APP_LAYER switch (while holding left space)
+                  KC_NAV_CURSOR, // F: Custom CURSOR_LAYER switch (while holding left space)
+                  KC_NAV_LIGHTING,  // G: Custom LIGHTING_LAYER switch (while holding left space)
                   TG(NUMPAD_LAYER),  // H: Toggle NUMPAD_LAYER (Layer 10)
                   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
     // Row 4: Transparent
@@ -221,28 +221,32 @@ From any non-momentary layer (L3-L10):
   - `W`: Toggle MAC_FN (Layer 6)
   - `E`: Toggle WIN_BASE (Layer 7)
   - `R`: Toggle WIN_FN (Layer 8)
-- **Left-hand home row (A/S/D/F/G/H)**: Selectors using `LT()` (Layer Tap) and `MO()` (Momentary)
-  - `A`: Reserved (future: shortcuts/automations) - currently latches APP_LAYER
-  - `S`: Latch WIN_LAYER (Layer 5) - note: also accessible via Q toggle
-  - `D`: Latch APP_LAYER (Layer 4)
-  - `F`: Latch CURSOR_LAYER (Layer 3)
-  - `G`: Momentary LIGHTING_LAYER (Layer 9) - hold to activate
+- **Left-hand home row (A/S/D/F/G/H)**: Selectors using custom keycodes and `TG()` (Toggle)
+  - `A`: Custom switch to APP_LAYER (while holding left space)
+  - `S`: Custom switch to WIN_LAYER (while holding left space) - note: also accessible via Q toggle
+  - `D`: Custom switch to APP_LAYER (while holding left space)
+  - `F`: Custom switch to CURSOR_LAYER (while holding left space)
+  - `G`: Custom switch to LIGHTING_LAYER (while holding left space)
   - `H`: Toggle NUMPAD_LAYER (Layer 10)
-- **`LT(LAYER, KC_NO)`**: Tap to latch layer, hold does nothing
+- **Custom Layer Switching**: While holding left space (NAV_LAYER active), pressing A/S/D/F/G switches to target layer and stays active until left space is released
 - **`TG(LAYER)`**: Tap to toggle layer on/off (returns to MAC_BASE when toggled off)
-- **`MO(LAYER)`**: Hold to activate layer, release to deactivate
+- **Custom Keycodes**: `KC_NAV_SPACE`, `KC_NAV_APP`, `KC_NAV_WIN`, `KC_NAV_APP_D`, `KC_NAV_CURSOR`, `KC_NAV_LIGHTING`
 - **Right-hand keys**: Transparent (pass through to BASE)
 - **Space bars**: Transparent (pass through to BASE layer's `LT()` functions - tap for space, hold for layer)
 
 **Usage**:
 1. **Activate NAV_LAYER**:
    - Hold Left Space → NAV_LAYER activates (from BASE layer)
-2. Tap selector key:
+2. **Switch to target layer** (while holding left space):
+   - Press A/S/D/F/G → Switches to corresponding target layer (APP/WIN/CURSOR/LIGHTING)
+   - Target layer stays active while left space is held
+   - Release selector key → Target layer remains active (left space still held)
+3. **Toggle layers** (tap, not hold):
    - **Toggle selectors (Q/W/E/R/H)**: Tap to toggle layer on/off
-   - **Latch selectors (A/S/D/F)**: Tap to latch layer
-   - **Momentary selector (G)**: Hold to activate lighting layer
-3. Release Left Space → NAV_LAYER deactivates, but latched/toggled layers remain active
-4. Tap toggle selector again or activate another layer → Deactivate toggled layer
+4. **Return to BASE**:
+   - Release Left Space → Returns to MAC_BASE, all custom-switched layers deactivate
+5. **Tap Left Space** (quick press/release):
+   - Sends space character, no layer activation
 
 ---
 
@@ -535,7 +539,7 @@ From any non-momentary layer (L3-L10):
 
 **Purpose**: Control keyboard RGB lighting effects
 
-**Activation**: NAV + G (hold G while NAV_LAYER is active) - Momentary (MO)
+**Activation**: NAV + G (press G while holding left space in NAV_LAYER) - Custom Switch
 
 **Key Mappings**:
 ```c
@@ -579,13 +583,14 @@ From any non-momentary layer (L3-L10):
 - **Flags Group** (B/N): `RM_FLGN` / `RM_FLGP` - Cycle through flags
 - **Left Thumb Key**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
 - **Logical grouping**: Controls grouped by function for easy access
-- **Momentary activation**: Layer activates only while G key is held
+- **Custom switch activation**: Layer activates when G is pressed while NAV_LAYER is active (left space held), remains active while left space is held
 
 **Usage**:
-1. Hold Left Thumb → NAV_LAYER activates
-2. Hold G key → LIGHTING_LAYER activates
-3. Press lighting control keys while holding G
-4. Release G or Left Thumb → LIGHTING_LAYER deactivates
+1. Hold Left Space → NAV_LAYER activates
+2. Press G key (while holding left space) → LIGHTING_LAYER activates and stays active
+3. Keep holding Left Space (release G) → LIGHTING_LAYER remains active
+4. Press lighting control keys (W/E for next/previous mode, etc.)
+5. Release Left Space → LIGHTING_LAYER deactivates, returns to MAC_BASE
 
 ---
 
@@ -753,6 +758,13 @@ enum custom_keycodes {
     KC_GLOBE_CUSTOM,                 // Custom Globe key implementation (currently unused)
     // Input method switching (macOS Ctrl+Space)
     KC_IME_NEXT,                     // Switch input method (Ctrl+Space)
+    // Custom layer switching for NAV_LAYER selectors
+    KC_NAV_SPACE,                    // Custom left space with layer switching
+    KC_NAV_APP,                      // Custom A key for APP_LAYER switch
+    KC_NAV_WIN,                      // Custom S key for WIN_LAYER switch
+    KC_NAV_APP_D,                    // Custom D key for APP_LAYER switch
+    KC_NAV_CURSOR,                   // Custom F key for CURSOR_LAYER switch
+    KC_NAV_LIGHTING,                 // Custom G key for LIGHTING_LAYER switch
 };
 ```
 
@@ -760,6 +772,8 @@ enum custom_keycodes {
 - `KC_SYM_*` keycodes: Handled in `process_record_user()` to send strings via `SEND_STRING()`
 - `KC_GLOBE_CUSTOM`: Placeholder for Globe key (requires QMK patches)
 - `KC_IME_NEXT`: Sends `LCTL(KC_SPC)` (Ctrl+Space) for macOS input source switching
+- `KC_NAV_SPACE`: Custom left space handler - supports tap-for-space and custom layer switching
+- `KC_NAV_APP`, `KC_NAV_WIN`, `KC_NAV_APP_D`, `KC_NAV_CURSOR`, `KC_NAV_LIGHTING`: Custom selector keys for switching layers while holding left space
 
 ### Encoder Macros
 
@@ -803,6 +817,8 @@ The `process_record_user()` function handles custom keycodes and includes:
    - `KC_SYM_*` keycodes: Send strings via `SEND_STRING()` macro
    - `KC_GLOBE_CUSTOM`: Placeholder (currently does nothing, requires QMK patches)
    - `KC_IME_NEXT`: Sends `LCTL(KC_SPC)` (Ctrl+Space) for macOS input source switching
+   - `KC_NAV_SPACE`: Handles left space with custom layer switching - activates NAV_LAYER or selected target layer based on state
+   - `KC_NAV_APP`, `KC_NAV_WIN`, `KC_NAV_APP_D`, `KC_NAV_CURSOR`, `KC_NAV_LIGHTING`: Switch from NAV_LAYER to target layer while left space is held
 
 **Example Implementation**:
 ```c

@@ -7,7 +7,7 @@ layers:
   - [W, E, R, T, Y, U, I, O, P, '[', ']', \]
   - [PGDN, APP SLACK 6, CAPS, A, S, D, F, G, H, J, K, L]
   - [;, '''', ENT, HOME, APP CHATGPT, LSFT, Z, X, C, V, B, N]
-  - [M, ',', ., /, RSFT, UP, APP VPN SHADOWROCKET, IME NEXT, LCTL, LALT, LGUI, 'LT(NAV LAYER,SPC)']
+  - [M, ',', ., /, RSFT, UP, APP VPN SHADOWROCKET, IME NEXT, LCTL, LALT, LGUI, NAV SPACE]
   - ['LT(SYM LAYER,SPC)', RGUI, RCTL, MO(MAC FN), LEFT, DOWN, RGHT]
   L1-NAV_LAYER:
   - - {t: ▽, type: trans}
@@ -61,11 +61,11 @@ layers:
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - LT(APP LAYER,NO)
-    - LT(WIN LAYER,NO)
-    - LT(APP LAYER,NO)
-    - LT(CURSOR LAYER,NO)
-    - MO(LIGHTING LAYER)
+    - NAV APP
+    - NAV WIN
+    - NAV APP D
+    - NAV CURSOR
+    - NAV LIGHTING
     - TG(NUMPAD LAYER)
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}

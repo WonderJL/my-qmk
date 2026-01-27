@@ -20,11 +20,11 @@
  *     NAV + W → Toggle MAC_FN
  *     NAV + E → Toggle WIN_BASE
  *     NAV + R → Toggle WIN_FN
- *     NAV + A → APP_LAYER (reserved, same as D for now)
- *     NAV + S → WIN_LAYER
- *     NAV + D → APP_LAYER
- *     NAV + F → CURSOR_LAYER
- *     NAV + G → LIGHTING_LAYER (momentary)
+ *     NAV + A → APP_LAYER (custom switch while holding left space)
+ *     NAV + S → WIN_LAYER (custom switch while holding left space)
+ *     NAV + D → APP_LAYER (custom switch while holding left space)
+ *     NAV + F → CURSOR_LAYER (custom switch while holding left space)
+ *     NAV + G → LIGHTING_LAYER (custom switch while holding left space)
  *     NAV + H → NUMPAD_LAYER (toggle)
  *   BASE → Right Thumb Hold → SYM_LAYER
  *   L3-L10 → Left Space Hold → NAV_LAYER
@@ -67,6 +67,13 @@ enum custom_keycodes {
     KC_GLOBE_CUSTOM,                 // Custom Globe key implementation
     // Input method switching (macOS Ctrl+Space)
     KC_IME_NEXT,                     // Switch input method (Ctrl+Space)
+    // Custom layer switching for NAV_LAYER selectors
+    KC_NAV_SPACE,                    // Custom left space with layer switching
+    KC_NAV_APP,                      // Custom A key for APP_LAYER switch
+    KC_NAV_WIN,                      // Custom S key for WIN_LAYER switch
+    KC_NAV_APP_D,                    // Custom D key for APP_LAYER switch
+    KC_NAV_CURSOR,                   // Custom F key for CURSOR_LAYER switch
+    KC_NAV_LIGHTING,                 // Custom G key for LIGHTING_LAYER switch
 };
 
 // ============================================
@@ -168,7 +175,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        Position 11: KC_LEFT - Left Arrow
         //        Position 12: KC_DOWN - Down Arrow
         //        Position 13: KC_RGHT - Right Arrow
-        KC_APP_VPN_SHADOWROCKET,  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI,      LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        KC_APP_VPN_SHADOWROCKET,  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI,      KC_NAV_SPACE,                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held)
@@ -181,16 +188,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
         // Row 2: Toggle selectors for L5-L8
         _______,  _______,  TG(WIN_LAYER),  TG(MAC_FN),  TG(WIN_BASE),  TG(WIN_FN),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-        // Row 3: Selectors on left-hand home row
-        //        A: Reserved (currently APP_LAYER)
-        //        S: WIN_LAYER (window management)
-        //        D: APP_LAYER (app launchers)
-        //        F: CURSOR_LAYER (Cursor IDE)
-        _______,  _______,  LT(APP_LAYER, KC_NO),      // A: Reserved → APP_LAYER
-                            LT(WIN_LAYER, KC_NO),      // S: WIN layer
-                            LT(APP_LAYER, KC_NO),      // D: APP layer
-                            LT(CURSOR_LAYER, KC_NO),   // F: CURSOR layer
-                            MO(LIGHTING_LAYER),        // G: LIGHTING layer (momentary)
+        // Row 3: Selectors on left-hand home row (custom layer switching)
+        //        A: APP_LAYER (switch while holding left space)
+        //        S: WIN_LAYER (switch while holding left space)
+        //        D: APP_LAYER (switch while holding left space)
+        //        F: CURSOR_LAYER (switch while holding left space)
+        //        G: LIGHTING_LAYER (switch while holding left space)
+        _______,  _______,  KC_NAV_APP,      // A: Custom APP_LAYER switch
+                            KC_NAV_WIN,      // S: Custom WIN_LAYER switch
+                            KC_NAV_APP_D,    // D: Custom APP_LAYER switch
+                            KC_NAV_CURSOR,   // F: Custom CURSOR_LAYER switch
+                            KC_NAV_LIGHTING, // G: Custom LIGHTING_LAYER switch
                             TG(NUMPAD_LAYER),          // H: NUMPAD layer (toggle)
                             _______,  _______,  _______,  _______,  _______,            _______,            _______,
         // Row 4: Transparent
@@ -365,7 +373,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 _______,            _______,  _______,    _______,  _______,  _______,  _______),
 
     // ============================================
-    // Layer 9: LIGHTING_LAYER - RGB lighting controls (NAV + G)
+    // Layer 9: LIGHTING_LAYER - RGB lighting controls (NAV + G, latch - tap to activate)
     // ============================================
     [LIGHTING_LAYER] = LAYOUT_91_ansi(
         // Row 0: Transparent
@@ -419,6 +427,13 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [NUMPAD_LAYER]   = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU),      ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN) },
 };
 #endif // ENCODER_MAP_ENABLE
+
+// ============================================
+// Custom Layer Switching State
+// Tracks which target layer is selected when switching from NAV_LAYER
+// ============================================
+static uint8_t selected_target_layer = NAV_LAYER;  // Default to NAV_LAYER
+static uint16_t nav_space_press_time = 0;          // Track press time for tap detection
 
 // ============================================
 // Process Record User - Handle custom keycodes
@@ -539,6 +554,95 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_IME_NEXT:
             if (record->event.pressed) {
                 tap_code16(LCTL(KC_SPC));  // Ctrl + Space for macOS input source switching
+            }
+            return false;
+
+        // Custom layer switching - Left Space
+        // Handles layer activation based on selected target layer
+        // Supports tap-for-space and hold-for-layer behavior
+        case KC_NAV_SPACE:
+            if (record->event.pressed) {
+                nav_space_press_time = record->event.time;
+                if (selected_target_layer != NAV_LAYER && selected_target_layer < 11) {
+                    // Activate selected target layer (APP/WIN/CURSOR/LIGHTING)
+                    layer_on(selected_target_layer);
+                } else {
+                    // Default: activate NAV_LAYER
+                    layer_on(NAV_LAYER);
+                }
+            } else {
+                // Release - check if this was a tap (quick press/release)
+                // TAPPING_TERM is typically 200ms, defined by QMK
+                uint16_t press_duration = TIMER_DIFF_16(record->event.time, nav_space_press_time);
+                bool was_tap = press_duration < TAPPING_TERM;
+                
+                // Deactivate all possible layers
+                layer_off(NAV_LAYER);
+                layer_off(APP_LAYER);
+                layer_off(WIN_LAYER);
+                layer_off(CURSOR_LAYER);
+                layer_off(LIGHTING_LAYER);
+                
+                // Reset selection to default
+                selected_target_layer = NAV_LAYER;
+                
+                // If it was a tap (not a hold), send space character
+                if (was_tap) {
+                    tap_code(KC_SPC);
+                }
+            }
+            return false; // We've handled it
+
+        // Custom layer switching - Selector keys
+        // These keys switch from NAV_LAYER to target layer while left space is held
+        // Only work when NAV_LAYER is currently active
+        case KC_NAV_APP:  // A key - Switch to APP_LAYER
+            if (record->event.pressed) {
+                if (layer_state_is(NAV_LAYER)) {
+                    selected_target_layer = APP_LAYER;
+                    layer_off(NAV_LAYER);
+                    layer_on(APP_LAYER);
+                }
+            }
+            return false;
+
+        case KC_NAV_WIN:  // S key - Switch to WIN_LAYER
+            if (record->event.pressed) {
+                if (layer_state_is(NAV_LAYER)) {
+                    selected_target_layer = WIN_LAYER;
+                    layer_off(NAV_LAYER);
+                    layer_on(WIN_LAYER);
+                }
+            }
+            return false;
+
+        case KC_NAV_APP_D:  // D key - Switch to APP_LAYER
+            if (record->event.pressed) {
+                if (layer_state_is(NAV_LAYER)) {
+                    selected_target_layer = APP_LAYER;
+                    layer_off(NAV_LAYER);
+                    layer_on(APP_LAYER);
+                }
+            }
+            return false;
+
+        case KC_NAV_CURSOR:  // F key - Switch to CURSOR_LAYER
+            if (record->event.pressed) {
+                if (layer_state_is(NAV_LAYER)) {
+                    selected_target_layer = CURSOR_LAYER;
+                    layer_off(NAV_LAYER);
+                    layer_on(CURSOR_LAYER);
+                }
+            }
+            return false;
+
+        case KC_NAV_LIGHTING:  // G key - Switch to LIGHTING_LAYER
+            if (record->event.pressed) {
+                if (layer_state_is(NAV_LAYER)) {
+                    selected_target_layer = LIGHTING_LAYER;
+                    layer_off(NAV_LAYER);
+                    layer_on(LIGHTING_LAYER);
+                }
             }
             return false;
 

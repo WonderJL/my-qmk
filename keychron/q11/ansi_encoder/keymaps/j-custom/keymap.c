@@ -66,45 +66,47 @@ enum custom_keycodes {
 };
 
 // ============================================
-// App Launcher Macros (modifier combinations - can be used directly)
+// App Launcher Macros (⌥⌘ combinations)
+// Using LAG() macro for Left Alt + Left GUI (ensures proper modifier release)
 // ============================================
-#define KC_APP_CHATGPT   LALT(LGUI(KC_Z))       // ⌥⌘Z - Z key
-#define KC_APP_VSCODE    LALT(LGUI(KC_V))       // ⌥⌘V - V key
-#define KC_APP_CAL       LALT(LGUI(KC_C))       // ⌥⌘C - C key
-#define KC_APP_MAIL      LALT(LGUI(KC_E))       // ⌥⌘E - E key
-#define KC_APP_SLACK     LALT(LGUI(KC_S))       // ⌥⌘S - S key
-#define KC_APP_BGA       LALT(LGUI(KC_B))       // ⌥⌘B - B key
-#define KC_APP_WHATSAPP  LALT(LGUI(KC_1))       // ⌥⌘1 - J key
-#define KC_APP_SIGNAL    LALT(LGUI(KC_2))       // ⌥⌘2 - K key
-#define KC_APP_WECHAT    LALT(LGUI(KC_3))       // ⌥⌘3 - L key
-#define KC_APP_TELEGRAM  LALT(LGUI(KC_4))       // ⌥⌘4 - ; key
-#define KC_APP_CALC      LALT(LGUI(KC_ESC))     // ⌥⌘Esc - Esc key
-#define KC_APP_MUSIC     LALT(LGUI(KC_GRV))     // ⌥⌘` - ` key
-#define KC_APP_NOTION    LSFT(LCTL(LGUI(KC_N))) // ⇧⌃⌘N - N key
-#define KC_APP_OBSIDIAN  LALT(LGUI(KC_O))       // ⌥⌘O - O key
-#define KC_APP_FINDER    LSFT(LALT(LGUI(KC_SPC))) // ⇧⌥⌘Space - Space key
-#define KC_APP_SLACK_6   LALT(LGUI(KC_6))       // ⌥⌘6 - Left column Row 3
-#define KC_APP_VPN_SHADOWROCKET LSFT(LALT(LGUI(KC_Z))) // ⇧⌥⌘Z - Toggle Shadowrocket VPN
+#define KC_APP_CHATGPT   LAG(KC_Z)              // ⌥⌘Z - Z key
+#define KC_APP_VSCODE    LAG(KC_V)              // ⌥⌘V - V key
+#define KC_APP_CAL       LAG(KC_C)              // ⌥⌘C - C key
+#define KC_APP_MAIL      LAG(KC_E)              // ⌥⌘E - E key
+#define KC_APP_SLACK     LAG(KC_S)              // ⌥⌘S - S key
+#define KC_APP_BGA       LAG(KC_B)              // ⌥⌘B - B key
+#define KC_APP_WHATSAPP  LAG(KC_1)              // ⌥⌘1 - J key
+#define KC_APP_SIGNAL    LAG(KC_2)              // ⌥⌘2 - K key
+#define KC_APP_WECHAT    LAG(KC_3)              // ⌥⌘3 - L key
+#define KC_APP_TELEGRAM  LAG(KC_4)              // ⌥⌘4 - ; key
+#define KC_APP_CALC      LAG(KC_ESC)            // ⌥⌘Esc - Esc key
+#define KC_APP_MUSIC     LAG(KC_GRV)            // ⌥⌘` - ` key
+#define KC_APP_NOTION    LCSG(KC_N)             // ⇧⌃⌘N - N key (Left Control + Left Shift + Left GUI)
+#define KC_APP_OBSIDIAN  LAG(KC_O)              // ⌥⌘O - O key
+#define KC_APP_FINDER    LSAG(KC_SPC)           // ⇧⌥⌘Space - Space key (Left Shift + Left Alt + Left GUI)
+#define KC_APP_SLACK_6   LAG(KC_6)              // ⌥⌘6 - Left column Row 3
+#define KC_APP_VPN_SHADOWROCKET LSAG(KC_Z)      // ⇧⌥⌘Z - Toggle Shadowrocket VPN (Left Shift + Left Alt + Left GUI)
 
 // ============================================
 // Window Management Macros (modifier combinations)
+// Using QMK macros for proper modifier release
 // ============================================
-// Maximize/Halves (⇧⌃⌘)
-#define KC_WIN_MAX       LSFT(LCTL(LGUI(KC_F)))      // ⇧⌃⌘F - F key (maximize)
-#define KC_WIN_LEFT      LSFT(LCTL(LGUI(KC_LEFT)))   // ⇧⌃⌘← - Left arrow
-#define KC_WIN_RIGHT     LSFT(LCTL(LGUI(KC_RIGHT)))  // ⇧⌃⌘→ - Right arrow
-#define KC_WIN_TOP       LSFT(LCTL(LGUI(KC_UP)))     // ⇧⌃⌘↑ - Up arrow
-#define KC_WIN_BOTTOM    LSFT(LCTL(LGUI(KC_DOWN)))   // ⇧⌃⌘↓ - Down arrow
+// Maximize/Halves (⇧⌃⌘) - Left Control + Left Shift + Left GUI
+#define KC_WIN_MAX       LCSG(KC_F)              // ⇧⌃⌘F - F key (maximize)
+#define KC_WIN_LEFT      LCSG(KC_LEFT)          // ⇧⌃⌘← - Left arrow
+#define KC_WIN_RIGHT     LCSG(KC_RIGHT)         // ⇧⌃⌘→ - Right arrow
+#define KC_WIN_TOP       LCSG(KC_UP)            // ⇧⌃⌘↑ - Up arrow
+#define KC_WIN_BOTTOM    LCSG(KC_DOWN)          // ⇧⌃⌘↓ - Down arrow
 
-// Quarters (⌃⌥)
-#define KC_WIN_TL        LCTL(LALT(KC_LEFT))         // ⌃⌥← - Q key (top left)
-#define KC_WIN_TR        LCTL(LALT(KC_RIGHT))        // ⌃⌥→ - W key (top right)
-#define KC_WIN_BL        LSFT(LCTL(LALT(KC_LEFT)))   // ⇧⌃⌥← - A key (bottom left)
-#define KC_WIN_BR        LSFT(LCTL(LALT(KC_RIGHT)))  // ⇧⌃⌥→ - S key (bottom right)
+// Quarters (⌃⌥) - Left Control + Left Alt
+#define KC_WIN_TL        LCA(KC_LEFT)           // ⌃⌥← - Q key (top left)
+#define KC_WIN_TR        LCA(KC_RIGHT)          // ⌃⌥→ - W key (top right)
+#define KC_WIN_BL        LSFT(LCA(KC_LEFT))     // ⇧⌃⌥← - A key (bottom left)
+#define KC_WIN_BR        LSFT(LCA(KC_RIGHT))    // ⇧⌃⌥→ - S key (bottom right)
 
-// Split View (⌃⌥⌘)
-#define KC_WIN_SV_L      LCTL(LALT(LGUI(KC_LEFT)))   // ⌃⌥⌘← - Z key (split left)
-#define KC_WIN_SV_R      LCTL(LALT(LGUI(KC_RIGHT)))  // ⌃⌥⌘→ - X key (split right)
+// Split View (⌃⌥⌘) - Left Control + Left Alt + Left GUI
+#define KC_WIN_SV_L      LCAG(KC_LEFT)          // ⌃⌥⌘← - Z key (split left)
+#define KC_WIN_SV_R      LCAG(KC_RIGHT)         // ⌃⌥⌘→ - X key (split right)
 
 // ============================================
 // Encoder Macros
@@ -112,7 +114,7 @@ enum custom_keycodes {
 #define KC_ZOOM_OUT      LGUI(KC_MINS)          // Cmd - (zoom out)
 #define KC_ZOOM_IN       LGUI(KC_EQL)           // Cmd = (zoom in)
 #define KC_ZOOM_RESET    LGUI(KC_0)             // Cmd 0 (zoom reset)
-#define KC_LOCK_SCREEN   LCTL(LGUI(KC_Q))       // Ctrl+Cmd+Q (lock screen)
+#define KC_LOCK_SCREEN   LCG(KC_Q)              // Ctrl+Cmd+Q (lock screen) - Left Control + Left GUI
 
 // ============================================
 // Tap Dance

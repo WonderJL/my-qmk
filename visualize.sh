@@ -616,6 +616,27 @@ extract_layer_names() {
     fi
 }
 
+# Count layers in keymap.c
+count_layers() {
+    local keymap_file="$1"
+    
+    if [ ! -f "$keymap_file" ]; then
+        echo "0"
+        return 1
+    fi
+    
+    # Extract layer names and count them
+    local count=0
+    while IFS= read -r name; do
+        if [ -n "$name" ]; then
+            ((count++)) || true
+        fi
+    done < <(extract_layer_names "$keymap_file")
+    
+    echo "$count"
+    return 0
+}
+
 # Update YAML file to replace L0, L1, etc. with layer names
 update_yaml_layer_names() {
     local yaml_file="$1"
@@ -751,6 +772,275 @@ EOF
 }
 
 # =============================================================================
+# Split keyboard detection and configuration functions
+# =============================================================================
+
+# Find info.json file for the keyboard (local or QMK directory)
+find_info_json() {
+    local keyboard_path="$1"
+    
+    # Try local info.json first (in keyboard directory)
+    local local_info_json="$SCRIPT_DIR/$keyboard_path/info.json"
+    if [ -f "$local_info_json" ]; then
+        echo "$local_info_json"
+        return 0
+    fi
+    
+    # Try parent directory (for keyboards like keychron/q11/ansi_encoder)
+    local parent_info_json="$SCRIPT_DIR/$(dirname "$keyboard_path")/info.json"
+    if [ -f "$parent_info_json" ]; then
+        echo "$parent_info_json"
+        return 0
+    fi
+    
+    # Try QMK firmware directory
+    local qmk_info_json="$QMK_FIRMWARE_DIR/keyboards/$keyboard_path/info.json"
+    if [ -f "$qmk_info_json" ]; then
+        echo "$qmk_info_json"
+        return 0
+    fi
+    
+    # Try QMK firmware parent directory
+    local qmk_parent_info_json="$QMK_FIRMWARE_DIR/keyboards/$(dirname "$keyboard_path")/info.json"
+    if [ -f "$qmk_parent_info_json" ]; then
+        echo "$qmk_parent_info_json"
+        return 0
+    fi
+    
+    return 1
+}
+
+# Check if keyboard is split by examining info.json
+is_split_keyboard() {
+    local info_json="$1"
+    
+    if [ ! -f "$info_json" ]; then
+        return 1
+    fi
+    
+    # Check if split.enabled is true in info.json
+    # Use Python for reliable JSON parsing (more robust than grep)
+    if command -v python3 &> /dev/null; then
+        python3 << EOF 2>/dev/null
+import json
+import sys
+
+try:
+    with open('$info_json', 'r') as f:
+        data = json.load(f)
+    
+    # Check if split is enabled
+    if 'split' in data and isinstance(data['split'], dict):
+        if data['split'].get('enabled', False):
+            sys.exit(0)
+    
+    sys.exit(1)
+except Exception:
+    sys.exit(1)
+EOF
+        return $?
+    fi
+    
+    # Fallback to grep (less reliable but works if Python not available)
+    if grep -q '"split"' "$info_json" && grep -q '"enabled"' "$info_json" && grep -q 'true' "$info_json"; then
+        return 0
+    fi
+    
+    return 1
+}
+
+# Create config file with split_gap for split keyboards
+create_split_config() {
+    local config_file="$1"
+    local split_gap="${2:-30.0}"  # Default 30.0 pixels
+    
+    # Create config file with split_gap setting
+    cat > "$config_file" << EOF
+draw_config:
+  split_gap: $split_gap
+EOF
+    
+    print_info "Created split keyboard config with gap: ${split_gap}px"
+}
+
+# Post-process SVG to add visual gap for split keyboards
+# This shifts right half keys to the right by split_gap pixels
+add_split_gap_to_svg() {
+    local svg_file="$1"
+    local info_json="$2"
+    local split_gap="${3:-60.0}"  # Default 60 pixels
+    
+    if [ ! -f "$svg_file" ] || [ ! -f "$info_json" ]; then
+        return 1
+    fi
+    
+    # Use Python to post-process the SVG
+    if ! command -v python3 &> /dev/null; then
+        print_warning "Python3 not available, skipping SVG split gap post-processing"
+        return 1
+    fi
+    
+    python3 << PYEOF 2>/dev/null
+import re
+import json
+import sys
+
+svg_file = '$svg_file'
+info_json = '$info_json'
+split_gap = float('$split_gap')
+
+try:
+    # Read info.json to get layout mapping
+    with open(info_json, 'r') as f:
+        info_data = json.load(f)
+    
+    # Get layout (use LAYOUT_91_ansi as default)
+    layout_name = 'LAYOUT_91_ansi'
+    if 'layouts' in info_data and layout_name in info_data['layouts']:
+        layout = info_data['layouts'][layout_name]['layout']
+    else:
+        # Try to find any layout
+        if 'layouts' in info_data and len(info_data['layouts']) > 0:
+            layout_name = list(info_data['layouts'].keys())[0]
+            layout = info_data['layouts'][layout_name]['layout']
+        else:
+            sys.exit(1)
+    
+    # Build mapping: keypos index -> is_right_half (matrix[0] >= 6)
+    keypos_to_right_half = {}
+    for idx, key_def in enumerate(layout):
+        matrix_row = key_def.get('matrix', [0, 0])[0]
+        is_right_half = matrix_row >= 6
+        keypos_to_right_half[idx] = is_right_half
+    
+    # Read SVG
+    with open(svg_file, 'r') as f:
+        svg_content = f.read()
+    
+    # Find all key elements with keypos class and shift right half keys
+    # Pattern: <g transform="translate(X, Y)" class="key keypos-N">
+    def shift_key_transform(match):
+        full_match = match.group(0)
+        transform = match.group(1)
+        classes = match.group(2)
+        
+        # Extract keypos number
+        keypos_match = re.search(r'keypos-(\d+)', classes)
+        if not keypos_match:
+            return full_match
+        
+        keypos = int(keypos_match.group(1))
+        
+        # Check if this is a right half key
+        if keypos in keypos_to_right_half and keypos_to_right_half[keypos]:
+            # Extract x and y from transform
+            coords_match = re.search(r'translate\(([0-9.]+),\s*([0-9.]+)\)', transform)
+            if coords_match:
+                x = float(coords_match.group(1))
+                y = float(coords_match.group(2))
+                # Shift x by split_gap
+                new_x = x + split_gap
+                new_transform = f'translate({new_x:.1f}, {y:.1f})'
+                return f'<g transform="{new_transform}" class="{classes}">'
+        
+        return full_match
+    
+    # Replace all key transforms (match keys with keypos class)
+    svg_content = re.sub(
+        r'<g transform="([^"]+)" class="([^"]*key[^"]*keypos-\d+[^"]*)"',
+        shift_key_transform,
+        svg_content
+    )
+    
+    # Also shift text elements and other content that might be positioned relative to right half keys
+    # Find the split point in SVG coordinates by looking at the transition
+    # We'll find the rightmost left-half key and shift everything after that
+    left_max_x = 0
+    right_min_x = float('inf')
+    
+    for match in re.finditer(r'<g transform="translate\(([0-9.]+),\s*([0-9.]+)\)" class="[^"]*key[^"]*keypos-(\d+)', svg_content):
+        x = float(match.group(1))
+        keypos = int(match.group(3))
+        if keypos in keypos_to_right_half:
+            if not keypos_to_right_half[keypos]:
+                left_max_x = max(left_max_x, x)
+            else:
+                right_min_x = min(right_min_x, x)
+    
+    # Use the midpoint as split threshold
+    if right_min_x != float('inf') and left_max_x > 0:
+        split_threshold = (left_max_x + right_min_x) / 2
+    else:
+        # Fallback: approximate split point (around 450-500px based on layout)
+        split_threshold = 450
+    
+    # Shift other elements (text, combos, etc.) that are positioned on the right half
+    def shift_other_transform(match):
+        full_match = match.group(0)
+        transform = match.group(1)
+        coords_match = re.search(r'translate\(([0-9.]+),\s*([0-9.]+)\)', transform)
+        if coords_match:
+            x = float(coords_match.group(1))
+            y = float(coords_match.group(2))
+            # Only shift if x is beyond split threshold and not already a key element
+            if x > split_threshold and 'keypos-' not in full_match:
+                new_x = x + split_gap
+                new_transform = f'translate({new_x:.1f}, {y:.1f})'
+                return full_match.replace(transform, new_transform)
+        return full_match
+    
+    # Shift other group transforms (but avoid double-shifting keys)
+    svg_content = re.sub(
+        r'<g transform="translate\(([0-9.]+),\s*([0-9.]+)\)"',
+        shift_other_transform,
+        svg_content
+    )
+    
+    # Update viewBox width to accommodate the gap
+    viewbox_match = re.search(r'viewBox="0\s+0\s+([0-9.]+)\s+([0-9.]+)"', svg_content)
+    if viewbox_match:
+        width = float(viewbox_match.group(1))
+        height = float(viewbox_match.group(2))
+        new_width = width + split_gap
+        svg_content = re.sub(
+            r'viewBox="0\s+0\s+([0-9.]+)\s+([0-9.]+)"',
+            f'viewBox="0 0 {new_width:.1f} {height:.1f}"',
+            svg_content,
+            count=1
+        )
+    
+    # Update SVG width attribute if present
+    width_match = re.search(r'<svg[^>]*width="([0-9.]+)"', svg_content)
+    if width_match:
+        width = float(width_match.group(1))
+        new_width = width + split_gap
+        svg_content = re.sub(
+            r'(<svg[^>]*width=")([0-9.]+)(")',
+            f'\\g<1>{new_width:.1f}\\g<3>',
+            svg_content,
+            count=1
+        )
+    
+    # Write back to file
+    with open(svg_file, 'w') as f:
+        f.write(svg_content)
+    
+    sys.exit(0)
+except Exception as e:
+    # Silently fail - don't break the workflow
+    sys.exit(1)
+PYEOF
+
+    if [ $? -eq 0 ]; then
+        print_success "Added split gap (${split_gap}px) to SVG visualization"
+        return 0
+    else
+        print_warning "Failed to add split gap to SVG (non-critical)"
+        return 1
+    fi
+}
+
+# =============================================================================
 # Diagram generation functions
 # =============================================================================
 
@@ -766,6 +1056,29 @@ generate_diagrams() {
     fi
     
     print_info "Keymap file: $keymap_file"
+    
+    # Early layer detection - count layers before processing
+    local layer_count
+    layer_count=$(count_layers "$keymap_file")
+    if [ "$layer_count" -gt 0 ]; then
+        print_success "Detected $layer_count layer(s) in keymap"
+        
+        # Extract and display layer names early
+        local layer_names=()
+        local layer_index=0
+        while IFS= read -r name; do
+            if [ -n "$name" ]; then
+                layer_names[layer_index]="$name"
+                ((layer_index++)) || true
+            fi
+        done < <(extract_layer_names "$keymap_file")
+        
+        if [ ${#layer_names[@]} -gt 0 ]; then
+            print_info "Layers: ${layer_names[*]}"
+        fi
+    else
+        print_warning "Could not detect layers in keymap.c"
+    fi
     
     # Construct final output directory: <base_path>/<keyboard>/<keymap>/<format>/
     # Determine format subdirectory based on output format
@@ -889,10 +1202,26 @@ generate_diagrams() {
     local columns_arg=""
     if [ "$SELECTED_COLUMNS" != "auto" ]; then
         columns_arg="-c $SELECTED_COLUMNS"
+        print_info "Using columns: $SELECTED_COLUMNS (manual)"
     else
-        # Try to auto-detect columns (default to 10 if detection fails)
-        columns_arg="-c 10"
-        print_info "Using columns: 10 (auto-detect attempted)"
+        # Try to auto-detect columns based on layer count and keyboard layout
+        # For split keyboards, use a heuristic: if many layers, might need more columns
+        local auto_columns=10
+        if [ "$layer_count" -gt 0 ]; then
+            # Use layer count as a hint for columns (but cap at reasonable value)
+            # More layers might benefit from more columns for better organization
+            if [ "$layer_count" -gt 8 ]; then
+                auto_columns=12
+            elif [ "$layer_count" -gt 5 ]; then
+                auto_columns=11
+            else
+                auto_columns=10
+            fi
+            print_info "Auto-detected columns: $auto_columns (based on $layer_count layers)"
+        else
+            print_info "Using default columns: $auto_columns (layer detection unavailable)"
+        fi
+        columns_arg="-c $auto_columns"
     fi
     
     if ! cat "$json_output" | keymap parse $columns_arg -q - > "$yaml_file" 2>&1; then
@@ -904,23 +1233,51 @@ generate_diagrams() {
     print_success "Parsed to YAML: $yaml_file"
     print_success "JSON saved to: $json_file"
     
-    # Step 2.5: Update YAML and JSON with layer names
-    print_info "Extracting and applying layer names..."
+    # Validate YAML layer count matches detected layers
+    if [ "$layer_count" -gt 0 ]; then
+        local yaml_layer_count=0
+        if [ -f "$yaml_file" ]; then
+            # Count layers in YAML (lines starting with "  L" followed by number)
+            yaml_layer_count=$(grep -E '^  L[0-9]+' "$yaml_file" 2>/dev/null | wc -l | tr -d ' ')
+        fi
+        
+        if [ "$yaml_layer_count" -gt 0 ]; then
+            if [ "$yaml_layer_count" -eq "$layer_count" ]; then
+                print_success "YAML layer count matches detected layers ($layer_count)"
+            else
+                print_warning "Layer count mismatch: keymap.c has $layer_count layers, YAML has $yaml_layer_count layers"
+                print_info "This may be normal if some layers are empty or transparent"
+            fi
+        fi
+    fi
     
-    # Extract and display layer names
+    # Step 2.5: Update YAML and JSON with layer names
+    print_info "Applying layer names to YAML and JSON..."
+    
+    # Re-extract layer names (in case they weren't extracted earlier)
     local layer_names=()
     local layer_index=0
     while IFS= read -r name; do
         if [ -n "$name" ]; then
             layer_names[layer_index]="$name"
-            print_info "  Layer $layer_index: $name"
             ((layer_index++)) || true
         fi
     done < <(extract_layer_names "$keymap_file")
     
+    # Verify layer count matches
+    if [ ${#layer_names[@]} -ne "$layer_count" ] && [ "$layer_count" -gt 0 ]; then
+        print_warning "Layer count mismatch: detected $layer_count, extracted ${#layer_names[@]}"
+    fi
+    
     if [ ${#layer_names[@]} -gt 0 ]; then
+        # Display layer summary
+        print_info "Layer summary (${#layer_names[@]} total):"
+        for i in "${!layer_names[@]}"; do
+            print_info "  Layer $i: ${layer_names[i]}"
+        done
+        
         if update_yaml_layer_names "$yaml_file" "$keymap_file"; then
-            print_success "Layer names applied to YAML (${#layer_names[@]} layers)"
+            print_success "Layer names applied to YAML"
         else
             print_warning "Could not apply layer names to YAML (will use L0, L1, etc.)"
         fi
@@ -932,6 +1289,9 @@ generate_diagrams() {
         fi
     else
         print_warning "No layer names found in keymap.c (will use L0, L1, etc.)"
+        if [ "$layer_count" -gt 0 ]; then
+            print_info "Note: Detected $layer_count layers but could not extract names"
+        fi
     fi
     
     # Step 3: Generate SVG via keymap draw
@@ -939,18 +1299,128 @@ generate_diagrams() {
     
     local svg_file="$OUTPUT_DIR/keymap.svg"
     
-    if ! keymap draw "$yaml_file" > "$svg_file" 2>&1; then
+    # Find info.json for layout information
+    local info_json
+    info_json=$(find_info_json "$SELECTED_KEYBOARD")
+    
+    # Check if keyboard is split and prepare config
+    local config_file=""
+    local draw_args=""
+    
+    if [ -n "$info_json" ] && is_split_keyboard "$info_json"; then
+        print_info "Detected split keyboard layout"
+        
+        # Create temporary config file with split_gap
+        # Use a larger gap (60px) for better visibility of split
+        config_file=$(mktemp /tmp/keymap_config_XXXXXX.yaml)
+        create_split_config "$config_file" "60.0"
+        
+        # Add config file to draw args
+        draw_args="-c $config_file"
+        
+        print_success "Using split keyboard visualization (gap: 60px)"
+    fi
+    
+    # Extract layout name from YAML if available
+    local layout_name=""
+    if [ -f "$yaml_file" ]; then
+        # Extract layout_name from YAML format: layout: {qmk_keyboard: ..., layout_name: LAYOUT_91_ansi}
+        # Use Python for reliable extraction
+        if command -v python3 &> /dev/null; then
+            layout_name=$(python3 << PYEOF 2>/dev/null
+import re
+import sys
+try:
+    with open('$yaml_file', 'r') as f:
+        for line in f:
+            if line.startswith('layout:'):
+                # Match layout_name: followed by the value (alphanumeric and underscores)
+                match = re.search(r'layout_name:\s*([A-Za-z0-9_]+)', line)
+                if match:
+                    print(match.group(1))
+                    sys.exit(0)
+except:
+    pass
+PYEOF
+)
+        else
+            # Fallback to sed (less reliable)
+            layout_name=$(grep -E "^layout:" "$yaml_file" | sed -E 's/.*layout_name:[[:space:]]*([A-Z0-9_]+).*/\1/' | head -1)
+        fi
+    fi
+    
+    # Add info.json to draw args if found
+    if [ -n "$info_json" ]; then
+        draw_args="$draw_args -j $info_json"
+        print_info "Using layout from: $info_json"
+        # Explicitly specify layout name if found in YAML
+        if [ -n "$layout_name" ]; then
+            draw_args="$draw_args -l $layout_name"
+            print_info "Using layout name: $layout_name"
+        fi
+    fi
+    
+    # Generate SVG with appropriate arguments
+    # Build command array for proper argument handling
+    # Note: -c (config) is a GLOBAL option and must come BEFORE the subcommand
+    local draw_cmd_array=("keymap")
+    if [ -n "$config_file" ]; then
+        draw_cmd_array+=("-c" "$config_file")
+    fi
+    draw_cmd_array+=("draw")
+    if [ -n "$info_json" ]; then
+        draw_cmd_array+=("-j" "$info_json")
+        if [ -n "$layout_name" ]; then
+            draw_cmd_array+=("-l" "$layout_name")
+        fi
+    fi
+    draw_cmd_array+=("$yaml_file")
+    
+    # Capture both stdout and stderr to see errors
+    local draw_error_output
+    draw_error_output=$(mktemp /tmp/keymap_draw_error_XXXXXX.txt)
+    
+    if ! "${draw_cmd_array[@]}" > "$svg_file" 2> "$draw_error_output"; then
         print_error "Failed to generate SVG diagram"
+        echo ""
+        print_info "Command executed: ${draw_cmd_array[*]}"
+        echo ""
+        if [ -s "$draw_error_output" ]; then
+            print_info "Error details:"
+            cat "$draw_error_output" | while IFS= read -r line; do
+                echo -e "  ${RED}$line${NC}"
+            done
+            echo ""
+        fi
         print_info "This may indicate:"
         print_info "  - Invalid YAML structure"
         print_info "  - Layout detection issues"
         print_info "  - Missing keyboard layout definition"
+        print_info "  - Config file format issues"
+        rm -f "$draw_error_output"
+        if [ -n "$config_file" ]; then
+            rm -f "$config_file"
+        fi
         if [ "$SAVE_YAML" = false ]; then
             rm -f "$yaml_file"
         fi
         exit 1
     fi
+    
+    rm -f "$draw_error_output"
+    
+    # Cleanup config file
+    if [ -n "$config_file" ]; then
+        rm -f "$config_file"
+    fi
+    
     print_success "Generated SVG: $svg_file"
+    
+    # Post-process SVG to add visual split gap if keyboard is split
+    if [ -n "$info_json" ] && is_split_keyboard "$info_json"; then
+        print_info "Post-processing SVG to add visual split gap..."
+        add_split_gap_to_svg "$svg_file" "$info_json" "60.0"
+    fi
     
     # Step 4: Convert to PNG if requested
     if [ "$OUTPUT_FORMAT" = "png" ] || [ "$OUTPUT_FORMAT" = "both" ]; then
@@ -1052,6 +1522,14 @@ main() {
     print_header "Visualization Complete!"
     echo -e "  Keyboard: ${CYAN}$SELECTED_KEYBOARD${NC}"
     echo -e "  Keymap:   ${CYAN}$SELECTED_KEYMAP${NC}"
+    
+    # Show layer count in summary if available
+    local final_layer_count
+    final_layer_count=$(count_layers "$SCRIPT_DIR/$SELECTED_KEYBOARD/keymaps/$SELECTED_KEYMAP/keymap.c" 2>/dev/null)
+    if [ "$final_layer_count" -gt 0 ]; then
+        echo -e "  Layers:   ${CYAN}$final_layer_count${NC} detected"
+    fi
+    
     echo -e "  Output:   ${GREEN}$OUTPUT_DIR/${NC}"
     echo ""
     

@@ -85,7 +85,7 @@ enum custom_keycodes {
 #define KC_APP_OBSIDIAN  LAG(KC_O)              // ⌥⌘O - O key
 #define KC_APP_FINDER    LSAG(KC_SPC)           // ⇧⌥⌘Space - Space key (Left Shift + Left Alt + Left GUI)
 #define KC_APP_SLACK_6   LAG(KC_6)              // ⌥⌘6 - Left column Row 3
-#define KC_APP_VPN_SHADOWROCKET LSAG(KC_Z)      // ⇧⌥⌘Z - Toggle Shadowrocket VPN (Left Shift + Left Alt + Left GUI)
+#define KC_APP_VPN_SHADOWROCKET LCAG(KC_Z)      // ⌃⌥⌘Z - Toggle Shadowrocket VPN (Left Control + Left Alt + Left GUI)
 
 // ============================================
 // Window Management Macros (modifier combinations)

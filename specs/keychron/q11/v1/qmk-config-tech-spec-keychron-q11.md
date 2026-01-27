@@ -151,7 +151,7 @@ From any non-momentary layer (L3-L10):
   - **Row 2** (left of TAB): `KC_APP_WECHAT` - Opens WeChat (⌥⌘3)
   - **Row 3** (left of CAPS): `KC_APP_SLACK_6` - Opens Slack (⌥⌘6)
   - **Row 4** (left of LSFT): `KC_APP_CHATGPT` - Opens ChatGPT (⌥⌘Z)
-  - **Row 5** (left of LCTL): `KC_APP_VPN_SHADOWROCKET` - Toggles Shadowrocket VPN (⇧⌥⌘Z)
+  - **Row 5** (left of LCTL): `KC_APP_VPN_SHADOWROCKET` - Toggles Shadowrocket VPN (⌃⌥⌘Z)
 
 **Fn Key Behavior**:
 - **Left Thumb** and **Right Thumb** both use `LT(MAC_FN, LCTL(KC_SPC))` - Layer Tap
@@ -696,7 +696,7 @@ From any non-momentary layer (L3-L10):
 #define KC_APP_MUSIC     LAG(KC_GRV)            // ⌥⌘`
 #define KC_APP_NOTION    LCSG(KC_N)             // ⇧⌃⌘N (Left Control + Left Shift + Left GUI)
 #define KC_APP_FINDER    LSAG(KC_SPC)           // ⇧⌥⌘Space (Left Shift + Left Alt + Left GUI)
-#define KC_APP_VPN_SHADOWROCKET LSAG(KC_Z)      // ⇧⌥⌘Z - Toggle Shadowrocket VPN (Left Shift + Left Alt + Left GUI)
+#define KC_APP_VPN_SHADOWROCKET LCAG(KC_Z)      // ⌃⌥⌘Z - Toggle Shadowrocket VPN (Left Control + Left Alt + Left GUI)
 ```
 
 ### Window Management Macros

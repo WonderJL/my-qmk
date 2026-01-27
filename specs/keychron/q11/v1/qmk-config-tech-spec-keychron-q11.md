@@ -79,12 +79,13 @@ From any non-momentary layer (L3-L10):
 - **Space Bars**: Layer Tap (LT) - tap for space, hold for layer activation
   - **Left Space**: `LT(NAV_LAYER, KC_SPC)` - tap for space, hold for NAV layer
   - **Right Space**: `LT(SYM_LAYER, KC_SPC)` - tap for space, hold for SYM layer
-- **Thumb Keys**: Fn keys (MacBook-style)
-  - **Left Thumb**: `LT(MAC_FN, KC_LNG1)` - Fn key (tap for input method switch, hold for F1-F12)
-  - **Right Thumb**: `LT(MAC_FN, KC_LNG1)` - Fn key (tap for input method switch, hold for F1-F12)
+- **Thumb Keys**: Fn keys (Layer Tap)
+  - **Left Thumb**: `LT(MAC_FN, LCTL(KC_SPC))` - Fn key (tap for Ctrl+Space, hold for MAC_FN layer)
+  - **Right Thumb**: `LT(MAC_FN, LCTL(KC_SPC))` - Fn key (tap for Ctrl+Space, hold for MAC_FN layer)
   - **Fn Key Behavior**:
-    - **Tap**: `KC_LNG1` - Switch input method (Language 1)
-    - **Hold + F1-F12**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions (brightness, volume, etc.)
+    - **Tap**: Sends `LCTL(KC_SPC)` - Control + Space
+    - **Hold Fn**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions (brightness, volume, etc.)
+    - **Input Method Switch**: `KC_LNG1` key (Position 5) switches input method when tapped
 - **Helper Layers** (CURSOR/APP/WIN): Latch (LT) - tap selector to activate, tap again to deactivate
 - **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
 - **Lighting Layer** (L9): Momentary (MO) - activates only while selector held
@@ -114,27 +115,35 @@ From any non-momentary layer (L3-L10):
     KC_APP_SLACK_6,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
     // Row 4: QWERTY bottom row (leftmost key: ChatGPT)
     KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
-    // Row 5: Modifiers and thumb keys (leftmost key: Shadowrocket VPN toggle)
-    //        Structure matches old VIA config:
-    //        - 4 keys before left space: Left Thumb (Fn), KC_LCTL, KC_LOPT, KC_LCMD
-    //        - Left Space: LT(NAV_LAYER, KC_SPC) - tap for space, hold for NAV layer
-    //        - Right Space: LT(SYM_LAYER, KC_SPC) - tap for space, hold for SYM layer
+    // Row 5: Modifiers and thumb keys
+    //        Position 1: KC_APP_VPN_SHADOWROCKET - VPN toggle
+    //        Position 2: LT(MAC_FN, LCTL(KC_SPC)) - Left Thumb (tap for Ctrl+Space, hold for MAC_FN layer)
+    //        Position 3: KC_LCTL - Left Control
+    //        Position 4: KC_LALT - Left Option/Alt
+    //        Position 5: KC_LNG1 - Input method switch (Language 1)
+    //        Position 6: LT(NAV_LAYER, KC_SPC) - Left Space (tap for space, hold for NAV layer)
+    //        Right Space: LT(SYM_LAYER, KC_SPC) - tap for space, hold for SYM layer
     //        - 3 keys after right space: KC_RCMD, KC_RCTL, Right Thumb (Fn)
-    //        Fn key: LT(MAC_FN, KC_LNG1) - tap for input method switch, hold for F1-F12 layer
-    KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_LNG1),  KC_LCTL,  KC_LOPT,  KC_LCMD,         LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, KC_LNG1),  KC_LEFT,  KC_DOWN,  KC_RGHT
+    //        Fn key: LT(MAC_FN, LCTL(KC_SPC)) - tap for Ctrl+Space, hold to activate MAC_FN layer (F1-F12 keys)
+    KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, LCTL(KC_SPC)),  KC_LCTL,  KC_LALT,  KC_LNG1,         LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, LCTL(KC_SPC)),  KC_LEFT,  KC_DOWN,  KC_RGHT
 ),
 ```
 
 **Key Features**:
-- **Row 5 Structure** (matches old VIA config):
-  - **4 keys before left space**: Left Thumb (`LT(MAC_FN, KC_LNG1)` - Fn key), `KC_LCTL`, `KC_LOPT`, `KC_LCMD`
-  - **Left Space**: `LT(NAV_LAYER, KC_SPC)` - tap for space, hold for NAV layer
+- **Row 5 Structure**:
+  - **Position 1**: `KC_APP_VPN_SHADOWROCKET` - VPN toggle
+  - **Position 2**: `LT(MAC_FN, LCTL(KC_SPC))` - Left Thumb (tap for Ctrl+Space, hold for MAC_FN layer)
+  - **Position 3**: `KC_LCTL` - Left Control
+  - **Position 4**: `KC_LALT` - Left Option/Alt
+  - **Position 5**: `KC_LNG1` - Input method switch (Language 1)
+  - **Position 6**: `LT(NAV_LAYER, KC_SPC)` - Left Space (tap for space, hold for NAV layer)
   - **Right Space**: `LT(SYM_LAYER, KC_SPC)` - tap for space, hold for SYM layer
-  - **3 keys after right space**: `KC_RCMD`, `KC_RCTL`, Right Thumb (`LT(MAC_FN, KC_LNG1)` - Fn key)
-- **Fn Key Behavior** (MacBook-style):
-  - **Tap**: `KC_LNG1` - Switch input method (Language 1)
-  - **Hold + F1-F12**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions
+  - **3 keys after right space**: `KC_RCMD`, `KC_RCTL`, Right Thumb (`LT(MAC_FN, LCTL(KC_SPC))` - Fn key)
+- **Fn Key Behavior**:
+  - **Tap**: Sends `LCTL(KC_SPC)` - Control + Space
+  - **Hold Fn**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions
   - **Example**: Hold Fn + F1 sends `KC_F1` (actual F1 key) instead of brightness down
+  - **Input Method Switch**: `KC_LNG1` key (Position 5) switches input method when tapped
 - **All letters type normally** - no helper functionality
 - **Backslash key (`\`)**: Outputs `\` (backslash) - `KC_BSLS` (default behavior)
 - **Leftmost Column (5 keys)**: Quick app launchers and VPN toggle
@@ -144,9 +153,9 @@ From any non-momentary layer (L3-L10):
   - **Row 4** (left of LSFT): `KC_APP_CHATGPT` - Opens ChatGPT (⌥⌘Z)
   - **Row 5** (left of LCTL): `KC_APP_VPN_SHADOWROCKET` - Toggles Shadowrocket VPN (⇧⌥⌘Z)
 
-**Fn Key (MacBook-style)**:
-- **Left Thumb** and **Right Thumb** both use `LT(MAC_FN, KC_LNG1)`
-- **Tap Fn**: Switches input method (sends `KC_LNG1` - Language 1 keycode)
+**Fn Key Behavior**:
+- **Left Thumb** and **Right Thumb** both use `LT(MAC_FN, LCTL(KC_SPC))` - Layer Tap
+- **Tap Fn**: Sends `LCTL(KC_SPC)` - Control + Space (useful for many applications like Spotlight, VS Code command palette, etc.)
 - **Hold Fn + F1-F12**: Activates MAC_FN layer, sending actual function keys:
   - **Fn + F1**: Sends `KC_F1` (actual F1) instead of brightness down
   - **Fn + F2**: Sends `KC_F2` (actual F2) instead of brightness up
@@ -155,6 +164,7 @@ From any non-momentary layer (L3-L10):
   - And so on for all F1-F12 keys
 - **Without Fn**: F1-F12 keys on BASE layer trigger macOS system actions (brightness, volume, media controls, etc.)
 - **With Fn**: F1-F12 keys send actual function key codes that applications can use
+- **Input Method Switch**: `KC_LNG1` key (Position 5) switches input method when tapped
 
 ---
 

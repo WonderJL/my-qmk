@@ -148,14 +148,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_APP_SLACK_6,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
         // Row 4: QWERTY bottom row (leftmost key: ChatGPT)
         KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
-        // Row 5: Modifiers and thumb keys (leftmost key: Shadowrocket VPN toggle)
-        //        Structure matches old VIA config:
-        //        - 4 keys before left space: Left Thumb (Fn), KC_LCTL, KC_LOPT, KC_LCMD
-        //        - Left Space: LT(NAV_LAYER, KC_SPC) - tap for space, hold for NAV layer
-        //        - Right Space: LT(SYM_LAYER, KC_SPC) - tap for space, hold for SYM layer
+        // Row 5: Modifiers and thumb keys
+        //        Position 1: KC_APP_VPN_SHADOWROCKET - VPN toggle
+        //        Position 2: LT(MAC_FN, LCTL(KC_SPC)) - Left Thumb (tap for Ctrl+Space, hold for MAC_FN layer)
+        //        Position 3: KC_LCTL - Left Control
+        //        Position 4: KC_LALT - Left Option/Alt
+        //        Position 5: KC_LNG1 - Input method switch (Language 1)
+        //        Position 6: LT(NAV_LAYER, KC_SPC) - Left Space (tap for space, hold for NAV layer)
+        //        Right Space: LT(SYM_LAYER, KC_SPC) - tap for space, hold for SYM layer
         //        - 3 keys after right space: KC_RCMD, KC_RCTL, Right Thumb (Fn)
-        //        Fn key: LT(MAC_FN, KC_LNG1) - tap for input method switch, hold for F1-F12 layer
-        KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_LNG1),  KC_LCTL,  KC_LOPT,  KC_LCMD,      LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, KC_LNG1),  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        //        Fn key: LT(MAC_FN, LCTL(KC_SPC)) - tap for Ctrl+Space, hold to activate MAC_FN layer (F1-F12 keys)
+        KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, LCTL(KC_SPC)),  KC_LCTL,  KC_LALT,  KC_LNG1,      LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, LCTL(KC_SPC)),  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held)

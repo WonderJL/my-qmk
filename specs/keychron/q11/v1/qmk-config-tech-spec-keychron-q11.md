@@ -5,6 +5,11 @@
 This document consolidates and finalizes the QMK keymap configuration specification for Keychron Q11 ANSI Encoder, based on comprehensive planning documents:
 - `PLAN-add-app-layer-and-win-layer-to-qmk-keymap-for-keyc-v2.md`
 - `PLAN-update-sym-layer-symbol-mapping.md`
+- `PLAN-implement-custom-layer-switching-for-lighting-laye.md`
+
+**Recent Updates**:
+- Custom layer switching for NAV_LAYER selectors (A/S/D/F/G) - switch layers while holding left space
+- Universal return to base - double-click left encoder returns to MAC_BASE from any layer
 
 This tech spec serves as the **single source of truth** for implementation, providing complete layer definitions, key mappings, macro specifications, and implementation guidelines.
 
@@ -88,6 +93,7 @@ From any non-momentary layer (L3-L10):
 - **Helper Layers** (CURSOR/APP/WIN/LIGHTING): Custom Switch - while holding left space, press selector to switch to target layer, stays active until left space released
 - **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
 - **Custom Layer Switching**: Left space hold activates NAV_LAYER, then pressing A/S/D/F/G switches to target layer while left space remains held
+- **Universal Return to Base**: Double-click left encoder (top left) returns to MAC_BASE from any layer
 - **Left Space NAV Access**: All non-momentary layers (L3-L10) provide NAV access on left space, except NUMPAD_LAYER which uses the left thumb key to keep KP_0 on left space
 - **All layers deactivate** on space release (momentary layers) or explicit deactivation (latched/toggled layers)
 
@@ -105,7 +111,7 @@ From any non-momentary layer (L3-L10):
 ```c
 [MAC_BASE] = LAYOUT_91_ansi(
     // Row 0: Function keys, media, etc.
-    KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   TD(TD_ENC_R),
+    TD(TD_ENC_L),  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   TD(TD_ENC_R),
     // Row 1: Numbers and symbols (leftmost key: WhatsApp)
     KC_APP_WHATSAPP,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
     // Row 2: QWERTY top row (leftmost key: WeChat)
@@ -120,7 +126,7 @@ From any non-momentary layer (L3-L10):
     //        Position 3: KC_LCTL - Left Control
     //        Position 4: KC_LALT - Left Option/Alt
     //        Position 5: KC_LGUI - Mac Command button (Left GUI/Command)
-    //        Position 6: LT(NAV_LAYER, KC_SPC) - Left Space (tap: space, hold: NAV layer)
+    //        Position 6: KC_NAV_SPACE - Left Space (custom: tap for space, hold for NAV layer with custom switching)
     //        Position 7: LT(SYM_LAYER, KC_SPC) - Right Space (tap: space, hold: SYM layer)
     //        Position 8: KC_RGUI - Right Command (Right GUI/Command)
     //        Position 9: KC_RCTL - Right Control
@@ -139,7 +145,7 @@ From any non-momentary layer (L3-L10):
   - **Position 3**: `KC_LCTL` - Left Control
   - **Position 4**: `KC_LALT` - Left Option/Alt
   - **Position 5**: `KC_LGUI` - Mac Command button (Left GUI/Command)
-  - **Position 6**: `LT(NAV_LAYER, KC_SPC)` - Left Space (tap: space, hold: NAV layer)
+  - **Position 6**: `KC_NAV_SPACE` - Left Space (custom: tap for space, hold for NAV layer, supports custom layer switching)
   - **Position 7**: `LT(SYM_LAYER, KC_SPC)` - Right Space (tap: space, hold: SYM layer)
   - **Position 8**: `KC_RGUI` - Right Command (Right GUI/Command)
   - **Position 9**: `KC_RCTL` - Right Control
@@ -185,7 +191,7 @@ From any non-momentary layer (L3-L10):
 **Purpose**: Menu system for accessing helper layers
 
 **Activation**: 
-- Left Space hold (`LT(NAV_LAYER, KC_SPC)`) - from BASE layer, tap for space, hold for NAV layer
+- Left Space hold (`KC_NAV_SPACE`) - from BASE layer, tap for space, hold for NAV layer with custom switching support
 
 **Key Mappings**:
 ```c
@@ -354,7 +360,11 @@ From any non-momentary layer (L3-L10):
 
 **Purpose**: Cursor IDE productivity actions
 
-**Activation**: NAV + F (tap F while NAV_LAYER is active)
+**Activation**: NAV + F (press F while holding left space in NAV_LAYER) - Custom Switch
+
+**Return to Base**: 
+- Double-click left encoder (top left) → Returns to MAC_BASE (works from any layer)
+- Or: Release left space → Returns to MAC_BASE
 
 **Key Mappings**:
 ```c
@@ -400,7 +410,11 @@ From any non-momentary layer (L3-L10):
 
 **Purpose**: Quick application launching
 
-**Activation**: NAV + D (tap D while NAV_LAYER is active)
+**Activation**: NAV + D (press D while holding left space in NAV_LAYER) - Custom Switch
+
+**Return to Base**: 
+- Double-click left encoder (top left) → Returns to MAC_BASE (works from any layer)
+- Or: Release left space → Returns to MAC_BASE
 
 **Key Mappings**:
 ```c
@@ -473,7 +487,11 @@ From any non-momentary layer (L3-L10):
 
 **Purpose**: Window management shortcuts
 
-**Activation**: NAV + S (tap S while NAV_LAYER is active)
+**Activation**: NAV + S (press S while holding left space in NAV_LAYER) - Custom Switch
+
+**Return to Base**: 
+- Double-click left encoder (top left) → Returns to MAC_BASE (works from any layer)
+- Or: Release left space → Returns to MAC_BASE
 
 **Key Mappings**:
 ```c
@@ -600,11 +618,15 @@ From any non-momentary layer (L3-L10):
 
 **Activation**: NAV + H (tap H while NAV_LAYER is active) - Toggle (TG)
 
+**Return to Base**: 
+- Double-click left encoder (top left) → Returns to MAC_BASE (works from any layer)
+- Or: Hold left thumb → NAV_LAYER → Tap H → Toggle off → Returns to MAC_BASE
+
 **Key Mappings**:
 ```c
 [NUMPAD_LAYER] = LAYOUT_91_ansi(
-    // Row 0: Transparent
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+    // Row 0: Encoder tap dance for return to base
+    TD(TD_ENC_L),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  TD(TD_ENC_R),
     // Row 1: Transparent
     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
     // Row 2: Top row - Numpad top row (7, 8, 9, /)
@@ -765,6 +787,7 @@ enum custom_keycodes {
     KC_NAV_APP_D,                    // Custom D key for APP_LAYER switch
     KC_NAV_CURSOR,                   // Custom F key for CURSOR_LAYER switch
     KC_NAV_LIGHTING,                 // Custom G key for LIGHTING_LAYER switch
+    KC_RETURN_TO_BASE,               // Custom keycode to return to MAC_BASE from any layer (used by left encoder double-click)
 };
 ```
 
@@ -774,6 +797,7 @@ enum custom_keycodes {
 - `KC_IME_NEXT`: Sends `LCTL(KC_SPC)` (Ctrl+Space) for macOS input source switching
 - `KC_NAV_SPACE`: Custom left space handler - supports tap-for-space and custom layer switching
 - `KC_NAV_APP`, `KC_NAV_WIN`, `KC_NAV_APP_D`, `KC_NAV_CURSOR`, `KC_NAV_LIGHTING`: Custom selector keys for switching layers while holding left space
+- `KC_RETURN_TO_BASE`: Custom keycode that explicitly turns off all layers (including toggle layers) and returns to MAC_BASE - used by left encoder double-click for universal return to base
 
 ### Encoder Macros
 
@@ -787,15 +811,41 @@ enum custom_keycodes {
 #define KC_LOCK_SCREEN  LCG(KC_Q)               // Ctrl+Cmd+Q (Left Control + Left GUI)
 ```
 
-### Tap Dance Definition (Right Encoder Press)
+### Tap Dance Definition (Encoder Press Actions)
 
 ```c
 enum {
-    TD_ENC_R = 0,
+    TD_ENC_L = 0,  // Left encoder: single = Mute, double = Return to base
+    TD_ENC_R = 1,  // Right encoder: single = Zoom reset, double = Lock screen
 };
 
-qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),
+// Tap dance callback functions for left encoder (with debug output)
+void td_enc_l_finished(tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        tap_code(KC_MUTE);  // Single tap = Mute
+    } else if (state->count == 2) {
+        // Double tap = Return to base (executes directly in callback)
+        layer_off(WIN_LAYER);
+        layer_off(MAC_FN);
+        layer_off(WIN_BASE);
+        layer_off(WIN_FN);
+        layer_off(NUMPAD_LAYER);
+        layer_off(NAV_LAYER);
+        layer_off(SYM_LAYER);
+        layer_off(CURSOR_LAYER);
+        layer_off(APP_LAYER);
+        layer_off(LIGHTING_LAYER);
+        layer_move(MAC_BASE);
+    }
+}
+
+void td_enc_l_reset(tap_dance_state_t *state, void *user_data) {
+    // Reset handler (used for debug output)
+}
+
+tap_dance_action_t tap_dance_actions[] = {
+    [TD_ENC_L] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_enc_l_finished, td_enc_l_reset),  // Left encoder: single = Mute, double = Return to base (callback handles toggle layers)
+    [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),  // Right encoder: single = Zoom reset, double = Lock screen
 };
 ```
 
@@ -806,6 +856,8 @@ The `process_record_user()` function handles custom keycodes and includes:
 1. **Debug Console Output** (when `CONSOLE_ENABLE = yes`):
    - Logs all key presses with keycode, matrix position, press state, and timestamp
    - Decodes Layer Tap (LT) keycodes to show layer name and tap keycode
+   - Detects tap dance keycodes (TD_ENC_L, TD_ENC_R) and custom keycodes
+   - Tap dance callbacks also output debug information (TD_ENC_L finished/reset messages with layer state)
    - Helps debug keymap issues and verify key assignments
 
 2. **KC_LNG1 Workaround**:
@@ -819,6 +871,9 @@ The `process_record_user()` function handles custom keycodes and includes:
    - `KC_IME_NEXT`: Sends `LCTL(KC_SPC)` (Ctrl+Space) for macOS input source switching
    - `KC_NAV_SPACE`: Handles left space with custom layer switching - activates NAV_LAYER or selected target layer based on state
    - `KC_NAV_APP`, `KC_NAV_WIN`, `KC_NAV_APP_D`, `KC_NAV_CURSOR`, `KC_NAV_LIGHTING`: Switch from NAV_LAYER to target layer while left space is held
+   - `KC_RETURN_TO_BASE`: Explicitly turns off all layers (toggle and momentary) and switches to MAC_BASE - ensures proper return from any layer including toggle layers
+
+**Note**: The left encoder double-click return-to-base functionality is implemented in the tap dance callback (`td_enc_l_finished`) rather than through `KC_RETURN_TO_BASE` in `process_record_user()`. This ensures reliable detection and execution even when toggle layers are active.
 
 **Example Implementation**:
 ```c
@@ -840,7 +895,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [MAC_BASE] = { 
-        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),         // Left encoder: Volume
+        ENCODER_CCW_CW(KC_VOLD, KC_VOLU),         // Left encoder: Volume down/up
         ENCODER_CCW_CW(KC_ZOOM_OUT, KC_ZOOM_IN)   // Right encoder: Zoom out/in
     },
     [NAV_LAYER] = { 
@@ -890,11 +945,12 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 **Encoder Actions**:
 - **Left Encoder Rotate CCW/CW**: Volume down/up
 - **Left Encoder Press (single)**: Mute
+- **Left Encoder Press (double)**: Return to MAC_BASE layer (works from any layer) - tap dance
 - **Right Encoder Rotate CCW/CW**: Zoom out/in (Cmd - / Cmd =)
 - **Right Encoder Press (single)**: Zoom reset (Cmd 0) - tap dance
 - **Right Encoder Press (double)**: Lock screen (Ctrl+Cmd+Q) - tap dance
 
-**Status**: ⚠️ **INCOMPLETE** - Tap dance for right encoder press actions needs implementation
+**Universal Return to Base**: Double-click left encoder from any layer to return to MAC_BASE
 
 ---
 
@@ -904,21 +960,25 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - [x] Layer enum definitions
 - [x] Special symbol macro definitions
 - [x] BASE layer implementation
+- [x] NAV layer implementation (with custom layer switching)
 - [x] SYM layer implementation (with special macros)
+- [x] Custom layer switching implementation (KC_NAV_SPACE, KC_NAV_APP, KC_NAV_WIN, KC_NAV_APP_D, KC_NAV_CURSOR, KC_NAV_LIGHTING)
+- [x] Encoder tap dance implementation (left encoder double-click returns to base)
 - [x] Macro definitions for app launchers
 - [x] Macro definitions for window management
 - [x] Encoder macro definitions
 
 ### ⚠️ In Progress / Needs Completion
-- [ ] NAV_LAYER implementation (selectors finalized: Q/W/E/R for L5-L8 toggles, G/H for L9/L10)
+- [x] NAV_LAYER implementation (selectors finalized: Q/W/E/R for L5-L8 toggles, A/S/D/F/G custom switching, H for L10 toggle)
 - [ ] CURSOR_LAYER implementation (mapped Y/U/I/O; remaining TBD: model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
-- [ ] APP_LAYER implementation (Obsidian mapping added, Slack on S)
-- [ ] WIN_LAYER implementation (complete key mappings)
-- [ ] LIGHTING_LAYER implementation (RGB controls mapped)
-- [ ] NUMPAD_LAYER implementation (standard numpad layout mapped)
-- [ ] Left space NAV access for all non-momentary layers (L3-L10, NUMPAD uses left thumb key)
-- [ ] Encoder tap dance implementation (right encoder single/double press)
-- [ ] Windows support layers (WIN_BASE, WIN_FN)
+- [x] APP_LAYER implementation (Obsidian mapping added, Slack on S, custom switching implemented)
+- [x] WIN_LAYER implementation (complete key mappings, custom switching implemented)
+- [x] LIGHTING_LAYER implementation (RGB controls mapped, custom switching implemented)
+- [x] NUMPAD_LAYER implementation (standard numpad layout mapped)
+- [x] Left space NAV access for all non-momentary layers (L3-L10, NUMPAD uses left thumb key)
+- [x] Custom layer switching implementation (KC_NAV_SPACE and selector keycodes)
+- [x] Encoder tap dance implementation (left encoder: single=mute, double=return to base; right encoder: single/double press)
+- [x] Windows support layers (WIN_BASE, WIN_FN)
 
 ### 🔍 Review Required
 - [ ] **Usability Review**: Test each layer activation sequence
@@ -995,21 +1055,30 @@ When `CONSOLE_ENABLE = yes` is set in `rules.mk`, you can use the QMK console to
 ### Functional Tests (Hardware Required)
 - [ ] BASE layer: All keys type correctly
 - [ ] NAV layer: All selectors activate correct layers
+- [ ] Custom layer switching: A/S/D/F/G switch layers while holding left space
+- [ ] Left space: Tap sends space, hold activates NAV/target layer
 - [ ] SYM layer: Symbols accessible, special macros work
 - [ ] CURSOR layer: All Cursor actions work (after mapping)
 - [ ] APP layer: All 15 apps launch correctly
 - [ ] WIN layer: All window management actions work
+- [ ] LIGHTING layer: All lighting controls work
 - [ ] Encoder: Rotate and press actions work
+- [ ] Left encoder double-click: Returns to MAC_BASE from any layer
+- [ ] Right encoder tap dance: Single = zoom reset, double = lock screen
 - [ ] Layer activation/deactivation works correctly
 - [ ] No conflicts between layers
 - [ ] Debug console shows correct keycodes for all positions
 
 ### Edge Cases
 - [ ] Rapid layer switching doesn't cause stuck keys
+- [ ] Custom layer switching: Selector keys work correctly when NAV_LAYER is active
+- [ ] Custom layer switching: Left space release properly deactivates all layers
+- [ ] Custom layer switching: Tap detection for space character works correctly
 - [ ] Holding selector key doesn't interfere
 - [ ] Multiple modifier keys work correctly
 - [ ] Special keys (Esc, Space, arrows, backtick) work in macros
-- [ ] Encoder tap dance timing works correctly
+- [ ] Encoder tap dance timing works correctly (both left and right encoders)
+- [ ] Left encoder double-click returns to base from all layers
 - [ ] No typing disruption on BASE layer
 
 ---
@@ -1058,29 +1127,31 @@ Use `qmk console` command to view debug output in real-time. This helps verify k
 - Purpose: Function keys (F1-F12) and RGB controls for macOS
 - Activation: Toggle via NAV + W (`TG(MAC_FN)`)
 - **Left Space**: `MO(NAV_LAYER)` for NAV access
-- Encoder: Left volume/mute, right zoom + tap dance
+- **Encoder**: Left encoder double-click returns to MAC_BASE (universal return to base)
 
 **Layer 7: WIN_BASE** (Windows Typing)
 - Purpose: Normal typing layer for Windows
 - Activation: Toggle via NAV + E (`TG(WIN_BASE)`)
 - **Left Space**: `MO(NAV_LAYER)` for NAV access
-- Encoder: Left volume/mute, right zoom + tap dance
+- **Encoder**: Left encoder double-click returns to MAC_BASE (universal return to base)
 
 **Layer 8: WIN_FN** (Windows Function Keys)
 - Purpose: Function keys and RGB controls for Windows
 - Activation: Toggle via NAV + R (`TG(WIN_FN)`)
 - **Left Space**: `MO(NAV_LAYER)` for NAV access
-- Encoder: Left volume/mute, right zoom + tap dance
+- **Encoder**: Left encoder double-click returns to MAC_BASE (universal return to base)
 
 ---
 
 ## 🎯 Next Steps
 
 ### Immediate Actions
-1. **Complete NAV_LAYER**: Finalize selector implementations
-2. **Complete Cursor Commands**: Map remaining Cursor IDE shortcuts
-3. **Complete APP_LAYER**: Add Obsidian mapping and confirm Slack on S
-4. **Complete WIN_LAYER**: Finalize all window management mappings
+1. ~~**Complete NAV_LAYER**: Finalize selector implementations~~ ✅ Complete (custom layer switching implemented)
+2. **Complete Cursor Commands**: Map remaining Cursor IDE shortcuts (model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
+3. ~~**Complete APP_LAYER**: Add Obsidian mapping and confirm Slack on S~~ ✅ Complete
+4. ~~**Complete WIN_LAYER**: Finalize all window management mappings~~ ✅ Complete
+5. ~~**Custom Layer Switching**: Implement custom keycodes for left space and selector keys~~ ✅ Complete
+6. ~~**Encoder Tap Dance**: Implement double-click return to base~~ ✅ Complete
 
 ### Implementation Tasks
 1. **Implement Encoder Tap Dance**: Add single/double press detection
@@ -1102,31 +1173,40 @@ Use `qmk console` command to view debug output in real-time. This helps verify k
 
 ### Completeness Status
 - ✅ **BASE Layer**: Complete (with leftmost column app launchers: WhatsApp, WeChat, Slack, ChatGPT, Shadowrocket VPN toggle)
+- ✅ **NAV Layer**: Complete (with custom layer switching for A/S/D/F/G selectors)
+- ✅ **BASE Layer**: Complete (with leftmost column app launchers: WhatsApp, WeChat, Slack, ChatGPT, Shadowrocket VPN toggle)
+- ✅ **NAV Layer**: Complete (custom layer switching implemented for A/S/D/F/G selectors)
 - ✅ **SYM Layer**: Complete (with special macros)
-- ✅ **NAV Layer**: Structure defined, all selectors finalized (Q/W/E/R for L5-L8, A/S/D/F/G/H for others)
-- ⚠️ **CURSOR Layer**: Partial mapping (Y/U/I/O); remaining commands TBD, left space NAV access added
-- ✅ **APP Layer**: All apps mapped (Obsidian added, Slack on S), left space NAV access added
-- ⚠️ **WIN Layer**: Structure defined, mappings need completion, left space NAV access added
-- ✅ **LIGHTING Layer**: Complete specification with all RGB controls, left space NAV access added
-- ✅ **NUMPAD Layer**: Complete specification with standard layout, NAV access on left thumb key added
-- ✅ **MAC_FN Layer**: Existing layer with left space NAV access
-- ✅ **WIN_BASE Layer**: Existing layer with left space NAV access
-- ✅ **WIN_FN Layer**: Existing layer with left space NAV access
-- ⚠️ **Encoder**: Behavior defined (left volume/mute, right zoom + tap dance), tap dance needs implementation
+- ⚠️ **CURSOR Layer**: Partial mapping (Y/U/I/O); remaining commands TBD, custom switching implemented
+- ✅ **APP Layer**: Complete (all apps mapped, custom switching implemented)
+- ✅ **WIN Layer**: Complete (all window management mappings, custom switching implemented)
+- ✅ **LIGHTING Layer**: Complete (all RGB controls mapped, custom switching implemented)
+- ✅ **NUMPAD Layer**: Complete (standard layout mapped, left thumb NAV access)
+- ✅ **MAC_FN Layer**: Complete (existing layer with encoder tap dance)
+- ✅ **WIN_BASE Layer**: Complete (existing layer with encoder tap dance)
+- ✅ **WIN_FN Layer**: Complete (existing layer with encoder tap dance)
+- ✅ **Custom Layer Switching**: Complete (KC_NAV_SPACE and selector keycodes implemented)
+- ✅ **Encoder Tap Dance**: Complete (left encoder: single=mute, double=return to base; right encoder: single=zoom reset, double=lock screen)
 
 ### Remaining Work
-1. Map remaining Cursor IDE commands for CURSOR_LAYER
-2. Complete WIN_LAYER key mappings
-3. Implement encoder tap dance (right encoder)
-4. Comprehensive testing and validation
-5. Test all layer activation sequences (toggle, latch, momentary)
-6. Verify left space NAV access works from all non-momentary layers
+1. Map remaining Cursor IDE commands for CURSOR_LAYER (model picker, submit with/without codebase, focus editor, previous/next change, apply, accept all files)
+2. ~~Complete WIN_LAYER key mappings~~ ✅ Complete
+3. ~~Custom layer switching implementation~~ ✅ Complete
+4. ~~Encoder tap dance implementation~~ ✅ Complete (both left and right encoders)
+5. Comprehensive testing and validation
+6. Test all layer activation sequences (custom switching, toggle)
+7. Verify left space NAV access works from all non-momentary layers
+8. Test universal return to base (double-click left encoder) from all layers
 
 ---
 
-**Document Version**: 1.2  
-**Last Updated**: 2026-01-27  
-**Status**: Finalized Tech Spec (Implementation In Progress)  
+**Document Version**: 1.4  
+**Last Updated**: 2026-01-28  
+**Status**: Finalized Tech Spec (Implementation In Progress)
+**Recent Updates**: 
+- Custom layer switching implemented
+- Universal return to base via left encoder double-click (using tap dance callback)
+- Debug mode enabled (CONSOLE_ENABLE = yes)  
 **Target Keyboard**: Keychron Q11 ANSI Encoder  
 **Firmware**: QMK
 

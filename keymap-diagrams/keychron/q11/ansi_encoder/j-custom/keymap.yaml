@@ -1,7 +1,7 @@
 layout: {qmk_keyboard: keychron/q11/ansi_encoder, layout_name: LAYOUT_91_ansi}
 layers:
   L0-MAC_BASE:
-  - [MUTE, ESC, BRID, BRIU, MCTL, LPAD, RM VALD, RM VALU, MPRV, MPLY, MNXT, MUTE]
+  - [TD(TD ENC L), ESC, BRID, BRIU, MCTL, LPAD, RM VALD, RM VALU, MPRV, MPLY, MNXT, MUTE]
   - [VOLD, VOLU, INS, DEL, TD(TD ENC R), APP WHATSAPP, '`', '1', '2', '3', '4', '5']
   - ['6', '7', '8', '9', '0', '-', '=', BSPC, PGUP, APP WECHAT, TAB, Q]
   - [W, E, R, T, Y, U, I, O, P, '[', ']', \]
@@ -470,7 +470,7 @@ layers:
     - WIN BOTTOM
     - WIN RIGHT
   L6-MAC_FN:
-  - - MUTE
+  - - TD(TD ENC L)
     - {t: ▽, type: trans}
     - F1
     - F2
@@ -562,7 +562,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   L7-WIN_BASE:
-  - [MUTE, ESC, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10]
+  - [TD(TD ENC L), ESC, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10]
   - - F11
     - F12
     - INS
@@ -626,7 +626,7 @@ layers:
     - MO(NAV LAYER)
   - [SPC, RALT, MO(WIN FN), RCTL, LEFT, DOWN, RGHT]
   L8-WIN_FN:
-  - - MUTE
+  - - TD(TD ENC L)
     - {t: ▽, type: trans}
     - BRID
     - BRIU
@@ -810,7 +810,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   L10-NUMPAD_LAYER:
-  - - {t: ▽, type: trans}
+  - - TD(TD ENC L)
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -826,7 +826,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - TD(TD ENC R)
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}

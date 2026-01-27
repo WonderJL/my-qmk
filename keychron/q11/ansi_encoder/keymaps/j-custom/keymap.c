@@ -29,6 +29,9 @@
  *   BASE → Right Thumb Hold → SYM_LAYER
  *   L3-L10 → Left Space Hold → NAV_LAYER
  *
+ * Universal Return to Base:
+ *   Double-click left encoder (top left) → Returns to MAC_BASE from any layer
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -74,6 +77,7 @@ enum custom_keycodes {
     KC_NAV_APP_D,                    // Custom D key for APP_LAYER switch
     KC_NAV_CURSOR,                   // Custom F key for CURSOR_LAYER switch
     KC_NAV_LIGHTING,                 // Custom G key for LIGHTING_LAYER switch
+    KC_RETURN_TO_BASE,               // Custom keycode to return to MAC_BASE from any layer
 };
 
 // ============================================
@@ -131,11 +135,72 @@ enum custom_keycodes {
 // Tap Dance
 // ============================================
 enum {
-    TD_ENC_R = 0,
+    TD_ENC_L = 0,  // Left encoder: single = Mute, double = Return to base
+    TD_ENC_R = 1,  // Right encoder: single = Zoom reset, double = Lock screen
 };
 
+// Tap dance callback functions for debugging
+void td_enc_l_finished(tap_dance_state_t *state, void *user_data) {
+#ifdef CONSOLE_ENABLE
+    uprintf("DEBUG: TD_ENC_L finished - count: %d\n", state->count);
+#endif
+    if (state->count == 1) {
+#ifdef CONSOLE_ENABLE
+        uprintf("DEBUG: TD_ENC_L single tap - sending KC_MUTE\n");
+#endif
+        tap_code(KC_MUTE);
+    } else if (state->count == 2) {
+#ifdef CONSOLE_ENABLE
+        uprintf("DEBUG: TD_ENC_L double tap - executing return to base\n");
+        uprintf("DEBUG: Current layer state before: 0x%04X\n", layer_state);
+        uprintf("DEBUG: Active layers before: ");
+        for (uint8_t i = 0; i < 11; i++) {
+            if (layer_state_is(i)) {
+                uprintf("L%d ", i);
+            }
+        }
+        uprintf("\n");
+#endif
+        // Execute return to base directly (same code as KC_RETURN_TO_BASE handler)
+        // Turn off all toggle layers explicitly
+        layer_off(WIN_LAYER);
+        layer_off(MAC_FN);
+        layer_off(WIN_BASE);
+        layer_off(WIN_FN);
+        layer_off(NUMPAD_LAYER);
+        
+        // Turn off all momentary/custom layers
+        layer_off(NAV_LAYER);
+        layer_off(SYM_LAYER);
+        layer_off(CURSOR_LAYER);
+        layer_off(APP_LAYER);
+        layer_off(LIGHTING_LAYER);
+        
+        // Switch to MAC_BASE
+        layer_move(MAC_BASE);
+        
+#ifdef CONSOLE_ENABLE
+        uprintf("DEBUG: After layer_move, layer state: 0x%04X\n", layer_state);
+        uprintf("DEBUG: Active layers after: ");
+        for (uint8_t i = 0; i < 11; i++) {
+            if (layer_state_is(i)) {
+                uprintf("L%d ", i);
+            }
+        }
+        uprintf("\n");
+#endif
+    }
+}
+
+void td_enc_l_reset(tap_dance_state_t *state, void *user_data) {
+#ifdef CONSOLE_ENABLE
+    uprintf("DEBUG: TD_ENC_L reset - count: %d\n", state->count);
+#endif
+}
+
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),
+    [TD_ENC_L] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_enc_l_finished, td_enc_l_reset),  // Left encoder: single = Mute, double = Return to base
+    [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),  // Right encoder: single = Zoom reset, double = Lock screen
 };
 
 // Windows-specific shortcuts (for WIN_BASE/WIN_FN layers)
@@ -152,7 +217,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // ============================================
     [MAC_BASE] = LAYOUT_91_ansi(
         // Row 0: Encoder, Esc, F-keys, media
-        KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   TD(TD_ENC_R),
+        TD(TD_ENC_L),  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   TD(TD_ENC_R),
         // Row 1: Numbers (leftmost key: WhatsApp)
         KC_APP_WHATSAPP,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
         // Row 2: QWERTY top row (leftmost key: WeChat)
@@ -343,7 +408,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Layer 6: MAC_FN - Function keys (existing)
     // ============================================
     [MAC_FN] = LAYOUT_91_ansi(
-        KC_MUTE,  _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   _______,  _______,  TD(TD_ENC_R),
+        TD(TD_ENC_L),  _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   _______,  _______,  TD(TD_ENC_R),
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
@@ -354,7 +419,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Layer 7: WIN_BASE - Normal typing (Windows)
     // ============================================
     [WIN_BASE] = LAYOUT_91_ansi(
-        KC_MUTE,  KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   KC_INS,   KC_DEL,   TD(TD_ENC_R),
+        TD(TD_ENC_L),  KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,     KC_F12,   KC_INS,   KC_DEL,   TD(TD_ENC_R),
         _______,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
         _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
         _______,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
@@ -365,7 +430,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Layer 8: WIN_FN - Function keys (Windows)
     // ============================================
     [WIN_FN] = LAYOUT_91_ansi(
-        KC_MUTE,  _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FLXP,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  _______,  _______,  TD(TD_ENC_R),
+        TD(TD_ENC_L),  _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FLXP,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  _______,  _______,  TD(TD_ENC_R),
         _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
@@ -393,8 +458,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Layer 10: NUMPAD_LAYER - Number pad (NAV + H)
     // ============================================
     [NUMPAD_LAYER] = LAYOUT_91_ansi(
-        // Row 0: Transparent
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
+        // Row 0: Encoder tap dance for return to base
+        TD(TD_ENC_L),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  TD(TD_ENC_R),
         // Row 1: Transparent
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
         // Row 2: Numpad top row (7, 8, 9, /)
@@ -409,8 +474,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 // ============================================
 // Encoder Configuration
-// Left encoder: Volume (CCW: down, CW: up), press: Mute
-// Right encoder: Zoom (CCW: out, CW: in), press: Tap dance (Cmd+0 / Ctrl+Cmd+Q)
+// Left encoder: Volume (CCW: down, CW: up)
+//   - Single press: Mute
+//   - Double press: Return to MAC_BASE layer (works from any layer)
+// Right encoder: Zoom (CCW: out, CW: in)
+//   - Single press: Zoom reset (Cmd+0)
+//   - Double press: Lock screen (Ctrl+Cmd+Q)
 // ============================================
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
@@ -462,6 +531,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                                (tap_key == KC_SPC) ? "KC_SPC" :
                                (tap_key == KC_NO) ? "KC_NO" :
                                (tap_key == KC_IME_NEXT) ? "KC_IME_NEXT" : NULL;
+        
+        
         if (tap_name) {
             uprintf("DEBUG: kc: 0x%04X [LT(%s, %s)], col:%2u, row:%2u, pressed:%u, time:%5u\n", 
                     keycode, layer_name, tap_name,
@@ -478,12 +549,41 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     record->event.time);
         }
     } else {
-        uprintf("DEBUG: kc: 0x%04X, col:%2u, row:%2u, pressed:%u, time:%5u\n", 
-                keycode,
-                record->event.key.col, 
-                record->event.key.row, 
-                record->event.pressed,
-                record->event.time);
+        // Check for tap dance keycodes (TD_*)
+        if (keycode >= QK_TAP_DANCE && keycode <= QK_TAP_DANCE_MAX) {
+            uint8_t td_index = keycode - QK_TAP_DANCE;
+            const char* td_name = (td_index == TD_ENC_L) ? "TD_ENC_L" :
+                                 (td_index == TD_ENC_R) ? "TD_ENC_R" : "TD_UNKNOWN";
+            uprintf("DEBUG: kc: 0x%04X [%s], col:%2u, row:%2u, pressed:%u, time:%5u\n", 
+                    keycode, td_name,
+                    record->event.key.col, 
+                    record->event.key.row, 
+                    record->event.pressed,
+                    record->event.time);
+        } else {
+            // Check for custom keycodes
+            const char* custom_name = NULL;
+            if (keycode == KC_RETURN_TO_BASE) custom_name = "KC_RETURN_TO_BASE";
+            else if (keycode == KC_MUTE) custom_name = "KC_MUTE";
+            else if (keycode == KC_ZOOM_RESET) custom_name = "KC_ZOOM_RESET";
+            else if (keycode == KC_LOCK_SCREEN) custom_name = "KC_LOCK_SCREEN";
+            
+            if (custom_name) {
+                uprintf("DEBUG: kc: 0x%04X [%s], col:%2u, row:%2u, pressed:%u, time:%5u\n", 
+                        keycode, custom_name,
+                        record->event.key.col, 
+                        record->event.key.row, 
+                        record->event.pressed,
+                        record->event.time);
+            } else {
+                uprintf("DEBUG: kc: 0x%04X, col:%2u, row:%2u, pressed:%u, time:%5u\n", 
+                        keycode,
+                        record->event.key.col, 
+                        record->event.key.row, 
+                        record->event.pressed,
+                        record->event.time);
+            }
+        }
     }
 #endif
     
@@ -643,6 +743,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     layer_off(NAV_LAYER);
                     layer_on(LIGHTING_LAYER);
                 }
+            }
+            return false;
+
+        // Return to base - explicitly turn off all layers and return to MAC_BASE
+        // This works from any layer, including toggle layers
+        case KC_RETURN_TO_BASE:
+            if (record->event.pressed) {
+#ifdef CONSOLE_ENABLE
+                uprintf("DEBUG: KC_RETURN_TO_BASE triggered! Current layer state: 0x%04X\n", layer_state);
+                uprintf("DEBUG: Active layers before: ");
+                for (uint8_t i = 0; i < 11; i++) {
+                    if (layer_state_is(i)) {
+                        uprintf("L%d ", i);
+                    }
+                }
+                uprintf("\n");
+#endif
+                // Turn off all toggle layers explicitly
+                layer_off(WIN_LAYER);
+                layer_off(MAC_FN);
+                layer_off(WIN_BASE);
+                layer_off(WIN_FN);
+                layer_off(NUMPAD_LAYER);
+                
+                // Turn off all momentary/custom layers
+                layer_off(NAV_LAYER);
+                layer_off(SYM_LAYER);
+                layer_off(CURSOR_LAYER);
+                layer_off(APP_LAYER);
+                layer_off(LIGHTING_LAYER);
+                
+                // Switch to MAC_BASE
+                layer_move(MAC_BASE);
+                
+                // Reset custom layer switching state
+                selected_target_layer = NAV_LAYER;
+                
+#ifdef CONSOLE_ENABLE
+                uprintf("DEBUG: After layer_move, layer state: 0x%04X\n", layer_state);
+                uprintf("DEBUG: Active layers after: ");
+                for (uint8_t i = 0; i < 11; i++) {
+                    if (layer_state_is(i)) {
+                        uprintf("L%d ", i);
+                    }
+                }
+                uprintf("\n");
+#endif
             }
             return false;
 

@@ -176,8 +176,7 @@ From any non-momentary layer (L3-L10):
   - And so on for all F1-F12 keys
 - **Without Fn**: F1-F12 keys on BASE layer trigger macOS system actions (brightness, volume, media controls, etc.)
 - **With Fn**: F1-F12 keys send actual function key codes that applications can use
-- **Mac Command Button**: `KC_LCMD` key (Position 5) is the Mac Command button (Left Command)
-- **Globe Key Note**: `KC_GLOBE` is used for macOS Globe/Fn key functionality. If compilation fails, the code includes a fallback custom keycode `KC_GLOBE_CUSTOM` that can be used instead.
+- **Mac Command Button**: `KC_LGUI` key (Position 5) is the Mac Command button (Left GUI/Command)
 
 ---
 
@@ -737,6 +736,31 @@ From any non-momentary layer (L3-L10):
 #define KC_WIN_SV_R      LCAG(KC_RIGHT)          // ⌃⌥⌘→
 ```
 
+### Custom Keycodes
+
+```c
+// ============================================
+// Custom Keycodes (for SEND_STRING macros and special functions)
+// ============================================
+enum custom_keycodes {
+    // Symbol macros (SYM_LAYER) - require SEND_STRING
+    KC_SYM_BACKTICKS = SAFE_RANGE,  // H: ```\n``` with cursor before closing backticks
+    KC_SYM_TILDE_SLASH,              // F: ~/
+    KC_SYM_PARENTHESES,              // J: () with cursor in middle
+    KC_SYM_CURLY_BRACES,             // K: {} with cursor in middle
+    KC_SYM_SQUARE_BRACKETS,          // L: [] with cursor in middle
+    // Globe key (macOS Globe/Fn key) - fallback if KC_GLOBE not available
+    KC_GLOBE_CUSTOM,                 // Custom Globe key implementation (currently unused)
+    // Input method switching (macOS Ctrl+Space)
+    KC_IME_NEXT,                     // Switch input method (Ctrl+Space)
+};
+```
+
+**Custom Keycode Handlers**:
+- `KC_SYM_*` keycodes: Handled in `process_record_user()` to send strings via `SEND_STRING()`
+- `KC_GLOBE_CUSTOM`: Placeholder for Globe key (requires QMK patches)
+- `KC_IME_NEXT`: Sends `LCTL(KC_SPC)` (Ctrl+Space) for macOS input source switching
+
 ### Encoder Macros
 
 ```c
@@ -759,6 +783,35 @@ enum {
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),
 };
+```
+
+### Process Record User Handler
+
+The `process_record_user()` function handles custom keycodes and includes:
+
+1. **Debug Console Output** (when `CONSOLE_ENABLE = yes`):
+   - Logs all key presses with keycode, matrix position, press state, and timestamp
+   - Decodes Layer Tap (LT) keycodes to show layer name and tap keycode
+   - Helps debug keymap issues and verify key assignments
+
+2. **KC_LNG1 Workaround**:
+   - Converts `KC_LNG1` to `KC_LGUI` at position 5 (col:4, row:5)
+   - Handles cases where EEPROM has stored `KC_LNG1` instead of `KC_LGUI`
+   - Only active if VIA was previously used or EEPROM has old data
+
+3. **Custom Keycode Handlers**:
+   - `KC_SYM_*` keycodes: Send strings via `SEND_STRING()` macro
+   - `KC_GLOBE_CUSTOM`: Placeholder (currently does nothing, requires QMK patches)
+   - `KC_IME_NEXT`: Sends `LCTL(KC_SPC)` (Ctrl+Space) for macOS input source switching
+
+**Example Implementation**:
+```c
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // Debug output (if CONSOLE_ENABLE = yes)
+    // KC_LNG1 workaround for position 5
+    // Custom keycode handlers (KC_SYM_*, KC_GLOBE_CUSTOM, KC_IME_NEXT)
+    return true; // Process other keycodes normally
+}
 ```
 
 ---
@@ -969,7 +1022,7 @@ When `CONSOLE_ENABLE = yes` is set in `rules.mk`, you can use the QMK console to
 ### Build Configuration (rules.mk)
 - **ENCODER_MAP_ENABLE**: `yes` - Encoder support enabled
 - **TAP_DANCE_ENABLE**: `yes` - Tap dance support enabled
-- **CONSOLE_ENABLE**: `yes` - Console/debug output enabled (logs ALL key presses)
+- **CONSOLE_ENABLE**: `no` (disabled) - Console/debug output disabled by default (can be enabled for debugging)
 - **VIA_ENABLE**: `no` (disabled) - VIA support disabled; keymap is code-managed only
 
 **Note**: VIA is disabled to prevent EEPROM-stored keymaps from overriding the compiled keymap. All keymap changes must be made in code and reflashed.
@@ -979,8 +1032,9 @@ When `CONSOLE_ENABLE = yes` is set in `rules.mk`, you can use the QMK console to
 - Matrix position (column, row)
 - Press state (1 = pressed, 0 = released)
 - Timestamp
+- Layer Tap (LT) keycode decoding (shows layer name and tap keycode)
 
-Use `qmk console` command to view debug output in real-time. This helps verify key assignments, debug keymap issues, and troubleshoot matrix position problems.
+Use `qmk console` command to view debug output in real-time. This helps verify key assignments, debug keymap issues, and troubleshoot matrix position problems. Debug code is safely wrapped in `#ifdef CONSOLE_ENABLE` blocks, so it has no impact when disabled.
 
 ### Additional Layer Notes
 

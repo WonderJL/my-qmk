@@ -85,7 +85,7 @@ From any non-momentary layer (L3-L10):
   - **Fn Key Behavior**:
     - **Tap**: Sends `KC_GLOBE` - macOS Globe/Fn key (if `KC_GLOBE` is not available, custom keycode `KC_GLOBE_CUSTOM` is used as fallback)
     - **Hold Fn**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions (brightness, volume, etc.)
-    - **Mac Command Button**: `KC_LGUI` key (Position 5) is the Mac Command button (Left GUI/Command)
+    - **Mac Command Button**: `KC_LCMD` key (Position 5) is the Mac Command button (Left Command)
 - **Helper Layers** (CURSOR/APP/WIN): Latch (LT) - tap selector to activate, tap again to deactivate
 - **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
 - **Lighting Layer** (L9): Momentary (MO) - activates only while selector held
@@ -117,34 +117,34 @@ From any non-momentary layer (L3-L10):
     KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
     // Row 5: Modifiers and thumb keys
     //        Position 1: KC_APP_VPN_SHADOWROCKET - VPN toggle
-    //        Position 2: LT(MAC_FN, KC_GLOBE) - Left Thumb Fn (tap: Globe, hold: MAC_FN layer)
+    //        Position 2: LT(MAC_FN, KC_GLOBE_CUSTOM) - Left Thumb Fn (tap: Globe, hold: MAC_FN layer)
     //        Position 3: KC_LCTL - Left Control
     //        Position 4: KC_LALT - Left Option/Alt
-    //        Position 5: KC_LGUI - Mac Command button (Left GUI/Command)
+    //        Position 5: KC_LCMD - Mac Command button (Left Command)
     //        Position 6: LT(NAV_LAYER, KC_SPC) - Left Space (tap: space, hold: NAV layer)
     //        Position 7: LT(SYM_LAYER, KC_SPC) - Right Space (tap: space, hold: SYM layer)
-    //        Position 8: KC_RGUI - Right Command (Right GUI/Command)
+    //        Position 8: KC_RCMD - Right Command
     //        Position 9: KC_RCTL - Right Control
-    //        Position 10: LT(MAC_FN, KC_GLOBE) - Right Thumb Fn (tap: Globe, hold: MAC_FN layer)
+    //        Position 10: LT(MAC_FN, KC_GLOBE_CUSTOM) - Right Thumb Fn (tap: Globe, hold: MAC_FN layer)
     //        Position 11: KC_LEFT - Left Arrow
     //        Position 12: KC_DOWN - Down Arrow
     //        Position 13: KC_RGHT - Right Arrow
-    KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_GLOBE),  KC_LCTL,  KC_LALT,  KC_LGUI,         LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  LT(MAC_FN, KC_GLOBE),  KC_LEFT,  KC_DOWN,  KC_RGHT
+    KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_GLOBE_CUSTOM),  KC_LCTL,  KC_LALT,  KC_LCMD,         LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, KC_GLOBE_CUSTOM),  KC_LEFT,  KC_DOWN,  KC_RGHT
 ),
 ```
 
 **Key Features**:
 - **Row 5 Structure**:
   - **Position 1**: `KC_APP_VPN_SHADOWROCKET` - VPN toggle
-  - **Position 2**: `LT(MAC_FN, KC_GLOBE)` - Left Thumb Fn (tap: Globe, hold: MAC_FN layer)
+  - **Position 2**: `LT(MAC_FN, KC_GLOBE_CUSTOM)` - Left Thumb Fn (tap: Globe, hold: MAC_FN layer)
   - **Position 3**: `KC_LCTL` - Left Control
   - **Position 4**: `KC_LALT` - Left Option/Alt
-  - **Position 5**: `KC_LGUI` - Mac Command button (Left GUI/Command)
+  - **Position 5**: `KC_LCMD` - Mac Command button (Left Command)
   - **Position 6**: `LT(NAV_LAYER, KC_SPC)` - Left Space (tap: space, hold: NAV layer)
   - **Position 7**: `LT(SYM_LAYER, KC_SPC)` - Right Space (tap: space, hold: SYM layer)
-  - **Position 8**: `KC_RGUI` - Right Command (Right GUI/Command)
+  - **Position 8**: `KC_RCMD` - Right Command
   - **Position 9**: `KC_RCTL` - Right Control
-  - **Position 10**: `LT(MAC_FN, KC_GLOBE)` - Right Thumb Fn (tap: Globe, hold: MAC_FN layer)
+  - **Position 10**: `LT(MAC_FN, KC_GLOBE_CUSTOM)` - Right Thumb Fn (tap: Globe, hold: MAC_FN layer)
   - **Position 11**: `KC_LEFT` - Left Arrow
   - **Position 12**: `KC_DOWN` - Down Arrow
   - **Position 13**: `KC_RGHT` - Right Arrow
@@ -173,7 +173,7 @@ From any non-momentary layer (L3-L10):
   - And so on for all F1-F12 keys
 - **Without Fn**: F1-F12 keys on BASE layer trigger macOS system actions (brightness, volume, media controls, etc.)
 - **With Fn**: F1-F12 keys send actual function key codes that applications can use
-- **Mac Command Button**: `KC_LGUI` key (Position 5) is the Mac Command button (Left GUI/Command)
+- **Mac Command Button**: `KC_LCMD` key (Position 5) is the Mac Command button (Left Command)
 - **Globe Key Note**: `KC_GLOBE` is used for macOS Globe/Fn key functionality. If compilation fails, the code includes a fallback custom keycode `KC_GLOBE_CUSTOM` that can be used instead.
 
 ---
@@ -873,15 +873,52 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 **Resolution**: Implement QMK tap dance for right encoder press detection
 
+### Issue 3: KC_LNG1 vs KC_LGUI (Position 5)
+**Problem**: Position 5 (Left Command) may show `KC_LNG1` in debug output instead of `KC_LGUI` due to EEPROM-stored values from previous flashes
+
+**Resolution**: 
+1. VIA support is disabled (`VIA_ENABLE = no`) to prevent EEPROM overrides
+2. Workaround implemented in `process_record_user()` to convert `KC_LNG1` to `KC_LGUI` at position 5 (col:4, row:5)
+3. After rebuilding and flashing with VIA disabled, the compiled keymap (`KC_LGUI`) should be used directly
+4. If `KC_LNG1` persists, clear EEPROM using `EE_CLR` keycode and reflash
+
 ---
 
 ## 🧪 Testing & Validation
+
+### Debug Console Usage
+When `CONSOLE_ENABLE = yes` is set in `rules.mk`, you can use the QMK console to debug all key presses:
+
+1. **Start QMK Console**:
+   ```bash
+   qmk console
+   ```
+
+2. **View Debug Output**: All key presses will be logged with:
+   - Keycode (hexadecimal format: `0x0008` for KC_LGUI)
+   - Matrix position (column, row)
+   - Press state (`1` = pressed, `0` = released)
+   - Timestamp
+
+3. **Example Output**:
+   ```
+   DEBUG: kc: 0x0008, col: 4, row: 5, pressed:1, time:12345
+   DEBUG: kc: 0x0008, col: 4, row: 5, pressed:0, time:12350
+   ```
+
+4. **Use Cases**:
+   - Verify keycode assignments match expected values
+   - Debug matrix position issues
+   - Troubleshoot keymap problems
+   - Verify layer activation/deactivation
+   - Check for keycode conflicts
 
 ### Compilation Tests
 - [ ] Keymap compiles without errors: `qmk compile -kb keychron/q11/ansi_encoder -km j-custom`
 - [ ] No undefined keycode references
 - [ ] All macros properly defined
 - [ ] No syntax errors in SEND_STRING macros
+- [ ] Console debug output works: `qmk console` shows all key presses
 
 ### Functional Tests (Hardware Required)
 - [ ] BASE layer: All keys type correctly
@@ -893,6 +930,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - [ ] Encoder: Rotate and press actions work
 - [ ] Layer activation/deactivation works correctly
 - [ ] No conflicts between layers
+- [ ] Debug console shows correct keycodes for all positions
 
 ### Edge Cases
 - [ ] Rapid layer switching doesn't cause stuck keys
@@ -924,6 +962,22 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - **Row 3**: QWERTY home row (15 keys)
 - **Row 4**: QWERTY bottom row (14 keys)
 - **Row 5**: Modifiers and thumb keys (13 keys)
+
+### Build Configuration (rules.mk)
+- **ENCODER_MAP_ENABLE**: `yes` - Encoder support enabled
+- **TAP_DANCE_ENABLE**: `yes` - Tap dance support enabled
+- **CONSOLE_ENABLE**: `yes` - Console/debug output enabled (logs ALL key presses)
+- **VIA_ENABLE**: `no` (disabled) - VIA support disabled; keymap is code-managed only
+
+**Note**: VIA is disabled to prevent EEPROM-stored keymaps from overriding the compiled keymap. All keymap changes must be made in code and reflashed.
+
+**Debug Console**: When `CONSOLE_ENABLE = yes`, all key presses are logged to the console with:
+- Keycode (hexadecimal)
+- Matrix position (column, row)
+- Press state (1 = pressed, 0 = released)
+- Timestamp
+
+Use `qmk console` command to view debug output in real-time. This helps verify key assignments, debug keymap issues, and troubleshoot matrix position problems.
 
 ### Additional Layer Notes
 
@@ -965,7 +1019,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 1. **Windows Support**: Complete WIN_BASE and WIN_NAV layers
 2. **Shortcuts/Automations Layer**: Implement reserved selector A
 3. **Layer Indicators**: Add RGB/OLED feedback for active layer
-4. **VIA Configuration**: Create VIA-compatible keymap (optional)
+4. **VIA Configuration**: VIA support is disabled; keymap is code-managed only
 
 ---
 

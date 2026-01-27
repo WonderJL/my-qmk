@@ -423,6 +423,32 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 // SEND_STRING macros must be called from here, not from keymap directly
 // ============================================
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+#ifdef CONSOLE_ENABLE
+    // Enhanced debug output: Print ALL key presses with keycode, matrix position, and press state
+    // This helps debug keymap issues and verify key assignments
+    uprintf("DEBUG: kc: 0x%04X, col:%2u, row:%2u, pressed:%u, time:%5u\n", 
+            keycode,
+            record->event.key.col, 
+            record->event.key.row, 
+            record->event.pressed,
+            record->event.time);
+#endif
+    
+    // Workaround: Convert KC_LNG1 to KC_LGUI for position 5 (col:4, row:5)
+    // This handles cases where VIA or EEPROM has stored KC_LNG1 instead of KC_LGUI
+    // Note: The keymap array has KC_LGUI, but EEPROM/VIA may override it with KC_LNG1
+    if (keycode == KC_LNG1 && record->event.key.col == 4 && record->event.key.row == 5) {
+#ifdef CONSOLE_ENABLE
+        uprintf("WORKAROUND: Converting KC_LNG1 to KC_LGUI at position 5\n");
+#endif
+        if (record->event.pressed) {
+            register_code(KC_LGUI);
+        } else {
+            unregister_code(KC_LGUI);
+        }
+        return false; // We've handled it, don't process KC_LNG1
+    }
+    
     switch (keycode) {
         // Symbol macros - only trigger on key press (not release)
         case KC_SYM_BACKTICKS:

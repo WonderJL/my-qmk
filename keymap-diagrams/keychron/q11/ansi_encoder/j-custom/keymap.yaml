@@ -2,58 +2,13 @@ layout: {qmk_keyboard: keychron/q11/ansi_encoder, layout_name: LAYOUT_91_ansi}
 layers:
   L0-MAC_BASE:
   - [MUTE, ESC, BRID, BRIU, MCTL, LPAD, RM VALD, RM VALU, MPRV, MPLY]
-  - - MNXT
-    - MUTE
-    - VOLD
-    - VOLU
-    - INS
-    - DEL
-    - TD(TD ENC R)
-    - {t: ▽, type: trans}
-    - '`'
-    - '1'
+  - [MNXT, MUTE, VOLD, VOLU, INS, DEL, TD(TD ENC R), APP WHATSAPP, '`', '1']
   - ['2', '3', '4', '5', '6', '7', '8', '9', '0', '-']
-  - - '='
-    - BSPC
-    - PGUP
-    - {t: ▽, type: trans}
-    - TAB
-    - Q
-    - W
-    - E
-    - R
-    - T
-  - - Y
-    - U
-    - I
-    - O
-    - P
-    - '['
-    - ']'
-    - \
-    - PGDN
-    - {t: ▽, type: trans}
+  - ['=', BSPC, PGUP, APP WECHAT, TAB, Q, W, E, R, T]
+  - [Y, U, I, O, P, '[', ']', \, PGDN, APP SLACK 6]
   - [CAPS, A, S, D, F, G, H, J, K, L]
-  - - ;
-    - ''''
-    - ENT
-    - HOME
-    - {t: ▽, type: trans}
-    - LSFT
-    - Z
-    - X
-    - C
-    - V
-  - - B
-    - N
-    - M
-    - ','
-    - .
-    - /
-    - RSFT
-    - UP
-    - {t: ▽, type: trans}
-    - LCTL
+  - [;, '''', ENT, HOME, APP CHATGPT, LSFT, Z, X, C, V]
+  - [B, N, M, ',', ., /, RSFT, UP, APP VPN SHADOWROCKET, LCTL]
   - [LOPT, LCMD, MO(NAV LAYER), SPC, SPC, MO(SYM LAYER), RCMD, RCTL, LEFT, DOWN]
   - [RGHT]
   L1-NAV_LAYER:

@@ -83,6 +83,8 @@ enum custom_keycodes {
 #define KC_APP_NOTION    LSFT(LCTL(LGUI(KC_N))) // ⇧⌃⌘N - N key
 #define KC_APP_OBSIDIAN  LALT(LGUI(KC_O))       // ⌥⌘O - O key
 #define KC_APP_FINDER    LSFT(LALT(LGUI(KC_SPC))) // ⇧⌥⌘Space - Space key
+#define KC_APP_SLACK_6   LALT(LGUI(KC_6))       // ⌥⌘6 - Left column Row 3
+#define KC_APP_VPN_SHADOWROCKET LSFT(LALT(LGUI(KC_Z))) // ⇧⌥⌘Z - Toggle Shadowrocket VPN
 
 // ============================================
 // Window Management Macros (modifier combinations)
@@ -119,7 +121,7 @@ enum {
     TD_ENC_R = 0,
 };
 
-qk_tap_dance_action_t tap_dance_actions[] = {
+tap_dance_action_t tap_dance_actions[] = {
     [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),
 };
 
@@ -138,18 +140,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [MAC_BASE] = LAYOUT_91_ansi(
         // Row 0: Encoder, Esc, F-keys, media
         KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   TD(TD_ENC_R),
-        // Row 1: Numbers
-        _______,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
-        // Row 2: QWERTY top row
-        _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
-        // Row 3: QWERTY home row
-        _______,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
-        // Row 4: QWERTY bottom row
-        _______,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
-        // Row 5: Modifiers and thumb keys
+        // Row 1: Numbers (leftmost key: WhatsApp)
+        KC_APP_WHATSAPP,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
+        // Row 2: QWERTY top row (leftmost key: WeChat)
+        KC_APP_WECHAT,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
+        // Row 3: QWERTY home row (leftmost key: Slack)
+        KC_APP_SLACK_6,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
+        // Row 4: QWERTY bottom row (leftmost key: ChatGPT)
+        KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
+        // Row 5: Modifiers and thumb keys (leftmost key: Shadowrocket VPN toggle)
         //        Left Thumb: MO(NAV_LAYER) for layer menu
         //        Right Thumb: MO(SYM_LAYER) for symbols
-        _______,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(NAV_LAYER),      KC_SPC,                        KC_SPC,             MO(SYM_LAYER), KC_RCMD,  KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        KC_APP_VPN_SHADOWROCKET,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(NAV_LAYER),      KC_SPC,                        KC_SPC,             MO(SYM_LAYER), KC_RCMD,  KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held)

@@ -93,16 +93,16 @@ From any non-momentary layer (L3-L10):
 [MAC_BASE] = LAYOUT_91_ansi(
     // Row 0: Function keys, media, etc.
     KC_MUTE,  KC_ESC,   KC_BRID,  KC_BRIU,  KC_MCTL,  KC_LPAD,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,    KC_VOLU,  KC_INS,   KC_DEL,   TD(TD_ENC_R),
-    // Row 1: Numbers and symbols
-    _______,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
-    // Row 2: QWERTY top row
-    _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
-    // Row 3: QWERTY home row
-    _______,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
-    // Row 4: QWERTY bottom row
-    _______,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
-    // Row 5: Modifiers and thumb keys
-    _______,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(NAV_LAYER),         KC_SPC,                        KC_SPC,             MO(SYM_LAYER), KC_RCMD,  KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
+    // Row 1: Numbers and symbols (leftmost key: WhatsApp)
+    KC_APP_WHATSAPP,  KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,      KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,    KC_EQL,   KC_BSPC,            KC_PGUP,
+    // Row 2: QWERTY top row (leftmost key: WeChat)
+    KC_APP_WECHAT,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
+    // Row 3: QWERTY home row (leftmost key: Slack)
+    KC_APP_SLACK_6,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
+    // Row 4: QWERTY bottom row (leftmost key: ChatGPT)
+    KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
+    // Row 5: Modifiers and thumb keys (leftmost key: Shadowrocket VPN toggle)
+    KC_APP_VPN_SHADOWROCKET,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(NAV_LAYER),         KC_SPC,                        KC_SPC,             MO(SYM_LAYER), KC_RCMD,  KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
 ),
 ```
 
@@ -111,6 +111,12 @@ From any non-momentary layer (L3-L10):
 - **Right Thumb**: `MO(SYM_LAYER)` - activates SYM layer when held
 - **All letters type normally** - no helper functionality
 - **Backslash key (`\`)**: Outputs `\` (backslash) - `KC_BSLS` (default behavior)
+- **Leftmost Column (5 keys)**: Quick app launchers and VPN toggle
+  - **Row 1** (left of backtick): `KC_APP_WHATSAPP` - Opens WhatsApp (⌥⌘1)
+  - **Row 2** (left of TAB): `KC_APP_WECHAT` - Opens WeChat (⌥⌘3)
+  - **Row 3** (left of CAPS): `KC_APP_SLACK_6` - Opens Slack (⌥⌘6)
+  - **Row 4** (left of LSFT): `KC_APP_CHATGPT` - Opens ChatGPT (⌥⌘Z)
+  - **Row 5** (left of LCTL): `KC_APP_VPN_SHADOWROCKET` - Toggles Shadowrocket VPN (⇧⌥⌘Z)
 
 ---
 
@@ -626,6 +632,7 @@ From any non-momentary layer (L3-L10):
 #define KC_APP_CAL       LALT(LGUI(KC_C))      // ⌥⌘C
 #define KC_APP_MAIL      LALT(LGUI(KC_E))      // ⌥⌘E
 #define KC_APP_SLACK     LALT(LGUI(KC_S))      // ⌥⌘S
+#define KC_APP_SLACK_6   LALT(LGUI(KC_6))      // ⌥⌘6 - Left column Row 3
 #define KC_APP_OBSIDIAN  LALT(LGUI(KC_O))      // ⌥⌘O
 #define KC_APP_BGA       LALT(LGUI(KC_B))      // ⌥⌘B
 #define KC_APP_WHATSAPP  LALT(LGUI(KC_1))      // ⌥⌘1
@@ -636,6 +643,7 @@ From any non-momentary layer (L3-L10):
 #define KC_APP_MUSIC     LALT(LGUI(KC_GRV))    // ⌥⌘`
 #define KC_APP_NOTION    LSFT(LCTL(LGUI(KC_N))) // ⇧⌃⌘N
 #define KC_APP_FINDER    LSFT(LALT(LGUI(KC_SPC))) // ⇧⌥⌘Space
+#define KC_APP_VPN_SHADOWROCKET LSFT(LALT(LGUI(KC_Z))) // ⇧⌥⌘Z - Toggle Shadowrocket VPN
 ```
 
 ### Window Management Macros
@@ -902,7 +910,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 **This tech spec consolidates all planning documents and provides a complete, production-ready specification for the QMK keymap implementation.**
 
 ### Completeness Status
-- ✅ **BASE Layer**: Complete
+- ✅ **BASE Layer**: Complete (with leftmost column app launchers: WhatsApp, WeChat, Slack, ChatGPT, Shadowrocket VPN toggle)
 - ✅ **SYM Layer**: Complete (with special macros)
 - ✅ **NAV Layer**: Structure defined, all selectors finalized (Q/W/E/R for L5-L8, A/S/D/F/G/H for others)
 - ⚠️ **CURSOR Layer**: Partial mapping (Y/U/I/O); remaining commands TBD, left space NAV access added
@@ -925,13 +933,19 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 
 ---
 
-**Document Version**: 1.1  
-**Last Updated**: 2026-01-26  
+**Document Version**: 1.2  
+**Last Updated**: 2026-01-27  
 **Status**: Finalized Tech Spec (Implementation In Progress)  
 **Target Keyboard**: Keychron Q11 ANSI Encoder  
 **Firmware**: QMK
 
 **Recent Updates**:
+- Added leftmost column app launchers to MAC_BASE layer (5 keys):
+  - Row 1: WhatsApp (⌥⌘1)
+  - Row 2: WeChat (⌥⌘3)
+  - Row 3: Slack (⌥⌘6)
+  - Row 4: ChatGPT (⌥⌘Z)
+  - Row 5: Shadowrocket VPN toggle (⇧⌥⌘Z)
 - Added Layer 9: LIGHTING_LAYER (RGB lighting controls)
 - Added Layer 10: NUMPAD_LAYER (number pad)
 - Updated NAV_LAYER with toggle selectors for L5-L8 (Q/W/E/R)

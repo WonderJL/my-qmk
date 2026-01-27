@@ -201,9 +201,11 @@ path.combo {
 <tspan x="0" dy="-1.2em">TD(TD</tspan><tspan x="0" dy="1.2em">ENC</tspan><tspan x="0" dy="1.2em">R)</tspan>
 </text>
 </g>
-<g transform="translate(28, 98)" class="key trans keypos-17">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
-<text x="0" y="0" class="key trans tap">▽</text>
+<g transform="translate(28, 98)" class="key keypos-17">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-0.6em" style="font-size: 88%">APP</tspan><tspan x="0" dy="1.2em" style="font-size: 88%">WHATSAPP</tspan>
+</text>
 </g>
 <g transform="translate(98, 98)" class="key keypos-18">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
@@ -265,9 +267,11 @@ path.combo {
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">PGUP</text>
 </g>
-<g transform="translate(28, 154)" class="key trans keypos-33">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
-<text x="0" y="0" class="key trans tap">▽</text>
+<g transform="translate(28, 154)" class="key keypos-33">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-0.6em">APP</tspan><tspan x="0" dy="1.2em">WECHAT</tspan>
+</text>
 </g>
 <g transform="translate(112, 154)" class="key keypos-34">
 <rect rx="6" ry="6" x="-40" y="-26" width="80" height="52" class="key"/>
@@ -329,9 +333,11 @@ path.combo {
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">PGDN</text>
 </g>
-<g transform="translate(28, 210)" class="key trans keypos-49">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
-<text x="0" y="0" class="key trans tap">▽</text>
+<g transform="translate(28, 210)" class="key keypos-49">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-1.2em">APP</tspan><tspan x="0" dy="1.2em">SLACK</tspan><tspan x="0" dy="1.2em">6</tspan>
+</text>
 </g>
 <g transform="translate(119, 210)" class="key keypos-50">
 <rect rx="6" ry="6" x="-47" y="-26" width="94" height="52" class="key"/>
@@ -389,9 +395,11 @@ path.combo {
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">HOME</text>
 </g>
-<g transform="translate(28, 266)" class="key trans keypos-64">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
-<text x="0" y="0" class="key trans tap">▽</text>
+<g transform="translate(28, 266)" class="key keypos-64">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-0.6em">APP</tspan><tspan x="0" dy="1.2em">CHATGPT</tspan>
+</text>
 </g>
 <g transform="translate(133, 266)" class="key keypos-65">
 <rect rx="6" ry="6" x="-61" y="-26" width="122" height="52" class="key"/>
@@ -445,9 +453,11 @@ path.combo {
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">UP</text>
 </g>
-<g transform="translate(28, 322)" class="key trans keypos-78">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans"/>
-<text x="0" y="0" class="key trans tap">▽</text>
+<g transform="translate(28, 322)" class="key keypos-78">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-1.2em" style="font-size: 64%">APP</tspan><tspan x="0" dy="1.2em" style="font-size: 64%">VPN</tspan><tspan x="0" dy="1.2em" style="font-size: 64%">SHADOWROCK…</tspan>
+</text>
 </g>
 <g transform="translate(105, 322)" class="key keypos-79">
 <rect rx="6" ry="6" x="-33" y="-26" width="66" height="52" class="key"/>

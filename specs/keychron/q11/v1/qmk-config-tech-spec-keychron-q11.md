@@ -50,19 +50,23 @@ Layer 10: NUMPAD_LAYER  - Number pad (NAV + H)
 
 ```
 BASE (Layer 0)
-  ├─ Left Thumb Hold → NAV_LAYER (Layer 1)
-  │   ├─ Tap Q → Toggle WIN_LAYER (Layer 5) [toggle]
-  │   ├─ Tap W → Toggle MAC_FN (Layer 6) [toggle]
-  │   ├─ Tap E → Toggle WIN_BASE (Layer 7) [toggle]
-  │   ├─ Tap R → Toggle WIN_FN (Layer 8) [toggle]
-  │   ├─ Tap A → Latch APP_LAYER (Layer 4) [latch]
-  │   ├─ Tap S → Latch WIN_LAYER (Layer 5) [latch - existing]
-  │   ├─ Tap D → Latch APP_LAYER (Layer 4) [latch]
-  │   ├─ Tap F → Latch CURSOR_LAYER (Layer 3) [latch]
-  │   ├─ Hold G → Momentary LIGHTING_LAYER (Layer 9) [momentary]
-  │   └─ Tap H → Toggle NUMPAD_LAYER (Layer 10) [toggle]
+  ├─ Left Space Hold → NAV_LAYER (Layer 1) [Layer Tap]
+  │   ├─ Tap → Space
+  │   ├─ Hold → NAV_LAYER activates
+  │   │   ├─ Tap Q → Toggle WIN_LAYER (Layer 5) [toggle]
+  │   │   ├─ Tap W → Toggle MAC_FN (Layer 6) [toggle]
+  │   │   ├─ Tap E → Toggle WIN_BASE (Layer 7) [toggle]
+  │   │   ├─ Tap R → Toggle WIN_FN (Layer 8) [toggle]
+  │   │   ├─ Tap A → Latch APP_LAYER (Layer 4) [latch]
+  │   │   ├─ Tap S → Latch WIN_LAYER (Layer 5) [latch - existing]
+  │   │   ├─ Tap D → Latch APP_LAYER (Layer 4) [latch]
+  │   │   ├─ Tap F → Latch CURSOR_LAYER (Layer 3) [latch]
+  │   │   ├─ Hold G → Momentary LIGHTING_LAYER (Layer 9) [momentary]
+  │   │   └─ Tap H → Toggle NUMPAD_LAYER (Layer 10) [toggle]
   │
-  └─ Right Thumb Hold → SYM_LAYER (Layer 2)
+  └─ Right Space Hold → SYM_LAYER (Layer 2) [Layer Tap]
+     ├─ Tap → Space
+     └─ Hold → SYM_LAYER activates
 
 From any non-momentary layer (L3-L10):
   └─ Left Space Hold → NAV_LAYER (Layer 1)  
@@ -70,13 +74,22 @@ From any non-momentary layer (L3-L10):
 ```
 
 **Key Points**:
-- **NAV_LAYER**: Momentary (MO) - activates only while left thumb held
-- **SYM_LAYER**: Momentary (MO) - activates only while right thumb held
+- **NAV_LAYER**: Momentary - activates only while left space held (Layer Tap)
+- **SYM_LAYER**: Momentary - activates only while right space held (Layer Tap)
+- **Space Bars**: Layer Tap (LT) - tap for space, hold for layer activation
+  - **Left Space**: `LT(NAV_LAYER, KC_SPC)` - tap for space, hold for NAV layer
+  - **Right Space**: `LT(SYM_LAYER, KC_SPC)` - tap for space, hold for SYM layer
+- **Thumb Keys**: Fn keys (MacBook-style)
+  - **Left Thumb**: `LT(MAC_FN, KC_LNG1)` - Fn key (tap for input method switch, hold for F1-F12)
+  - **Right Thumb**: `LT(MAC_FN, KC_LNG1)` - Fn key (tap for input method switch, hold for F1-F12)
+  - **Fn Key Behavior**:
+    - **Tap**: `KC_LNG1` - Switch input method (Language 1)
+    - **Hold + F1-F12**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions (brightness, volume, etc.)
 - **Helper Layers** (CURSOR/APP/WIN): Latch (LT) - tap selector to activate, tap again to deactivate
 - **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
 - **Lighting Layer** (L9): Momentary (MO) - activates only while selector held
 - **Left Space NAV Access**: All non-momentary layers (L3-L10) provide NAV access on left space, except NUMPAD_LAYER which uses the left thumb key to keep KP_0 on left space
-- **All layers deactivate** on thumb release (momentary layers) or explicit deactivation (latched/toggled layers)
+- **All layers deactivate** on space release (momentary layers) or explicit deactivation (latched/toggled layers)
 
 ---
 
@@ -102,13 +115,26 @@ From any non-momentary layer (L3-L10):
     // Row 4: QWERTY bottom row (leftmost key: ChatGPT)
     KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
     // Row 5: Modifiers and thumb keys (leftmost key: Shadowrocket VPN toggle)
-    KC_APP_VPN_SHADOWROCKET,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(NAV_LAYER),         KC_SPC,                        KC_SPC,             MO(SYM_LAYER), KC_RCMD,  KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
+    //        Structure matches old VIA config:
+    //        - 4 keys before left space: Left Thumb (Fn), KC_LCTL, KC_LOPT, KC_LCMD
+    //        - Left Space: LT(NAV_LAYER, KC_SPC) - tap for space, hold for NAV layer
+    //        - Right Space: LT(SYM_LAYER, KC_SPC) - tap for space, hold for SYM layer
+    //        - 3 keys after right space: KC_RCMD, KC_RCTL, Right Thumb (Fn)
+    //        Fn key: LT(MAC_FN, KC_LNG1) - tap for input method switch, hold for F1-F12 layer
+    KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_LNG1),  KC_LCTL,  KC_LOPT,  KC_LCMD,         LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, KC_LNG1),  KC_LEFT,  KC_DOWN,  KC_RGHT
 ),
 ```
 
 **Key Features**:
-- **Left Thumb**: `MO(NAV_LAYER)` - activates NAV layer when held
-- **Right Thumb**: `MO(SYM_LAYER)` - activates SYM layer when held
+- **Row 5 Structure** (matches old VIA config):
+  - **4 keys before left space**: Left Thumb (`LT(MAC_FN, KC_LNG1)` - Fn key), `KC_LCTL`, `KC_LOPT`, `KC_LCMD`
+  - **Left Space**: `LT(NAV_LAYER, KC_SPC)` - tap for space, hold for NAV layer
+  - **Right Space**: `LT(SYM_LAYER, KC_SPC)` - tap for space, hold for SYM layer
+  - **3 keys after right space**: `KC_RCMD`, `KC_RCTL`, Right Thumb (`LT(MAC_FN, KC_LNG1)` - Fn key)
+- **Fn Key Behavior** (MacBook-style):
+  - **Tap**: `KC_LNG1` - Switch input method (Language 1)
+  - **Hold + F1-F12**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions
+  - **Example**: Hold Fn + F1 sends `KC_F1` (actual F1 key) instead of brightness down
 - **All letters type normally** - no helper functionality
 - **Backslash key (`\`)**: Outputs `\` (backslash) - `KC_BSLS` (default behavior)
 - **Leftmost Column (5 keys)**: Quick app launchers and VPN toggle
@@ -118,13 +144,26 @@ From any non-momentary layer (L3-L10):
   - **Row 4** (left of LSFT): `KC_APP_CHATGPT` - Opens ChatGPT (⌥⌘Z)
   - **Row 5** (left of LCTL): `KC_APP_VPN_SHADOWROCKET` - Toggles Shadowrocket VPN (⇧⌥⌘Z)
 
+**Fn Key (MacBook-style)**:
+- **Left Thumb** and **Right Thumb** both use `LT(MAC_FN, KC_LNG1)`
+- **Tap Fn**: Switches input method (sends `KC_LNG1` - Language 1 keycode)
+- **Hold Fn + F1-F12**: Activates MAC_FN layer, sending actual function keys:
+  - **Fn + F1**: Sends `KC_F1` (actual F1) instead of brightness down
+  - **Fn + F2**: Sends `KC_F2` (actual F2) instead of brightness up
+  - **Fn + F3**: Sends `KC_F3` (actual F3) instead of Mission Control
+  - **Fn + F9**: Sends `KC_F9` (actual F9) instead of media play/pause
+  - And so on for all F1-F12 keys
+- **Without Fn**: F1-F12 keys on BASE layer trigger macOS system actions (brightness, volume, media controls, etc.)
+- **With Fn**: F1-F12 keys send actual function key codes that applications can use
+
 ---
 
 ### Layer 1: NAV_LAYER (Navigation Menu)
 
 **Purpose**: Menu system for accessing helper layers
 
-**Activation**: Left Thumb hold (`MO(NAV_LAYER)`)
+**Activation**: 
+- Left Space hold (`LT(NAV_LAYER, KC_SPC)`) - from BASE layer, tap for space, hold for NAV layer
 
 **Key Mappings**:
 ```c
@@ -149,8 +188,8 @@ From any non-momentary layer (L3-L10):
                   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
     // Row 4: Transparent
     _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
-    // Row 5: Keep thumb key held
-    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______
+    // Row 5: Space bars transparent (pass through to BASE LT functions)
+    _______,  _______,  _______,  _______,  _______,            _______,                       _______,            _______,  _______,  _______,  _______,  _______,  _______
 ),
 ```
 
@@ -171,15 +210,16 @@ From any non-momentary layer (L3-L10):
 - **`TG(LAYER)`**: Tap to toggle layer on/off (returns to MAC_BASE when toggled off)
 - **`MO(LAYER)`**: Hold to activate layer, release to deactivate
 - **Right-hand keys**: Transparent (pass through to BASE)
-- **Thumb key**: Keep `MO(NAV_LAYER)` to maintain activation
+- **Space bars**: Transparent (pass through to BASE layer's `LT()` functions - tap for space, hold for layer)
 
 **Usage**:
-1. Hold Left Thumb → NAV_LAYER activates
+1. **Activate NAV_LAYER**:
+   - Hold Left Space → NAV_LAYER activates (from BASE layer)
 2. Tap selector key:
    - **Toggle selectors (Q/W/E/R/H)**: Tap to toggle layer on/off
    - **Latch selectors (A/S/D/F)**: Tap to latch layer
    - **Momentary selector (G)**: Hold to activate lighting layer
-3. Release Left Thumb → NAV_LAYER deactivates, but latched/toggled layers remain active
+3. Release Left Space → NAV_LAYER deactivates, but latched/toggled layers remain active
 4. Tap toggle selector again or activate another layer → Deactivate toggled layer
 
 ---
@@ -188,7 +228,8 @@ From any non-momentary layer (L3-L10):
 
 **Purpose**: Quick access to symbols and special coding macros
 
-**Activation**: Right Thumb hold (`MO(SYM_LAYER)`)
+**Activation**: 
+- Right Space hold (`LT(SYM_LAYER, KC_SPC)`) - from BASE layer, tap for space, hold for SYM layer
 
 **Key Mappings**:
 ```c
@@ -260,9 +301,9 @@ From any non-momentary layer (L3-L10):
     // Row 5: Modifiers and thumb keys
     // Left hand: Ctrl Opt Cmd Thumb
     _______,  _______,  _______,  _______,  _______,            // Left modifiers: Transparent
-                // Space: Transparent
+                // Space: Transparent (pass through to BASE layer's LT() functions)
                 // Right hand: Thumb Cmd Ctrl
-                MO(SYM_LAYER),            // Right thumb: Keep MO(SYM_LAYER) to maintain activation
+                _______,            // Right thumb: Transparent
                 _______,  _______,  // Right modifiers: Transparent
                 _______,  _______,  _______,  // Arrow keys: Transparent
 ),
@@ -279,6 +320,7 @@ From any non-momentary layer (L3-L10):
 - **Direct symbol access**: Number row outputs shifted symbols directly (1→!, 2→@, etc.)
 - **Standard symbols**: Backslash key outputs `|` (pipe) on SYM layer (shifted version)
 - **Letters remain transparent**: Typing safety maintained
+- **Space bars**: Transparent (pass through to BASE layer's `LT()` functions - tap for space, hold for layer)
 
 ---
 

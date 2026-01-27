@@ -461,43 +461,47 @@ path.combo {
 </g>
 <g transform="translate(105, 322)" class="key keypos-79">
 <rect rx="6" ry="6" x="-33" y="-26" width="66" height="52" class="key"/>
-<text x="0" y="0" class="key tap">LCTL</text>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-1.2em">LT(MAC</tspan><tspan x="0" dy="1.2em">FN,LNG1</tspan><tspan x="0" dy="1.2em">)</tspan>
+</text>
 </g>
 <g transform="translate(175, 322)" class="key keypos-80">
 <rect rx="6" ry="6" x="-33" y="-26" width="66" height="52" class="key"/>
-<text x="0" y="0" class="key tap">LOPT</text>
+<text x="0" y="0" class="key tap">LCTL</text>
 </g>
 <g transform="translate(245, 322)" class="key keypos-81">
 <rect rx="6" ry="6" x="-33" y="-26" width="66" height="52" class="key"/>
-<text x="0" y="0" class="key tap">LCMD</text>
+<text x="0" y="0" class="key tap">LOPT</text>
 </g>
 <g transform="translate(315, 322)" class="key keypos-82">
 <rect rx="6" ry="6" x="-33" y="-26" width="66" height="52" class="key"/>
-<text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em">MO(NAV</tspan><tspan x="0" dy="1.2em">LAYER)</tspan>
-</text>
+<text x="0" y="0" class="key tap">LCMD</text>
 </g>
 <g transform="translate(413, 322)" class="key keypos-83">
 <rect rx="6" ry="6" x="-61" y="-26" width="122" height="52" class="key"/>
-<text x="0" y="0" class="key tap">SPC</text>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-1.2em">LT(NAV</tspan><tspan x="0" dy="1.2em">LAYER,</tspan><tspan x="0" dy="1.2em">SPC)</tspan>
+</text>
 </g>
 <g transform="translate(613.0, 322.0)" class="key keypos-84">>
 <rect rx="6" ry="6" x="-75" y="-26" width="150" height="52" class="key"/>
-<text x="0" y="0" class="key tap">SPC</text>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-1.2em">LT(SYM</tspan><tspan x="0" dy="1.2em">LAYER,</tspan><tspan x="0" dy="1.2em">SPC)</tspan>
+</text>
 </g>
 <g transform="translate(718.0, 322.0)" class="key keypos-85">>
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em">MO(SYM</tspan><tspan x="0" dy="1.2em">LAYER)</tspan>
-</text>
+<text x="0" y="0" class="key tap">RCMD</text>
 </g>
 <g transform="translate(774.0, 322.0)" class="key keypos-86">>
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">RCMD</text>
+<text x="0" y="0" class="key tap">RCTL</text>
 </g>
 <g transform="translate(830.0, 322.0)" class="key keypos-87">>
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">RCTL</text>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-1.2em">LT(MAC</tspan><tspan x="0" dy="1.2em">FN,LNG1</tspan><tspan x="0" dy="1.2em">)</tspan>
+</text>
 </g>
 <g transform="translate(900.0, 322.0)" class="key keypos-88">>
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>

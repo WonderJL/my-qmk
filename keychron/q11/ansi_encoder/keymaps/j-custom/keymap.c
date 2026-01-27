@@ -149,9 +149,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         // Row 4: QWERTY bottom row (leftmost key: ChatGPT)
         KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
         // Row 5: Modifiers and thumb keys (leftmost key: Shadowrocket VPN toggle)
-        //        Left Thumb: MO(NAV_LAYER) for layer menu
-        //        Right Thumb: MO(SYM_LAYER) for symbols
-        KC_APP_VPN_SHADOWROCKET,  KC_LCTL,  KC_LOPT,  KC_LCMD,  MO(NAV_LAYER),      KC_SPC,                        KC_SPC,             MO(SYM_LAYER), KC_RCMD,  KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        //        Structure matches old VIA config:
+        //        - 4 keys before left space: Left Thumb (Fn), KC_LCTL, KC_LOPT, KC_LCMD
+        //        - Left Space: LT(NAV_LAYER, KC_SPC) - tap for space, hold for NAV layer
+        //        - Right Space: LT(SYM_LAYER, KC_SPC) - tap for space, hold for SYM layer
+        //        - 3 keys after right space: KC_RCMD, KC_RCTL, Right Thumb (Fn)
+        //        Fn key: LT(MAC_FN, KC_LNG1) - tap for input method switch, hold for F1-F12 layer
+        KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_LNG1),  KC_LCTL,  KC_LOPT,  KC_LCMD,      LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, KC_LNG1),  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held)

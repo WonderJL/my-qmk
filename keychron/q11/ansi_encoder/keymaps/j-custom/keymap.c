@@ -460,16 +460,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [NUMPAD_LAYER] = LAYOUT_91_ansi(
         // Row 0: Encoder tap dance for return to base
         TD(TD_ENC_L),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  TD(TD_ENC_R),
-        // Row 1: Transparent
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-        // Row 2: Numpad top row (7, 8, 9, /)
+        // Row 1: Numpad top row (7, 8, 9, /) - positions 8-11 (Y/U/I/O keys)
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_7,  KC_KP_8,  KC_KP_9,  KC_KP_SLASH,  _______,  _______,  _______,            _______,
-        // Row 3: Numpad second row (4, 5, 6, *)
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_ASTERISK,  _______,            _______,            _______,
-        // Row 4: Numpad third row (1, 2, 3, -)
-        _______,  _______,            _______,  _______,  _______,  _______,  _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_MINUS,              _______,  _______,  _______,
-        // Row 5: Numpad bottom row (0, ., +, Enter) + NAV access
-        _______,  _______,  _______,  _______,  MO(NAV_LAYER),      KC_KP_0,                    KC_KP_DOT,           KC_KP_PLUS,  KC_KP_ENTER,  _______,  _______,  _______,  _______),
+        // Row 2: Numpad second row (4, 5, 6, *) - positions 8-11 (H/J/K/L keys)
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_ASTERISK,  _______,  _______,  _______,            _______,
+        // Row 3: Numpad third row (1, 2, 3, -) - positions 8-11 (N/M/,/. keys)
+        _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_MINUS,              _______,            _______,            _______,
+        // Row 4: Numpad bottom row (0, ., +, Enter) - positions 8-11
+        _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_0,  KC_KP_DOT,  KC_KP_PLUS,  KC_KP_ENTER,              _______,  _______,
+        // Row 5: Left space = NAV access, Right space = Numpad Enter
+        _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 KC_KP_ENTER,            _______,  _______,  _______,  _______,  _______,  _______),
 };
 
 // ============================================

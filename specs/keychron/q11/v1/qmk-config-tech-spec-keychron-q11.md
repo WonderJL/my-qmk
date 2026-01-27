@@ -75,7 +75,7 @@ BASE (Layer 0)
 
 From any non-momentary layer (L3-L10):
   └─ Left Space Hold → NAV_LAYER (Layer 1)  
-     (NUMPAD_LAYER uses the left thumb key for NAV access to keep KP_0 on left space)
+     (NUMPAD_LAYER uses left space for NAV access, consistent with other layers)
 ```
 
 **Key Points**:
@@ -94,7 +94,7 @@ From any non-momentary layer (L3-L10):
 - **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
 - **Custom Layer Switching**: Left space hold activates NAV_LAYER, then pressing A/S/D/F/G switches to target layer while left space remains held
 - **Universal Return to Base**: Double-click left encoder (top left) returns to MAC_BASE from any layer
-- **Left Space NAV Access**: All non-momentary layers (L3-L10) provide NAV access on left space, except NUMPAD_LAYER which uses the left thumb key to keep KP_0 on left space
+- **Left Space NAV Access**: All non-momentary layers (L3-L10) provide NAV access on left space, including NUMPAD_LAYER
 - **All layers deactivate** on space release (momentary layers) or explicit deactivation (latched/toggled layers)
 
 ---
@@ -620,71 +620,43 @@ From any non-momentary layer (L3-L10):
 
 **Return to Base**: 
 - Double-click left encoder (top left) → Returns to MAC_BASE (works from any layer)
-- Or: Hold left thumb → NAV_LAYER → Tap H → Toggle off → Returns to MAC_BASE
+- Or: Hold left space → NAV_LAYER → Tap H → Toggle off → Returns to MAC_BASE
 
 **Key Mappings**:
 ```c
 [NUMPAD_LAYER] = LAYOUT_91_ansi(
     // Row 0: Encoder tap dance for return to base
     TD(TD_ENC_L),  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  TD(TD_ENC_R),
-    // Row 1: Transparent
-    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-    // Row 2: Top row - Numpad top row (7, 8, 9, /)
-    _______,  _______,  _______,  // Q: Transparent
-                  _______,  // W: Transparent
-                  _______,  // E: Transparent
-                  _______,  // R: Transparent
-                  _______,  // T: Transparent
-                  _______,  // Y: Transparent
-                  KC_KP_7,  // U: 7 (top left)
-                  KC_KP_8,  // I: 8
-                  KC_KP_9,  // O: 9
-                  KC_KP_SLASH,  // P: / (divide)
-                  _______,  _______,  _______,  _______,            _______,
-    // Row 3: Home row - Numpad second row (4, 5, 6, *)
-    _______,  _______,  _______,  // A: Transparent
-                  _______,  // S: Transparent
-                  _______,  // D: Transparent
-                  _______,  // F: Transparent
-                  _______,  // G: Transparent
-                  _______,  // H: Transparent
-                  KC_KP_4,  // J: 4
-                  KC_KP_5,  // K: 5
-                  KC_KP_6,  // L: 6
-                  KC_KP_ASTERISK,  // ;: * (multiply)
-                  _______,            _______,            _______,
-    // Row 4: Bottom row - Numpad third row (1, 2, 3, -)
-    _______,  _______,            _______,  // Z: Transparent
-                  _______,  // X: Transparent
-                  _______,  // C: Transparent
-                  _______,  // V: Transparent
-                  _______,  // B: Transparent
-                  KC_KP_1,  // N: 1
-                  KC_KP_2,  // M: 2
-                  KC_KP_3,  // ,: 3
-                  KC_KP_MINUS,  // .: - (subtract)
-                  _______,              _______,  _______,
-    // Row 5: Numpad bottom row (0, ., +, Enter) + NAV access
-    _______,  _______,  _______,  _______,  MO(NAV_LAYER),            KC_KP_0,                       KC_KP_DOT,             KC_KP_PLUS,  KC_KP_ENTER,  _______,  _______,  _______),
+    // Row 1: Numpad top row (7, 8, 9, /) - positions 8-11 (Y/U/I/O keys)
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_7,  KC_KP_8,  KC_KP_9,  KC_KP_SLASH,  _______,  _______,  _______,            _______,
+    // Row 2: Numpad second row (4, 5, 6, *) - positions 8-11 (H/J/K/L keys)
+    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_4,  KC_KP_5,  KC_KP_6,  KC_KP_ASTERISK,  _______,  _______,  _______,            _______,
+    // Row 3: Numpad third row (1, 2, 3, -) - positions 8-11 (N/M/,/. keys)
+    _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_1,  KC_KP_2,  KC_KP_3,  KC_KP_MINUS,              _______,            _______,            _______,
+    // Row 4: Numpad bottom row (0, ., +, Enter) - positions 8-11
+    _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  KC_KP_0,  KC_KP_DOT,  KC_KP_PLUS,  KC_KP_ENTER,              _______,  _______,
+    // Row 5: Left space = NAV access, Right space = Numpad Enter
+    _______,  _______,  _______,  _______,  _______,            MO(NAV_LAYER),                 KC_KP_ENTER,            _______,  _______,  _______,  _______,  _______,  _______),
 ```
 
 **Key Features**:
-- **Standard numpad layout**: Right-hand side placement
-- **Top row** (U/I/O/P): 7, 8, 9, / (divide)
-- **Second row** (J/K/L/;): 4, 5, 6, * (multiply)
-- **Third row** (N/M/,/.): 1, 2, 3, - (subtract)
-- **Bottom row**: 0 (left space), . (right space), + (right cmd), Enter (right ctrl)
-- **U key as 7**: Top-left position of numpad (as specified)
-- **Left Thumb Key**: `MO(NAV_LAYER)` - hold to access NAV_LAYER from this layer
+- **Standard numpad layout**: Right-hand side placement, full number pad numbers on right hand
+- **Top row** (Y/U/I/O): 7, 8, 9, / (divide) - positions 8-11
+- **Second row** (H/J/K/L): 4, 5, 6, * (multiply) - positions 8-11
+- **Third row** (N/M/,/.): 1, 2, 3, - (subtract) - positions 8-11
+- **Bottom row** (Row 4): 0, ., +, Enter - positions 8-11
+- **Left Space** (Row 5, position 5): `MO(NAV_LAYER)` - long press to access NAV_LAYER (consistent with other layers)
+- **Right Space** (Row 5, position 6): `KC_KP_ENTER` - numpad enter
 - **Toggle activation**: Tap H in NAV_LAYER to activate, tap H again to return to MAC_BASE
 - **Always returns to MAC_BASE**: When toggled off, always returns to Layer 0
 
 **Usage**:
-1. Hold Left Thumb → NAV_LAYER activates
+1. Hold Left Space → NAV_LAYER activates (or tap H in NAV_LAYER to toggle NUMPAD_LAYER)
 2. Tap H key → NUMPAD_LAYER toggles on
 3. Use numpad keys for numeric input
-4. Tap H again in NAV_LAYER → NUMPAD_LAYER toggles off (returns to MAC_BASE)
-5. Or hold Left Thumb Key → Access NAV_LAYER, then toggle off
+4. Long press Left Space → Access NAV_LAYER from NUMPAD_LAYER
+5. Tap H again in NAV_LAYER → NUMPAD_LAYER toggles off (returns to MAC_BASE)
+6. Right Space sends numpad enter for quick entry
 
 ---
 
@@ -975,7 +947,7 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 - [x] WIN_LAYER implementation (complete key mappings, custom switching implemented)
 - [x] LIGHTING_LAYER implementation (RGB controls mapped, custom switching implemented)
 - [x] NUMPAD_LAYER implementation (standard numpad layout mapped)
-- [x] Left space NAV access for all non-momentary layers (L3-L10, NUMPAD uses left thumb key)
+- [x] Left space NAV access for all non-momentary layers (L3-L10, including NUMPAD_LAYER)
 - [x] Custom layer switching implementation (KC_NAV_SPACE and selector keycodes)
 - [x] Encoder tap dance implementation (left encoder: single=mute, double=return to base; right encoder: single/double press)
 - [x] Windows support layers (WIN_BASE, WIN_FN)
@@ -1181,7 +1153,7 @@ Use `qmk console` command to view debug output in real-time. This helps verify k
 - ✅ **APP Layer**: Complete (all apps mapped, custom switching implemented)
 - ✅ **WIN Layer**: Complete (all window management mappings, custom switching implemented)
 - ✅ **LIGHTING Layer**: Complete (all RGB controls mapped, custom switching implemented)
-- ✅ **NUMPAD Layer**: Complete (standard layout mapped, left thumb NAV access)
+- ✅ **NUMPAD Layer**: Complete (standard layout mapped, left space NAV access, positions 8-11)
 - ✅ **MAC_FN Layer**: Complete (existing layer with encoder tap dance)
 - ✅ **WIN_BASE Layer**: Complete (existing layer with encoder tap dance)
 - ✅ **WIN_FN Layer**: Complete (existing layer with encoder tap dance)

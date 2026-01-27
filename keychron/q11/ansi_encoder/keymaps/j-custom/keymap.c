@@ -65,6 +65,8 @@ enum custom_keycodes {
     KC_SYM_SQUARE_BRACKETS,          // L: [] with cursor in middle
     // Globe key (macOS Globe/Fn key) - fallback if KC_GLOBE not available
     KC_GLOBE_CUSTOM,                 // Custom Globe key implementation
+    // Input method switching (macOS Ctrl+Space)
+    KC_IME_NEXT,                     // Switch input method (Ctrl+Space)
 };
 
 // ============================================
@@ -154,7 +156,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
         // Row 5: Modifiers and thumb keys
         //        Position 1: KC_APP_VPN_SHADOWROCKET - VPN toggle
-        //        Position 2: LT(MAC_FN, KC_GLOBE_CUSTOM) - Left Thumb Fn (tap: Globe, hold: MAC_FN layer)
+        //        Position 2: KC_IME_NEXT - Input method switch (Ctrl+Space)
         //        Position 3: KC_LCTL - Left Control
         //        Position 4: KC_LALT - Left Option/Alt
         //        Position 5: KC_LGUI - Mac Command button (Left GUI/Command)
@@ -162,11 +164,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        Position 7: LT(SYM_LAYER, KC_SPC) - Right Space (tap: space, hold: SYM layer)
         //        Position 8: KC_RGUI - Right Command (Right GUI/Command)
         //        Position 9: KC_RCTL - Right Control
-        //        Position 10: LT(MAC_FN, KC_GLOBE_CUSTOM) - Right Thumb Fn (tap: Globe, hold: MAC_FN layer)
+        //        Position 10: MO(MAC_FN) - Function layer (momentary, no tap behavior)
         //        Position 11: KC_LEFT - Left Arrow
         //        Position 12: KC_DOWN - Down Arrow
         //        Position 13: KC_RGHT - Right Arrow
-        KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_GLOBE_CUSTOM),  KC_LCTL,  KC_LALT,  KC_LGUI,      LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  LT(MAC_FN, KC_GLOBE_CUSTOM),  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        KC_APP_VPN_SHADOWROCKET,  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI,      LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held)
@@ -426,12 +428,48 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef CONSOLE_ENABLE
     // Enhanced debug output: Print ALL key presses with keycode, matrix position, and press state
     // This helps debug keymap issues and verify key assignments
-    uprintf("DEBUG: kc: 0x%04X, col:%2u, row:%2u, pressed:%u, time:%5u\n", 
-            keycode,
-            record->event.key.col, 
-            record->event.key.row, 
-            record->event.pressed,
-            record->event.time);
+    // Decode Layer Tap (LT) keycodes: LT() keycodes are in range 0x4000-0x4FFF
+    // Format: 0x4000 + (layer << 8) + (keycode & 0xFF)
+    if (keycode >= 0x4000 && keycode < 0x5000) {
+        uint8_t layer = (keycode >> 8) & 0x0F;
+        uint16_t tap_key = keycode & 0xFF;
+        const char* layer_name = (layer == MAC_FN) ? "MAC_FN" :
+                                 (layer == NAV_LAYER) ? "NAV_LAYER" :
+                                 (layer == SYM_LAYER) ? "SYM_LAYER" :
+                                 (layer == CURSOR_LAYER) ? "CURSOR_LAYER" :
+                                 (layer == APP_LAYER) ? "APP_LAYER" :
+                                 (layer == WIN_LAYER) ? "WIN_LAYER" :
+                                 (layer == WIN_BASE) ? "WIN_BASE" :
+                                 (layer == WIN_FN) ? "WIN_FN" :
+                                 (layer == LIGHTING_LAYER) ? "LIGHTING_LAYER" :
+                                 (layer == NUMPAD_LAYER) ? "NUMPAD_LAYER" : "UNKNOWN";
+        const char* tap_name = (tap_key == KC_GLOBE_CUSTOM) ? "KC_GLOBE_CUSTOM" :
+                               (tap_key == KC_SPC) ? "KC_SPC" :
+                               (tap_key == KC_NO) ? "KC_NO" :
+                               (tap_key == KC_IME_NEXT) ? "KC_IME_NEXT" : NULL;
+        if (tap_name) {
+            uprintf("DEBUG: kc: 0x%04X [LT(%s, %s)], col:%2u, row:%2u, pressed:%u, time:%5u\n", 
+                    keycode, layer_name, tap_name,
+                    record->event.key.col, 
+                    record->event.key.row, 
+                    record->event.pressed,
+                    record->event.time);
+        } else {
+            uprintf("DEBUG: kc: 0x%04X [LT(%s, tap:0x%02X)], col:%2u, row:%2u, pressed:%u, time:%5u\n", 
+                    keycode, layer_name, tap_key,
+                    record->event.key.col, 
+                    record->event.key.row, 
+                    record->event.pressed,
+                    record->event.time);
+        }
+    } else {
+        uprintf("DEBUG: kc: 0x%04X, col:%2u, row:%2u, pressed:%u, time:%5u\n", 
+                keycode,
+                record->event.key.col, 
+                record->event.key.row, 
+                record->event.pressed,
+                record->event.time);
+    }
 #endif
     
     // Workaround: Convert KC_LNG1 to KC_LGUI for position 5 (col:4, row:5)
@@ -495,6 +533,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_GLOBE_CUSTOM:
             // TODO: Implement Globe key once KC_GLOBE is available via patches
             // For now, this does nothing - Globe key functionality requires QMK patches
+            return false;
+
+        // Input method switching (macOS Ctrl+Space)
+        case KC_IME_NEXT:
+            if (record->event.pressed) {
+                tap_code16(LCTL(KC_SPC));  // Ctrl + Space for macOS input source switching
+            }
             return false;
 
         default:

@@ -79,13 +79,12 @@ From any non-momentary layer (L3-L10):
 - **Space Bars**: Layer Tap (LT) - tap for space, hold for layer activation
   - **Left Space**: `LT(NAV_LAYER, KC_SPC)` - tap for space, hold for NAV layer
   - **Right Space**: `LT(SYM_LAYER, KC_SPC)` - tap for space, hold for SYM layer
-- **Thumb Keys**: Fn keys (Layer Tap)
-  - **Left Thumb**: `LT(MAC_FN, KC_GLOBE)` - Fn key (tap for Globe, hold for MAC_FN layer)
-  - **Right Thumb**: `LT(MAC_FN, KC_GLOBE)` - Fn key (tap for Globe, hold for MAC_FN layer)
-  - **Fn Key Behavior**:
-    - **Tap**: Sends `KC_GLOBE` - macOS Globe/Fn key (if `KC_GLOBE` is not available, custom keycode `KC_GLOBE_CUSTOM` is used as fallback)
-    - **Hold Fn**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions (brightness, volume, etc.)
-    - **Mac Command Button**: `KC_LCMD` key (Position 5) is the Mac Command button (Left Command)
+- **Thumb Keys**:
+  - **Left Thumb (Position 2)**: `KC_IME_NEXT` - Input method switch (Ctrl+Space)
+  - **Right Thumb (Position 10)**: `MO(MAC_FN)` - Function layer (momentary, hold to activate)
+  - **Input Method Switching**: Position 2 sends `LCTL(KC_SPC)` for macOS input source switching
+  - **Function Layer**: Position 10 activates MAC_FN layer when held (momentary, no tap behavior)
+  - **Mac Command Button**: `KC_LGUI` key (Position 5) is the Mac Command button (Left GUI/Command)
 - **Helper Layers** (CURSOR/APP/WIN): Latch (LT) - tap selector to activate, tap again to deactivate
 - **Toggle Layers** (L5-L8, L10): Toggle (TG) - tap selector to activate, tap again to deactivate back to MAC_BASE
 - **Lighting Layer** (L9): Momentary (MO) - activates only while selector held
@@ -117,42 +116,44 @@ From any non-momentary layer (L3-L10):
     KC_APP_CHATGPT,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
     // Row 5: Modifiers and thumb keys
     //        Position 1: KC_APP_VPN_SHADOWROCKET - VPN toggle
-    //        Position 2: LT(MAC_FN, KC_GLOBE_CUSTOM) - Left Thumb Fn (tap: Globe, hold: MAC_FN layer)
+    //        Position 2: KC_IME_NEXT - Input method switch (Ctrl+Space)
     //        Position 3: KC_LCTL - Left Control
     //        Position 4: KC_LALT - Left Option/Alt
-    //        Position 5: KC_LCMD - Mac Command button (Left Command)
+    //        Position 5: KC_LGUI - Mac Command button (Left GUI/Command)
     //        Position 6: LT(NAV_LAYER, KC_SPC) - Left Space (tap: space, hold: NAV layer)
     //        Position 7: LT(SYM_LAYER, KC_SPC) - Right Space (tap: space, hold: SYM layer)
-    //        Position 8: KC_RCMD - Right Command
+    //        Position 8: KC_RGUI - Right Command (Right GUI/Command)
     //        Position 9: KC_RCTL - Right Control
-    //        Position 10: LT(MAC_FN, KC_GLOBE_CUSTOM) - Right Thumb Fn (tap: Globe, hold: MAC_FN layer)
+    //        Position 10: MO(MAC_FN) - Function layer (momentary, no tap behavior)
     //        Position 11: KC_LEFT - Left Arrow
     //        Position 12: KC_DOWN - Down Arrow
     //        Position 13: KC_RGHT - Right Arrow
-    KC_APP_VPN_SHADOWROCKET,  LT(MAC_FN, KC_GLOBE_CUSTOM),  KC_LCTL,  KC_LALT,  KC_LCMD,         LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RCMD, KC_RCTL,  LT(MAC_FN, KC_GLOBE_CUSTOM),  KC_LEFT,  KC_DOWN,  KC_RGHT
+    KC_APP_VPN_SHADOWROCKET,  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI,         LT(NAV_LAYER, KC_SPC),                        LT(SYM_LAYER, KC_SPC),             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT
 ),
 ```
 
 **Key Features**:
 - **Row 5 Structure**:
   - **Position 1**: `KC_APP_VPN_SHADOWROCKET` - VPN toggle
-  - **Position 2**: `LT(MAC_FN, KC_GLOBE_CUSTOM)` - Left Thumb Fn (tap: Globe, hold: MAC_FN layer)
+  - **Position 2**: `KC_IME_NEXT` - Input method switch (Ctrl+Space for macOS input source switching)
   - **Position 3**: `KC_LCTL` - Left Control
   - **Position 4**: `KC_LALT` - Left Option/Alt
-  - **Position 5**: `KC_LCMD` - Mac Command button (Left Command)
+  - **Position 5**: `KC_LGUI` - Mac Command button (Left GUI/Command)
   - **Position 6**: `LT(NAV_LAYER, KC_SPC)` - Left Space (tap: space, hold: NAV layer)
   - **Position 7**: `LT(SYM_LAYER, KC_SPC)` - Right Space (tap: space, hold: SYM layer)
-  - **Position 8**: `KC_RCMD` - Right Command
+  - **Position 8**: `KC_RGUI` - Right Command (Right GUI/Command)
   - **Position 9**: `KC_RCTL` - Right Control
-  - **Position 10**: `LT(MAC_FN, KC_GLOBE_CUSTOM)` - Right Thumb Fn (tap: Globe, hold: MAC_FN layer)
+  - **Position 10**: `MO(MAC_FN)` - Function layer (momentary, no tap behavior - hold to activate MAC_FN layer)
   - **Position 11**: `KC_LEFT` - Left Arrow
   - **Position 12**: `KC_DOWN` - Down Arrow
   - **Position 13**: `KC_RGHT` - Right Arrow
-- **Fn Key Behavior**:
-  - **Tap**: Sends `KC_GLOBE` - macOS Globe/Fn key (if `KC_GLOBE` is not available, custom keycode `KC_GLOBE_CUSTOM` is used as fallback)
+- **Input Method Switching**:
+  - **Position 2**: `KC_IME_NEXT` sends `LCTL(KC_SPC)` (Ctrl+Space) for macOS input source switching
+  - **macOS Setup**: System Settings → Keyboard → Keyboard Shortcuts → Input Sources → Set "Select the previous input source" to Control + Space
+- **Function Layer Activation**:
+  - **Position 10**: `MO(MAC_FN)` - Hold to activate MAC_FN layer (momentary, no tap behavior)
   - **Hold Fn**: Activates MAC_FN layer, sending actual F1-F12 keys instead of macOS system actions
   - **Example**: Hold Fn + F1 sends `KC_F1` (actual F1 key) instead of brightness down
-- **Globe Key Note**: `KC_GLOBE` is used for macOS Globe/Fn key functionality. If compilation fails, the code includes a fallback custom keycode `KC_GLOBE_CUSTOM` that can be used instead.
 - **All letters type normally** - no helper functionality
 - **Backslash key (`\`)**: Outputs `\` (backslash) - `KC_BSLS` (default behavior)
 - **Leftmost Column (5 keys)**: Quick app launchers and VPN toggle
@@ -163,8 +164,10 @@ From any non-momentary layer (L3-L10):
   - **Row 5** (left of LCTL): `KC_APP_VPN_SHADOWROCKET` - Toggles Shadowrocket VPN (⌃⌥⌘Z)
 
 **Fn Key Behavior**:
-- **Left Thumb** and **Right Thumb** both use `LT(MAC_FN, KC_GLOBE)` - Layer Tap
-- **Tap Fn**: Sends `KC_GLOBE` - macOS Globe/Fn key (if `KC_GLOBE` is not available, custom keycode `KC_GLOBE_CUSTOM` is used as fallback)
+- **Left Thumb (Position 2)**: `KC_IME_NEXT` - Input method switch (Ctrl+Space)
+- **Right Thumb (Position 10)**: `MO(MAC_FN)` - Function layer (momentary, hold to activate)
+- **Input Method Switching**: Position 2 sends `LCTL(KC_SPC)` for macOS input source switching
+- **Function Layer**: Position 10 activates MAC_FN layer when held (momentary, no tap behavior)
 - **Hold Fn + F1-F12**: Activates MAC_FN layer, sending actual function keys:
   - **Fn + F1**: Sends `KC_F1` (actual F1) instead of brightness down
   - **Fn + F2**: Sends `KC_F2` (actual F2) instead of brightness up

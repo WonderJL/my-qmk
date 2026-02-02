@@ -1,14 +1,12 @@
 layout: {qmk_keyboard: keychron/q11/ansi_encoder, layout_name: LAYOUT_91_ansi}
 layers:
   L0-MAC_BASE:
-  - [TD(TD ENC L), ESC, BRID, BRIU, MCTL, LPAD, RM VALD, RM VALU, MPRV, MPLY, MNXT, MUTE]
-  - [VOLD, VOLU, INS, DEL, TD(TD ENC R), APP WHATSAPP, '`', '1', '2', '3', '4', '5']
-  - ['6', '7', '8', '9', '0', '-', '=', BSPC, PGUP, APP WECHAT, TAB, Q]
-  - [W, E, R, T, Y, U, I, O, P, '[', ']', \]
-  - [PGDN, APP SLACK 6, CAPS, A, S, D, F, G, H, J, K, L]
-  - [;, '''', ENT, HOME, APP CHATGPT, LSFT, Z, X, C, V, B, N]
-  - [M, ',', ., /, RSFT, UP, APP VPN SHADOWROCKET, IME NEXT, LCTL, LALT, LGUI, NAV SPACE]
-  - ['LT(SYM LAYER,SPC)', RGUI, RCTL, MO(MAC FN), LEFT, DOWN, RGHT]
+  - [TD(TD ENC L), ESC, BRID, BRIU, MCTL, LPAD, RM VALD, RM VALU, MPRV, MPLY, MNXT, MUTE, VOLD, VOLU, INS, DEL, TD(TD ENC R)]
+  - [APP WHATSAPP, '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BSPC, PGUP, APP WECHAT]
+  - [TAB, Q, W, E, R, T, Y, U, I, O, P, '[', ']', \, PGDN, APP SLACK 6, CAPS]
+  - [A, S, D, F, G, H, J, K, L, ;, '''', ENT, HOME, APP CHATGPT, LSFT, Z, X]
+  - [C, V, B, N, M, ',', ., /, RSFT, UP, TD(TD SHADOWROCKET), IME NEXT, LCTL, LALT, TD(TD LGUI), SPC, NAV SPACE]
+  - [RGUI, RCTL, MO(MAC FN), LEFT, DOWN, RGHT]
   L1-NAV_LAYER:
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -22,13 +20,6 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -45,10 +36,20 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+  - - {t: ▽, type: trans}
     - TG(WIN LAYER)
-  - - TG(MAC FN)
+    - TG(MAC FN)
     - TG(WIN BASE)
     - TG(WIN FN)
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -63,17 +64,10 @@ layers:
     - {t: ▽, type: trans}
     - NAV APP
     - NAV WIN
-    - NAV APP D
-    - NAV CURSOR
-    - NAV LIGHTING
     - TG(NUMPAD LAYER)
+    - NAV CURSOR
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - NAV LIGHTING
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -83,6 +77,10 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -93,9 +91,9 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - MO(NAV LAYER)
-    - {t: ▽, type: trans}
-  - - TG(MAC BASE)
-    - {t: ▽, type: trans}
+    - SPC
+    - NAV SPACE
+  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -114,19 +112,19 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - '!'
     - '@'
     - '#'
     - $
     - '%'
-  - - ^
+    - ^
     - '&'
     - '*'
     - (
@@ -136,9 +134,9 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -150,10 +148,10 @@ layers:
     - '{'
     - '}'
     - '|'
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - SYM TILDE SLASH
@@ -162,7 +160,7 @@ layers:
     - SYM PARENTHESES
     - SYM CURLY BRACES
     - SYM SQUARE BRACKETS
-  - - ':'
+    - ':'
     - '"'
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -170,11 +168,11 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - <
     - '>'
     - '?'
@@ -185,9 +183,9 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - SPC
+    - NAV SPACE
   - - {t: ▽, type: trans}
-    - MO(SYM LAYER)
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -206,13 +204,6 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -230,7 +221,14 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -242,15 +240,6 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -266,6 +255,11 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -277,9 +271,13 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - MO(NAV LAYER)
-  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - SPC
+    - NAV SPACE
+  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -298,31 +296,31 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - APP MUSIC
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
     - APP MAIL
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -334,10 +332,10 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - APP SLACK
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -346,7 +344,7 @@ layers:
     - APP WHATSAPP
     - APP SIGNAL
     - APP WECHAT
-  - - APP TELEGRAM
+    - APP TELEGRAM
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -354,24 +352,24 @@ layers:
     - {t: ▽, type: trans}
     - APP CHATGPT
     - {t: ▽, type: trans}
-    - APP CAL
+  - - APP CAL
     - APP VSCODE
     - APP BGA
     - APP NOTION
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - SPC
+    - NAV SPACE
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - MO(NAV LAYER)
-  - - APP FINDER
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -390,13 +388,6 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -413,8 +404,15 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+  - - {t: ▽, type: trans}
     - WIN TL
-  - - WIN TR
+    - WIN TR
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -426,10 +424,10 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - WIN BL
+    - {t: ▽, type: trans}
+  - - WIN BL
     - WIN BR
     - {t: ▽, type: trans}
     - WIN MAX
@@ -438,7 +436,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -446,11 +444,11 @@ layers:
     - {t: ▽, type: trans}
     - WIN SV L
     - WIN SV R
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -462,8 +460,8 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - MO(NAV LAYER)
-  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - WIN LEFT
@@ -482,18 +480,11 @@ layers:
     - F8
     - F9
     - F10
-  - - F11
+    - F11
     - F12
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - TD(TD ENC R)
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -504,9 +495,16 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - RM TOGG
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+  - - RM TOGG
     - RM NEXT
-  - - RM VALU
+    - RM VALU
     - RM HUEU
     - RM SATU
     - RM SPDU
@@ -518,10 +516,10 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - RM PREV
+    - {t: ▽, type: trans}
+  - - RM PREV
     - RM VALD
     - RM HUED
     - RM SATD
@@ -530,52 +528,47 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - NK TOGG
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - SPC
+    - NAV SPACE
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - MO(NAV LAYER)
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   L7-WIN_BASE:
-  - [TD(TD ENC L), ESC, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10]
-  - - F11
-    - F12
-    - INS
-    - DEL
-    - TD(TD ENC R)
-    - {t: ▽, type: trans}
+  - [TD(TD ENC L), ESC, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, INS, DEL, TD(TD ENC R)]
+  - - {t: ▽, type: trans}
     - '`'
     - '1'
     - '2'
     - '3'
     - '4'
     - '5'
-  - - '6'
+    - '6'
     - '7'
     - '8'
     - '9'
@@ -585,13 +578,24 @@ layers:
     - BSPC
     - PGUP
     - {t: ▽, type: trans}
-    - TAB
+  - - TAB
     - Q
-  - [W, E, R, T, Y, U, I, O, P, '[', ']', \]
-  - - PGDN
+    - W
+    - E
+    - R
+    - T
+    - Y
+    - U
+    - I
+    - O
+    - P
+    - '['
+    - ']'
+    - \
+    - PGDN
     - {t: ▽, type: trans}
     - CAPS
-    - A
+  - - A
     - S
     - D
     - F
@@ -600,7 +604,7 @@ layers:
     - J
     - K
     - L
-  - - ;
+    - ;
     - ''''
     - ENT
     - HOME
@@ -608,11 +612,11 @@ layers:
     - LSFT
     - Z
     - X
-    - C
+  - - C
     - V
     - B
     - N
-  - - M
+    - M
     - ','
     - .
     - /
@@ -623,8 +627,9 @@ layers:
     - LWIN
     - LALT
     - MO(WIN FN)
-    - MO(NAV LAYER)
-  - [SPC, RALT, MO(WIN FN), RCTL, LEFT, DOWN, RGHT]
+    - SPC
+    - NAV SPACE
+  - [RALT, MO(WIN FN), RCTL, LEFT, DOWN, RGHT]
   L8-WIN_FN:
   - - TD(TD ENC L)
     - {t: ▽, type: trans}
@@ -638,18 +643,11 @@ layers:
     - MPLY
     - MNXT
     - MUTE
-  - - VOLD
+    - VOLD
     - VOLU
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - TD(TD ENC R)
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -660,9 +658,16 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - RM TOGG
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+  - - RM TOGG
     - RM NEXT
-  - - RM VALU
+    - RM VALU
     - RM HUEU
     - RM SATU
     - RM SPDU
@@ -674,10 +679,10 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - RM PREV
+    - {t: ▽, type: trans}
+  - - RM PREV
     - RM VALD
     - RM HUED
     - RM SATD
@@ -686,32 +691,32 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - NK TOGG
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - SPC
+    - NAV SPACE
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - MO(NAV LAYER)
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -730,13 +735,6 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -753,8 +751,15 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+  - - {t: ▽, type: trans}
     - RM TOGG
-  - - RM NEXT
+    - RM NEXT
     - RM PREV
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -766,10 +771,10 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - RM VALU
+    - {t: ▽, type: trans}
+  - - RM VALU
     - RM VALD
     - RM HUEU
     - RM HUED
@@ -778,7 +783,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -786,24 +791,24 @@ layers:
     - {t: ▽, type: trans}
     - RM SATU
     - RM SATD
-    - RM SPDU
+  - - RM SPDU
     - RM SPDD
     - RM FLGN
     - RM FLGP
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - SPC
+    - NAV SPACE
   - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - MO(NAV LAYER)
-  - - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -822,19 +827,19 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - TD(TD ENC R)
-    - APP WHATSAPP
+  - - APP WHATSAPP
     - '`'
     - '1'
     - '2'
     - '3'
     - '4'
     - '5'
-  - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - KP 7
     - KP 8
     - KP 9
@@ -844,9 +849,9 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - APP WECHAT
-    - TAB
+  - - TAB
     - Q
-  - - W
+    - W
     - E
     - R
     - T
@@ -858,10 +863,10 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-  - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
     - APP SLACK 6
     - CAPS
-    - A
+  - - A
     - S
     - D
     - F
@@ -870,7 +875,7 @@ layers:
     - KP 1
     - KP 2
     - KP 3
-  - - KP MINUS
+    - KP MINUS
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -878,24 +883,24 @@ layers:
     - LSFT
     - Z
     - X
-    - C
+  - - C
     - V
     - B
     - {t: ▽, type: trans}
-  - - KP 0
+    - KP 0
     - KP DOT
     - {t: ▽, type: trans}
     - KP PLUS
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - APP VPN SHADOWROCKET
+    - TD(TD SHADOWROCKET)
     - IME NEXT
     - LCTL
     - LALT
     - LGUI
     - TD(TD NUMPAD SPACE)
-  - - KP ENTER
-    - {t: ▽, type: trans}
+    - NAV SPACE
+  - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}

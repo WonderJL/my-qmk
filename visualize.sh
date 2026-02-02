@@ -1204,32 +1204,71 @@ generate_diagrams() {
         columns_arg="-c $SELECTED_COLUMNS"
         print_info "Using columns: $SELECTED_COLUMNS (manual)"
     else
-        # Try to auto-detect columns based on layer count and keyboard layout
-        # For split keyboards, use a heuristic: if many layers, might need more columns
-        local auto_columns=10
-        if [ "$layer_count" -gt 0 ]; then
-            # Use layer count as a hint for columns (but cap at reasonable value)
-            # More layers might benefit from more columns for better organization
-            if [ "$layer_count" -gt 8 ]; then
-                auto_columns=12
-            elif [ "$layer_count" -gt 5 ]; then
-                auto_columns=11
+        # Auto-detect columns from keyboard layout (info.json) when available, else use default.
+        # Do NOT use layer count for columns - columns = physical layout key grouping (keys per row).
+        local auto_columns="$DEFAULT_COLUMNS"
+        local info_json_for_cols
+        info_json_for_cols=$(find_info_json "$SELECTED_KEYBOARD")
+        if [ -n "$info_json_for_cols" ] && [ -f "$info_json_for_cols" ] && command -v python3 &> /dev/null; then
+            # Try to get first row key count from LAYOUT_91_ansi (or first layout) in info.json
+            local first_row_keys
+            first_row_keys=$(python3 - "$info_json_for_cols" << 'PYEOF' 2>/dev/null
+import json
+import sys
+try:
+    if len(sys.argv) < 2:
+        sys.exit(1)
+    with open(sys.argv[1], 'r') as f:
+        data = json.load(f)
+    layouts = data.get('layouts', {})
+    for name in ('LAYOUT_91_ansi', 'LAYOUT_92_iso'):
+        if name in layouts:
+            layout = layouts[name].get('layout', [])
+            if layout:
+                y0 = layout[0].get('y', 0)
+                count = sum(1 for k in layout if k.get('y') == y0)
+                if count > 0:
+                    print(count)
+                    sys.exit(0)
+    from collections import defaultdict
+    by_y = defaultdict(int)
+    for name, spec in layouts.items():
+        for k in spec.get('layout', []):
+            by_y[k.get('y', 0)] += 1
+    if by_y:
+        print(max(by_y.values()))
+except Exception:
+    sys.exit(1)
+PYEOF
+)
+            if [ -n "$first_row_keys" ] && [ "$first_row_keys" -gt 0 ] 2>/dev/null; then
+                auto_columns="$first_row_keys"
+                print_info "Auto-detected columns: $auto_columns (from layout in info.json)"
             else
-                auto_columns=10
+                print_info "Auto-detected columns: $auto_columns (default)"
             fi
-            print_info "Auto-detected columns: $auto_columns (based on $layer_count layers)"
         else
-            print_info "Using default columns: $auto_columns (layer detection unavailable)"
+            print_info "Auto-detected columns: $auto_columns (default)"
         fi
         columns_arg="-c $auto_columns"
     fi
     
-    if ! cat "$json_output" | keymap parse $columns_arg -q - > "$yaml_file" 2>&1; then
+    # keymap parse expects -q <file path>; use file path and -o for output (do not pipe stdin)
+    local parse_err
+    parse_err=$(mktemp /tmp/keymap_parse_err_XXXXXX.txt)
+    if ! keymap parse -q "$json_output" $columns_arg -o "$yaml_file" 2> "$parse_err"; then
         print_error "Failed to parse JSON to YAML"
         print_info "Check the keymap structure and columns parameter"
-        rm -f "$json_output" "$yaml_file"
+        if [ -s "$parse_err" ]; then
+            print_info "Parser output:"
+            cat "$parse_err" | while IFS= read -r line; do
+                echo -e "  ${RED}$line${NC}"
+            done
+        fi
+        rm -f "$parse_err" "$json_output" "$yaml_file"
         exit 1
     fi
+    rm -f "$parse_err"
     print_success "Parsed to YAML: $yaml_file"
     print_success "JSON saved to: $json_file"
     

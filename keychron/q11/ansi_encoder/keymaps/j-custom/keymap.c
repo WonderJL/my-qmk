@@ -119,6 +119,10 @@ enum custom_keycodes {
 #define KC_WIN_SV_L      LCAG(KC_LEFT)          // ⌃⌥⌘← - Z key (split left)
 #define KC_WIN_SV_R      LCAG(KC_RIGHT)         // ⌃⌥⌘→ - X key (split right)
 
+// Swipe between full-screen apps / Spaces (macOS: ⌃← / ⌃→)
+#define KC_WIN_SWIPE_L   LCTL(KC_LEFT)          // ⌃← - J key (swipe full-screen apps left)
+#define KC_WIN_SWIPE_R   LCTL(KC_RIGHT)         // ⌃→ - K key (swipe full-screen apps right)
+
 // ============================================
 // Encoder Macros
 // ============================================
@@ -412,11 +416,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        Q: Top Left (⌃⌥←)
         //        W: Top Right (⌃⌥→)
         _______,  _______,  KC_WIN_TL,  KC_WIN_TR,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
-        // Row 3: Bottom quarters + Maximize
-        //        A: Bottom Left (⇧⌃⌥←)
-        //        S: Bottom Right (⇧⌃⌥→)
-        //        F: Maximize (⇧⌃⌘F)
-        _______,  _______,  KC_WIN_BL,  KC_WIN_BR,  _______,  KC_WIN_MAX,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
+        // Row 3: Bottom quarters + Maximize + full-screen swipe
+        //        A: Bottom Left (⇧⌃⌥←), S: Bottom Right (⇧⌃⌥→), F: Maximize (⇧⌃⌘F)
+        //        J: Swipe full-screen apps left (⌃←), K: Swipe full-screen apps right (⌃→)
+        _______,  _______,  KC_WIN_BL,  KC_WIN_BR,  _______,  KC_WIN_MAX,  _______,  _______,  _______,  KC_WIN_SWIPE_L,  KC_WIN_SWIPE_R,  _______,  _______,            _______,            _______,
         // Row 4: Split view
         //        Z: Split View Left (⌃⌥⌘←)
         //        X: Split View Right (⌃⌥⌘→)

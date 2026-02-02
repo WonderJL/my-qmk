@@ -72,6 +72,7 @@ enum custom_keycodes {
     KC_NAV_CURSOR,                   // Custom J key for CURSOR_LAYER switch
     KC_NAV_LIGHTING,                 // Custom L key for LIGHTING_LAYER switch
     KC_RETURN_TO_BASE,               // Custom keycode to return to MAC_BASE from any layer
+    KC_LGUI_SPOTLIGHT,               // Base pos 5: hold = Cmd (copy/paste), tap = Cmd, double-tap = Spotlight
 };
 
 // ============================================
@@ -133,8 +134,7 @@ enum {
     TD_ENC_L = 0,  // Left encoder: single = Mute, double = Return to base
     TD_ENC_R = 1,  // Right encoder: single = Zoom reset, double = Lock screen
     TD_NUMPAD_SPACE = 2,  // NUMPAD_LAYER left space: single = space, double = toggle off NUMPAD_LAYER
-    TD_LGUI = 3,   // Base LGUI: single = Cmd, double = Spotlight (Cmd+Space)
-    TD_SHADOWROCKET = 4,  // Bottom pos 1: single = open Shadowrocket (LCAG+S), double = toggle VPN (LCAG+Z)
+    TD_SHADOWROCKET = 3,  // Bottom pos 1: single = open Shadowrocket (LCAG+S), double = toggle VPN (LCAG+Z)
 };
 
 // Tap dance callback functions for debugging
@@ -221,17 +221,6 @@ void td_numpad_space_reset(tap_dance_state_t *state, void *user_data) {
 #endif
 }
 
-// Tap dance: Base LGUI - single = Cmd, double = Spotlight (Cmd+Space)
-void td_lgui_finished(tap_dance_state_t *state, void *user_data) {
-    if (state->count == 1) {
-        tap_code(KC_LGUI);
-    } else if (state->count == 2) {
-        tap_code16(LGUI(KC_SPC));  // Mac Spotlight
-    }
-}
-
-void td_lgui_reset(tap_dance_state_t *state, void *user_data) {}
-
 // Tap dance: Bottom pos 1 - single = open Shadowrocket, double = toggle VPN
 void td_shadowrocket_finished(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1) {
@@ -247,7 +236,6 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_ENC_L] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_enc_l_finished, td_enc_l_reset),  // Left encoder: single = Mute, double = Return to base
     [TD_ENC_R] = ACTION_TAP_DANCE_DOUBLE(KC_ZOOM_RESET, KC_LOCK_SCREEN),  // Right encoder: single = Zoom reset, double = Lock screen
     [TD_NUMPAD_SPACE] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_numpad_space_finished, td_numpad_space_reset),  // NUMPAD_LAYER left space: single = space, double = toggle off NUMPAD_LAYER
-    [TD_LGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_lgui_finished, td_lgui_reset),  // Base LGUI: single = Cmd, double = Spotlight
     [TD_SHADOWROCKET] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_shadowrocket_finished, td_shadowrocket_reset),  // Bottom pos 1: single = open Shadowrocket, double = toggle VPN
 };
 
@@ -279,7 +267,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        Position 2: KC_IME_NEXT - Input method switch (Ctrl+Space)
         //        Position 3: KC_LCTL - Left Control
         //        Position 4: KC_LALT - Left Option/Alt
-        //        Position 5: TD_LGUI - tap = Cmd, double = Spotlight (Cmd+Space)
+        //        Position 5: KC_LGUI_SPOTLIGHT - hold = Cmd (copy/paste), tap = Cmd, double-tap = Spotlight
         //        Position 6: KC_SPC - Left Space (pure space)
         //        Position 7: KC_NAV_SPACE - Right Space (tap: space, hold: NAV layer)
         //        Position 8: KC_RGUI - Right Command (Right GUI/Command)
@@ -288,7 +276,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        Position 11: KC_LEFT - Left Arrow
         //        Position 12: KC_DOWN - Down Arrow
         //        Position 13: KC_RGHT - Right Arrow
-        TD(TD_SHADOWROCKET),  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  TD(TD_LGUI),      KC_SPC,                        KC_NAV_SPACE,             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        TD(TD_SHADOWROCKET),  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI_SPOTLIGHT,      KC_SPC,                        KC_NAV_SPACE,             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held via right space)
@@ -541,6 +529,8 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 // ============================================
 static uint8_t selected_target_layer = NAV_LAYER;  // Default to NAV_LAYER
 static uint16_t nav_space_press_time = 0;          // Track press time for tap detection
+static uint16_t lgui_spotlight_last_release = 0;   // For double-tap Spotlight detection
+static bool     lgui_spotlight_pending_spotlight = false;
 
 // ============================================
 // Process Record User - Handle custom keycodes
@@ -694,6 +684,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_IME_NEXT:
             if (record->event.pressed) {
                 tap_code16(LCTL(KC_SPC));  // Ctrl + Space for macOS input source switching
+            }
+            return false;
+
+        // Base pos 5: hold = Cmd (copy/paste), tap = Cmd, double-tap = Spotlight
+        case KC_LGUI_SPOTLIGHT:
+            if (record->event.pressed) {
+                register_code(KC_LGUI);  // Hold = Cmd so Cmd+C, Cmd+V work
+                if (TIMER_DIFF_16(record->event.time, lgui_spotlight_last_release) < TAPPING_TERM) {
+                    lgui_spotlight_pending_spotlight = true;  // Second tap within term = double-tap
+                }
+            } else {
+                unregister_code(KC_LGUI);
+                if (lgui_spotlight_pending_spotlight) {
+                    tap_code16(LGUI(KC_SPC));  // Mac Spotlight
+                    lgui_spotlight_pending_spotlight = false;
+                } else {
+                    lgui_spotlight_last_release = record->event.time;
+                }
             }
             return false;
 

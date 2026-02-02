@@ -86,7 +86,7 @@
       "KC_IME_NEXT",
       "KC_LCTL",
       "KC_LALT",
-      "TD(TD_LGUI)",
+      "KC_LGUI_SPOTLIGHT",
       "KC_SPC",
       "KC_NAV_SPACE",
       "KC_RGUI",

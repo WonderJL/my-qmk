@@ -5,7 +5,7 @@ layers:
   - [APP WHATSAPP, '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BSPC, PGUP, APP WECHAT]
   - [TAB, Q, W, E, R, T, Y, U, I, O, P, '[', ']', \, PGDN, APP SLACK 6, CAPS]
   - [A, S, D, F, G, H, J, K, L, ;, '''', ENT, HOME, APP CHATGPT, LSFT, Z, X]
-  - [C, V, B, N, M, ',', ., /, RSFT, UP, TD(TD SHADOWROCKET), IME NEXT, LCTL, LALT, TD(TD LGUI), SPC, NAV SPACE]
+  - [C, V, B, N, M, ',', ., /, RSFT, UP, TD(TD SHADOWROCKET), IME NEXT, LCTL, LALT, LGUI SPOTLIGHT, SPC, NAV SPACE]
   - [RGUI, RCTL, MO(MAC FN), LEFT, DOWN, RGHT]
   L1-NAV_LAYER:
   - - {t: ▽, type: trans}

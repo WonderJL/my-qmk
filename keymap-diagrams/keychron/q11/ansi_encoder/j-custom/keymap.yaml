@@ -5,7 +5,7 @@ layers:
   - [APP WHATSAPP, '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BSPC, PGUP, APP WECHAT]
   - [TAB, Q, W, E, R, T, Y, U, I, O, P, '[', ']', \, PGDN, APP SLACK 6, CAPS]
   - [A, S, D, F, G, H, J, K, L, ;, '''', ENT, HOME, APP CHATGPT, LSFT, Z, X]
-  - [C, V, B, N, M, ',', ., /, RSFT, UP, TD(TD SHADOWROCKET), IME NEXT, LCTL, LALT, LGUI SPOTLIGHT, SPC, NAV SPACE]
+  - [C, V, B, N, M, ',', ., /, RSFT, UP, TD(TD SHADOWROCKET), IME NEXT, LCTL, LALT, LGUI SPOTLIGHT, NAV SPACE, NAV SPACE]
   - [RGUI, RCTL, MO(MAC FN), LEFT, DOWN, RGHT]
   L1-NAV_LAYER:
   - - {t: ▽, type: trans}
@@ -91,7 +91,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - MO(NAV LAYER)
-    - SPC
+    - NAV SPACE
     - NAV SPACE
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -183,7 +183,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - SPC
+    - NAV SPACE
     - NAV SPACE
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -275,7 +275,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - SPC
+    - NAV SPACE
     - NAV SPACE
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -367,7 +367,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - SPC
+    - NAV SPACE
     - NAV SPACE
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -551,7 +551,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - SPC
+    - NAV SPACE
     - NAV SPACE
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -627,7 +627,7 @@ layers:
     - LWIN
     - LALT
     - MO(WIN FN)
-    - SPC
+    - NAV SPACE
     - NAV SPACE
   - [RALT, MO(WIN FN), RCTL, LEFT, DOWN, RGHT]
   L8-WIN_FN:
@@ -714,7 +714,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - SPC
+    - NAV SPACE
     - NAV SPACE
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}
@@ -806,7 +806,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - SPC
+    - NAV SPACE
     - NAV SPACE
   - - {t: ▽, type: trans}
     - {t: ▽, type: trans}

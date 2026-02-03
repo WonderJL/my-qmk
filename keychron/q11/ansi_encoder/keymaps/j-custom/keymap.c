@@ -19,7 +19,7 @@
  *     NAV + F → APP_LAYER, NAV + G → WIN_LAYER, NAV + J → CURSOR_LAYER, NAV + L → LIGHTING_LAYER
  *     NAV + H → NUMPAD_LAYER (toggle)
  *     NAV + Q/W/E/R → Toggle WIN_LAYER, MAC_FN, WIN_BASE, WIN_FN
- *   Left space = pure KC_SPC on all layers except NUMPAD (Numpad left = space + double-tap to exit).
+ *   Left space = tap=Space, hold=NAV (same as right space) on all layers except NUMPAD (Numpad left = space + double-tap to exit).
  *   Base LGUI: tap = Cmd, double-tap = Spotlight (Cmd+Space).
  *   Bottom pos 1: tap = open Shadowrocket (⌃⌥⌘S), double-tap = toggle VPN (⌃⌥⌘Z).
  *   SYM backticks (H): ``` + Shift+Enter + ``` (cursor before closing backticks; newline without chat submit).
@@ -272,15 +272,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        Position 3: KC_LCTL - Left Control
         //        Position 4: KC_LALT - Left Option/Alt
         //        Position 5: KC_LGUI_SPOTLIGHT - hold = Cmd (copy/paste), tap = Cmd, double-tap = Spotlight
-        //        Position 6: KC_SPC - Left Space (pure space)
-        //        Position 7: KC_NAV_SPACE - Right Space (tap: space, hold: NAV layer)
+        //        Position 6: KC_NAV_SPACE - Left Space (tap: space, hold: NAV layer)
+        //        Position 7: KC_NAV_SPACE - Right Space (tap: space, hold: NAV layer) — same as left
         //        Position 8: KC_RGUI - Right Command (Right GUI/Command)
         //        Position 9: KC_RCTL - Right Control
         //        Position 10: MO(MAC_FN) - Function layer (momentary, no tap behavior)
         //        Position 11: KC_LEFT - Left Arrow
         //        Position 12: KC_DOWN - Down Arrow
         //        Position 13: KC_RGHT - Right Arrow
-        TD(TD_SHADOWROCKET),  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI_SPOTLIGHT,      KC_SPC,                        KC_NAV_SPACE,             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        TD(TD_SHADOWROCKET),  KC_IME_NEXT,  KC_LCTL,  KC_LALT,  KC_LGUI_SPOTLIGHT,      KC_NAV_SPACE,                  KC_NAV_SPACE,             KC_RGUI, KC_RCTL,  MO(MAC_FN),  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 1: NAV_LAYER - Navigation menu (thumb-held via right space)
@@ -298,8 +298,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,  KC_NAV_APP,  KC_NAV_WIN,  TG(NUMPAD_LAYER),  KC_NAV_CURSOR,  _______,  KC_NAV_LIGHTING,  _______,  _______,  _______,  _______,
         // Row 4: Transparent
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
-        // Row 5: Left space = KC_SPC, Right space = KC_NAV_SPACE
-        _______,  _______,  _______,  _______,  MO(NAV_LAYER),      KC_SPC,                       KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 5: Left space = KC_NAV_SPACE, Right space = KC_NAV_SPACE
+        _______,  _______,  _______,  _______,  MO(NAV_LAYER),      KC_NAV_SPACE,                  KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 2: SYM_LAYER - Symbols (hold right space for NAV, then access via other means)
@@ -317,8 +317,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,  KC_SYM_TILDE_SLASH,  _______,  KC_SYM_BACKTICKS,  KC_SYM_PARENTHESES,  KC_SYM_CURLY_BRACES,  KC_SYM_SQUARE_BRACKETS,  KC_COLN,  KC_DQUO,              _______,            _______,
         // Row 4: Bottom row - shifted punctuation
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_LT,    KC_GT,    KC_QUES,              _______,  _______,
-        // Row 5: Left space = KC_SPC, Right space = KC_NAV_SPACE
-        _______,  _______,  _______,  _______,  _______,            KC_SPC,                       KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 5: Left space = KC_NAV_SPACE, Right space = KC_NAV_SPACE
+        _______,  _______,  _______,  _______,  _______,            KC_NAV_SPACE,                 KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 3: CURSOR_LAYER - Cursor IDE helper (NAV + J)
@@ -347,8 +347,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
         // Row 4: Transparent
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
-        // Row 5: Left space = KC_SPC, Right space = KC_NAV_SPACE
-        _______,  _______,  _______,  _______,  _______,            KC_SPC,                       KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 5: Left space = KC_NAV_SPACE, Right space = KC_NAV_SPACE
+        _______,  _______,  _______,  _______,  _______,            KC_NAV_SPACE,                 KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 4: APP_LAYER - Application launchers (NAV + F)
@@ -396,8 +396,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                             KC_APP_NOTION,     // N: Notion
                             _______,           // M: (reserved)
                             _______,  _______,  _______,              _______,  _______,
-        // Row 5: Left space = KC_SPC, Right space = KC_NAV_SPACE
-        _______,  _______,  _______,  _______,  _______,            KC_SPC,                       KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 5: Left space = KC_NAV_SPACE, Right space = KC_NAV_SPACE
+        _______,  _______,  _______,  _______,  _______,            KC_NAV_SPACE,                 KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 5: WIN_LAYER - Window management (NAV + G)
@@ -440,7 +440,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
         _______,  _______,            _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
-        _______,  _______,  _______,  _______,  _______,            KC_SPC,                       KC_NAV_SPACE,            _______,  _______,    _______,  _______,  _______,  _______),
+        _______,  _______,  _______,  _______,  _______,            KC_NAV_SPACE,                 KC_NAV_SPACE,            _______,  _______,    _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 7: WIN_BASE - Normal typing (Windows)
@@ -451,7 +451,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,      KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,    KC_RBRC,  KC_BSLS,            KC_PGDN,
         _______,  KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,              KC_ENT,             KC_HOME,
         _______,  KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,      KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,              KC_RSFT,  KC_UP,
-        _______,  KC_LCTL,  KC_LWIN,  KC_LALT,  MO(WIN_FN),         KC_SPC,                       KC_NAV_SPACE,            KC_RALT,  MO(WIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+        _______,  KC_LCTL,  KC_LWIN,  KC_LALT,  MO(WIN_FN),         KC_NAV_SPACE,                 KC_NAV_SPACE,            KC_RALT,  MO(WIN_FN), KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
     // ============================================
     // Layer 8: WIN_FN - Function keys (Windows)
@@ -462,7 +462,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,    _______,  _______,            _______,
         _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,              _______,            _______,
         _______,  _______,            _______,  _______,  _______,  _______,   _______,  NK_TOGG,  _______,  _______,  _______,  _______,              _______,  _______,
-        _______,  _______,  _______,  _______,  _______,            KC_SPC,                       KC_NAV_SPACE,            _______,  _______,    _______,  _______,  _______,  _______),
+        _______,  _______,  _______,  _______,  _______,            KC_NAV_SPACE,                 KC_NAV_SPACE,            _______,  _______,    _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 9: LIGHTING_LAYER - RGB lighting controls (NAV + L)
@@ -478,8 +478,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  RM_VALU,  RM_VALD,  RM_HUEU,  RM_HUED,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
         // Row 4: Saturation and Speed controls
         _______,  _______,            RM_SATU,  RM_SATD,  RM_SPDU,  RM_SPDD,  RM_FLGN,  RM_FLGP,  _______,  _______,  _______,  _______,              _______,  _______,
-        // Row 5: Left space = KC_SPC, Right space = KC_NAV_SPACE
-        _______,  _______,  _______,  _______,  _______,            KC_SPC,                       KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
+        // Row 5: Left space = KC_NAV_SPACE, Right space = KC_NAV_SPACE
+        _______,  _______,  _______,  _______,  _______,            KC_NAV_SPACE,                 KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
 
     // ============================================
     // Layer 10: NUMPAD_LAYER - Number pad (NAV + H)
@@ -527,11 +527,21 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 #endif // ENCODER_MAP_ENABLE
 
 // ============================================
+// NAV Space (tap=Space, hold=NAV) - space has priority
+// Space fires on key PRESS (instant). Hold past NAV_SPACE_TAPPING_TERM = backspace + NAV layer.
+// ============================================
+#ifndef NAV_SPACE_TAPPING_TERM
+#    define NAV_SPACE_TAPPING_TERM 150
+#endif
+
+// ============================================
 // Custom Layer Switching State
 // Tracks which target layer is selected when switching from NAV_LAYER
 // ============================================
 static uint8_t selected_target_layer = NAV_LAYER;  // Default to NAV_LAYER
-static uint16_t nav_space_press_time = 0;          // Track press time for tap detection
+static uint16_t nav_space_press_time = 0;          // Track press time for hold detection
+static bool     nav_space_held             = false;  // NAV space key is currently held
+static bool     nav_space_layer_activated  = false;  // Layer was activated this hold (we sent backspace)
 static uint16_t lgui_spotlight_last_release = 0;   // For double-tap Spotlight detection
 static bool     lgui_spotlight_pending_spotlight = false;
 
@@ -708,39 +718,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
-        // Custom layer switching - Left Space
-        // Handles layer activation based on selected target layer
-        // Supports tap-for-space and hold-for-layer behavior
+        // Custom layer switching - NAV Space (tap=Space, hold=NAV). Space has priority: instant on press.
+        // Press: send space immediately. Hold past NAV_SPACE_TAPPING_TERM: backspace (undo space) + activate NAV.
         case KC_NAV_SPACE:
             if (record->event.pressed) {
-                nav_space_press_time = record->event.time;
-                if (selected_target_layer != NAV_LAYER && selected_target_layer < 11) {
-                    // Activate selected target layer (APP/WIN/CURSOR/LIGHTING)
-                    layer_on(selected_target_layer);
-                } else {
-                    // Default: activate NAV_LAYER
-                    layer_on(NAV_LAYER);
-                }
+                tap_code(KC_SPC);  // Instant space on every press
+                nav_space_press_time     = record->event.time;
+                nav_space_held           = true;
+                nav_space_layer_activated = false;
             } else {
-                // Release - check if this was a tap (quick press/release)
-                // TAPPING_TERM is typically 200ms, defined by QMK
-                uint16_t press_duration = TIMER_DIFF_16(record->event.time, nav_space_press_time);
-                bool was_tap = press_duration < TAPPING_TERM;
-                
-                // Deactivate all possible layers
                 layer_off(NAV_LAYER);
                 layer_off(APP_LAYER);
                 layer_off(WIN_LAYER);
                 layer_off(CURSOR_LAYER);
                 layer_off(LIGHTING_LAYER);
-                
-                // Reset selection to default
                 selected_target_layer = NAV_LAYER;
-                
-                // If it was a tap (not a hold), send space character
-                if (was_tap) {
-                    tap_code(KC_SPC);
-                }
+                nav_space_held = false;
             }
             return false; // We've handled it
 
@@ -836,5 +829,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         default:
             return true; // Process all other keycodes normally
+    }
+}
+
+// ============================================
+// Matrix Scan User - Delayed NAV layer for NAV space (space already sent on press)
+// After NAV_SPACE_TAPPING_TERM: backspace (undo the space we sent on press) + activate layer.
+// ============================================
+void matrix_scan_user(void) {
+    if (!nav_space_held || nav_space_layer_activated) return;
+    if (timer_elapsed(nav_space_press_time) < NAV_SPACE_TAPPING_TERM) return;
+
+    nav_space_layer_activated = true;
+    tap_code(KC_BSPC);  // Remove the space we sent on press so hold = NAV only
+    if (selected_target_layer != NAV_LAYER && selected_target_layer < 11) {
+        layer_on(selected_target_layer);
+    } else {
+        layer_on(NAV_LAYER);
     }
 }

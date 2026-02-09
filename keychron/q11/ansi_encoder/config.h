@@ -21,8 +21,3 @@
 
 /* VIA Configuration - Support 11 layers (0-10) */
 #define DYNAMIC_KEYMAP_LAYER_COUNT 11
-
-/* NAV space: space has priority. Space fires on key PRESS (instant). Hold past NAV_SPACE_TAPPING_TERM = backspace + NAV layer. */
-#ifndef NAV_SPACE_TAPPING_TERM
-#    define NAV_SPACE_TAPPING_TERM 250
-#endif

@@ -248,10 +248,10 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
-    - {t: ▽, type: trans}
+    - CURSOR FOCUS EDITOR
+    - CURSOR PREV CHANGE
+    - CURSOR NEXT CHANGE
+    - CURSOR APPLY IN EDITOR
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}

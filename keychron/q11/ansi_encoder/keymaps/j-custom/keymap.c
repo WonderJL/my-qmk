@@ -73,6 +73,11 @@ enum custom_keycodes {
     KC_NAV_LIGHTING,                 // Custom L key for LIGHTING_LAYER switch
     KC_RETURN_TO_BASE,               // Custom keycode to return to MAC_BASE from any layer
     KC_LGUI_SPOTLIGHT,               // Base pos 5: hold = Cmd (copy/paste), tap = Cmd, double-tap = Spotlight
+    // Cursor IDE actions (CURSOR_LAYER) - placeholders until implemented
+    KC_CURSOR_FOCUS_EDITOR,          // H: Focus editor (TBD: Cursor command)
+    KC_CURSOR_PREV_CHANGE,           // J: Previous change (TBD: Cursor command)
+    KC_CURSOR_NEXT_CHANGE,           // K: Next change (TBD: Cursor command)
+    KC_CURSOR_APPLY_IN_EDITOR,       // L: Apply in editor (TBD: Cursor command)
 };
 
 // ============================================
@@ -322,7 +327,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // ============================================
     // Layer 3: CURSOR_LAYER - Cursor IDE helper (NAV + J)
-    // Partial mapping: Y/U/I/O set, remaining actions TBD
+    // Row 2: Y/U/I/O setup actions; Row 3: H/J/K/L Cursor actions
     // ============================================
     [CURSOR_LAYER] = LAYOUT_91_ansi(
         // Row 0: Transparent
@@ -338,16 +343,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         //        [: Submit with codebase (TBD)
         //        ]: Submit no codebase (TBD)
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  LGUI(KC_B),  LGUI(KC_T),  LGUI(KC_I),  LGUI(KC_DOT),  _______,  _______,  _______,  _______,            _______,
-        // Row 3: Home row - High-frequency actions (TBD)
-        //        H: Focus editor
-        //        J: Previous change
-        //        K: Next change
-        //        L: Apply in editor
-        //        ;: Accept all files
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
+        // Row 3: Home row - Cursor actions on H/J/K/L (positions 7-10)
+        //        H: Focus editor (TBD: Cursor command)
+        //        J: Previous change (TBD: Cursor command)
+        //        K: Next change (TBD: Cursor command)
+        //        L: Apply in editor (TBD: Cursor command)
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  KC_CURSOR_FOCUS_EDITOR,  KC_CURSOR_PREV_CHANGE,  KC_CURSOR_NEXT_CHANGE,  KC_CURSOR_APPLY_IN_EDITOR,  _______,  _______,            _______,            _______,
         // Row 4: Transparent
         _______,  _______,            _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,              _______,  _______,
-        // Row 5: Left space = KC_NAV_SPACE, Right space = KC_NAV_SPACE
+        // Row 5: Left/Right space = KC_NAV_SPACE
         _______,  _______,  _______,  _______,  _______,            KC_NAV_SPACE,                 KC_NAV_SPACE,            _______,  _______,  _______,  _______,  _______,  _______),
 
     // ============================================
@@ -740,44 +744,70 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Custom layer switching - Selector keys
         // These keys switch from NAV_LAYER to target layer while left space is held
         // Only work when NAV_LAYER is currently active
-        case KC_NAV_APP:  // A key - Switch to APP_LAYER
+        case KC_NAV_APP:  // F key - Switch to APP_LAYER
             if (record->event.pressed) {
+                // Set target layer - will be activated by matrix_scan_user if NAV is held
+                selected_target_layer = APP_LAYER;
+                // If NAV_LAYER is already active, switch immediately
                 if (layer_state_is(NAV_LAYER)) {
-                    selected_target_layer = APP_LAYER;
                     layer_off(NAV_LAYER);
                     layer_on(APP_LAYER);
                 }
+                // If NAV space is held but NAV_LAYER not active yet, matrix_scan_user will handle it
             }
             return false;
 
         case KC_NAV_WIN:  // G key - Switch to WIN_LAYER
             if (record->event.pressed) {
+                // Set target layer - will be activated by matrix_scan_user if NAV is held
+                selected_target_layer = WIN_LAYER;
+                // If NAV_LAYER is already active, switch immediately
                 if (layer_state_is(NAV_LAYER)) {
-                    selected_target_layer = WIN_LAYER;
                     layer_off(NAV_LAYER);
                     layer_on(WIN_LAYER);
                 }
+                // If NAV space is held but NAV_LAYER not active yet, matrix_scan_user will handle it
             }
             return false;
 
         case KC_NAV_CURSOR:  // J key - Switch to CURSOR_LAYER
             if (record->event.pressed) {
+                // Set target layer - will be activated by matrix_scan_user if NAV is held
+                selected_target_layer = CURSOR_LAYER;
+                // If NAV_LAYER is already active, switch immediately
                 if (layer_state_is(NAV_LAYER)) {
-                    selected_target_layer = CURSOR_LAYER;
                     layer_off(NAV_LAYER);
                     layer_on(CURSOR_LAYER);
                 }
+                // If NAV space is held but NAV_LAYER not active yet, matrix_scan_user will handle it
             }
             return false;
 
         case KC_NAV_LIGHTING:  // L key - Switch to LIGHTING_LAYER
             if (record->event.pressed) {
+                // Set target layer - will be activated by matrix_scan_user if NAV is held
+                selected_target_layer = LIGHTING_LAYER;
+                // If NAV_LAYER is already active, switch immediately
                 if (layer_state_is(NAV_LAYER)) {
-                    selected_target_layer = LIGHTING_LAYER;
                     layer_off(NAV_LAYER);
                     layer_on(LIGHTING_LAYER);
                 }
+                // If NAV space is held but NAV_LAYER not active yet, matrix_scan_user will handle it
             }
+            return false;
+
+        // Cursor IDE actions - placeholders (TBD: implement actual Cursor commands)
+        case KC_CURSOR_FOCUS_EDITOR:
+            // TODO: Implement Focus editor command
+            return false;
+        case KC_CURSOR_PREV_CHANGE:
+            // TODO: Implement Previous change command
+            return false;
+        case KC_CURSOR_NEXT_CHANGE:
+            // TODO: Implement Next change command
+            return false;
+        case KC_CURSOR_APPLY_IN_EDITOR:
+            // TODO: Implement Apply in editor command
             return false;
 
         // Return to base - explicitly turn off all layers and return to MAC_BASE
